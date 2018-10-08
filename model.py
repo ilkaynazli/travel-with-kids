@@ -15,15 +15,15 @@ class User(db.Model):
                         primary_key = True,
                         autoincrement = True,
                         )
-    username = db.Column(db.String(25), nullable = False)
+    username = db.Column(db.String(25), nullable = False, unique=True)
     password = db.Column(db.String(25), nullable = False)
     email = db.Column(db.String(50), nullable = False)
 
-    comment = db.relationship('Comment')
-    rating = db.relationship('Rating')
-    business_tip = db.relationship('BusinessTip')
-    trip_tip = db.relationship('TripTip')
-    answer = db.relationship('Answer')
+    comments = db.relationship('Comment')
+    ratings = db.relationship('Rating')
+    business_tips = db.relationship('BusinessTip')
+    trip_tips = db.relationship('TripTip')
+    answers = db.relationship('Answer')
 
     def __repr__(self):
         """Human readable data"""
@@ -42,12 +42,12 @@ class Business(db.Model):
                             primary_key = True,
                             )
     business_name = db.Column(db.String(50), nullable = False)
-    business_type = db.Columnd(db.String(5), nullable = False)
-    description = db.Column(db.String(500), nullable = True)
+    business_type = db.Column(db.String(5), nullable = False)
+    description = db.Column(db.Text, nullable = True)
 
-    comment = db.relationship('Comment')
-    rating = db.relationship('Rating')
-    business_tip = db.relationship('BusinessTip')
+    comments = db.relationship('Comment')
+    ratings = db.relationship('Rating')
+    business_tips = db.relationship('BusinessTip')
        
     def __repr__(self):
         """Human readable data"""
@@ -76,7 +76,7 @@ class Comment(db.Model):
 
     user = db.relationship('User')
     business = db.relationship('Business')
-    
+
     def __repr__(self):
         """Human readable data"""
         return f"<Comment id: {self.comment_id}, \
@@ -104,7 +104,7 @@ class Rating(db.Model):
 
     user = db.relationship('User')
     business = db.relationship('Business')
-    
+
     def __repr__(self):
         """Human readable data"""
         return f"<Rating id: {self.rating_id}, \
@@ -118,7 +118,7 @@ class BusinessTip(db.Model):
 
     __tablename__ = 'business_tips'
 
-    tip_id = db.Column(db.Integer,
+    business_tip_id = db.Column(db.Integer,
                         primary_key = True,
                         autoincrement = True,
                         )
@@ -128,14 +128,14 @@ class BusinessTip(db.Model):
     business_id = db.Column(db.Integer,
                             db.ForeignKey('businesses.business_id'),
                             )
-    business_tip = db.Column(db.String(150), nullable = True)
-    
+    business_tip = db.Column(db.Text, nullable = True)
+
     user = db.relationship('User')
     business = db.relationship('Business')
 
     def __repr__(self):
         """Human readable data"""
-        return f"<Tip id: {self.tip_id}, \
+        return f"<Tip id: {self.business_tip_id}, \
                     User id: {self.user_id},\
                     business id: {self.business_id},\
                     tip: {self.business_tip}>"
@@ -145,20 +145,20 @@ class TripTip(db.Model):
 
     __tablename__ = 'trip_tips'
 
-    tip_id = db.Column(db.Integer,
+    trip_tip_id = db.Column(db.Integer,
                         primary_key = True,
                         autoincrement = True,
                         )
     user_id = db.Column(db.Integer,
                         db.ForeignKey('users.user_id'),
                         )
-    trip_tip = db.Column(db.String(150), nullable = True)
+    trip_tip = db.Column(db.Text, nullable = True)
     
     user = db.relationship('User')
-    
+
     def __repr__(self):
         """Human readable data"""
-        return f"<Tip id: {self.tip_id}, \
+        return f"<Tip id: {self.trip_tip_id}, \
                     User id: {self.user_id},\
                     tip: {self.trip_tip}>"
 
@@ -173,7 +173,7 @@ class Question(db.Model):
                             )
     question = db.Column(db.String(150), nullable = False)
 
-    answer = db.relationship('Answer')
+    answers = db.relationship('Answer')
 
     def __repr__(self):
         """Human readable data"""
@@ -198,8 +198,8 @@ class Answer(db.Model):
                         )
     answer = db.Column(db.String(25), nullable = False)
 
-    question = db.relationship('Question')
     user = db.relationship('User')
+    question = db.relationship('Question')
 
     def __repr__(self):
         """Human readable data"""
@@ -217,6 +217,55 @@ def connect_to_db(app, db_name):
     db.init_app(app)
 
 
+def example_data():
+    """Create example data for the test database."""
+    
+    User.query.delete()
+    Business.query.delete()
+    Comment.query.delete()
+    Rating.query.delete()
+    BusinessTip.query.delete()
+    TripTip.query.delete()
+    Question.query.delete()
+    Answer.query.delete()
+
+    #add user, business, comment, rating, tips, question, answer
+    sample_user = User(username='ilkay', 
+                        password='12345Qwe/',
+                        email='ilkay@ilkay.com')
+    sample_business = Business(business_id=1, 
+                                business_name='test', 
+                                business_type='food')
+    sample_comment = Comment(user=sample_user, 
+                                business=sample_business,
+                                comment='hi there')
+    sample_rating = Rating(user=sample_user, 
+                                business=sample_business,
+                                rating=5)
+    sample_tip_b = BusinessTip(user=sample_user, 
+                                business=sample_business,
+                                business_tip='bring wet towels')
+    sample_tip_t = TripTip(user=sample_user,
+                            trip_tip='bring toys')
+    sample_question = Question(question='Favorite color?')
+    sample_answer = Answer(question=sample_question,
+                            user=sample_user,
+                            answer='blue')
+
+
+    db.session.add_all([sample_user,
+                        sample_business, 
+                        sample_rating, 
+                        sample_comment,
+                        sample_tip_b,
+                        sample_tip_t,
+                        sample_question,
+                        sample_answer])
+    db.session.commit()
+
+
+
+
 if __name__ == '__main__':
     """For running this interactively"""
 
@@ -224,5 +273,8 @@ if __name__ == '__main__':
 
     db_name = 'travels'
     connect_to_db(app, db_name)
+
+    db.create_all()
+    # example_data()
 
     print('Connected to database.')

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% block title %}Roadtrips With Kids{% endblock %}
+    </head>
+    <body>
+        <form action="/login">
+            Username: <input type="text" name="username"><br>
+            Password: <input type="password" name="password"><br><br>
+            <input type="submit">
+        </form>
+     
+        {% block body %}Body content goes here{% endblock %}
+    </body>
+</html>
