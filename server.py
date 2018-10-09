@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 from model import (User, Business, Comment, Rating, BusinessTip,
                     TripTip, Question, Answer, connect_to_db, db)
-
+from functions import test_the_password
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
@@ -36,25 +36,12 @@ def get_signup_info():
     """Add user info to database"""
     password = request.form.get('password')
     password2 = request.form.get('password2')
-    if password != password2:
+    
+    result = test_the_password(password, password2)
+    if not result[0]:
         return render_template("signup.html", 
                                 error=True, 
-                                message="Passwords don't match")
-    if password.isalnum():
-        upper = True
-        lower = True
-        character = True
-        for char in password:
-            if char.isupper() and upper:
-                upper = False
-            if char.islower() and lower:
-                lower = False
-            if char in ['!@#$%^&*(){}[]/?'] and character:
-                character = False
-        if upper or lower or character:
-            return render_template("signup.html", 
-                                    error=True, 
-                                    message="Password doesn't fit the requirements")
+                                message=result[1])
 
     username = request.form.get('username')
     email = request.form.get('email')
@@ -86,32 +73,66 @@ def login_user():
     return render_template("login.html", error=error)
 
 
+@app.route("/wrong-password")
+def wrong_password():
+    """User forgot the password render the page to forgot_password"""
+    return render_template("forgot_password.html")
+
+
 @app.route("/forgot-password")
 def forgot_password():
     """Get question and answer for the user login"""
     email = request.args.get('email')
+    session['email'] = email
     if email is None:
-        flash("This user does not exist. Please sign up here")
+        flash("This user does not exist. Please sign up here:")
         return render_template("signup.html")
 
-    question = db.session.query(Question.question)
-                .filter(Question.user.email == email).first()
+    user = User.query.filter(User.email == email).first()
+    question_id = db.session.query(Answer.question_id).filter(Answer.user_id == user.user_id).first()
+    question = db.session.query(Question.question).filter(Question.question_id == question_id).first()
     return render_template("check_answer.html", question=question)
 
 
-@aap.route("/check-answer")
+@app.route("/check-answer")
 def check_answer():
+    """Check if the answer matches to the one at the database"""
     user_email = session.get('email')
-    user_answer = db.session.query(Answer.answer)
-                .filter(User.email == user_email).first()
+
+    user = User.query.filter(User.email == user_email).first()
+    user_answer = db.session.query(Answer.answer).filter(Answer.user_id == user.user_id).first()
+    
     answer = request.args.get('answer')
-    if answer.lower() == user_answer.lower():
+
+    if answer.lower() == user_answer[0].lower():
         return render_template("new_password.html")
     else:
         flash("Answers do not match please try again!")
-        question = db.session.query(Question.question)
-                .filter(Question.user.email == email).first()
+        user = User.query.filter(User.email == user_email).first()
+        question_id = db.session.query(Answer.question_id).filter(Answer.user_id == user.user_id).first()
+        question = db.session.query(Question.question).filter(Question.question_id == question_id).first()
         return render_template("check_answer.html", question=question)
+
+
+@app.route("/new-password", methods=["POST"])
+def assign_new_password():
+    """Assign a new password for the existing user"""
+
+    password = request.form.get('password')
+    password2 = request.form.get('password2')
+    
+    result = test_the_password(password, password2)
+    if not result[0]:
+        return render_template("new_password.html", 
+                                error=True, 
+                                message=result[1])
+
+    user_email = session.get('email')
+    user = User.query.filter(User.email == user_email).first()
+
+    user.password = password
+    db.session.commit()
+    return redirect('/')
 
 
 if __name__ == "__main__":
