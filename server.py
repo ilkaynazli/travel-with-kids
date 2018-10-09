@@ -8,6 +8,10 @@ from model import (User, Business, Comment, Rating, BusinessTip,
 from functions import test_the_password
 import os
 
+
+GOOGLE_MAPS = os.environ['GOOGLE_MAPS_API']
+YELP = os.environ['YELP_API']
+
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
