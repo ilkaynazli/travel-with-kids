@@ -6,6 +6,8 @@ from flask_debugtoolbar import DebugToolbarExtension
 from model import (User, Business, Comment, Rating, BusinessTip,
                     TripTip, Question, Answer, connect_to_db, db)
 from functions import test_the_password
+import os
+
 app = Flask(__name__)
 
 # Required to use Flask sessions and the debug toolbar
@@ -19,7 +21,7 @@ app.jinja_env.undefined = StrictUndefined
 @app.route("/")
 def display_homepage():
     """Display homepage"""
-   
+
     return render_template("homepage.html")
 
 @app.route("/signup")
@@ -69,6 +71,7 @@ def login_user():
     if password == user.password:
         error = False
     else:
+        session['user_id'] = user.user_id
         error = True
     return render_template("login.html", error=error)
 
@@ -133,6 +136,26 @@ def assign_new_password():
     user.password = password
     db.session.commit()
     return redirect('/')
+
+
+@app.route("/log-out")
+def logout_user():
+    """Log out user from the website and remove session from system"""
+
+    session.pop('user_id', None)
+
+    return redirect("/")
+
+
+@app.route("/get-locations")
+def get_locations():
+    """Get start and end locations for the directions"""
+    start_location = request.args.get("start_location")
+    end_location = request.args.get("end_location")
+
+    return render_template("show_directions.html", 
+                            start=start_location, 
+                            end=end_location)
 
 
 if __name__ == "__main__":

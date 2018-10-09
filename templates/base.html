@@ -4,11 +4,15 @@
         {% block title %}Roadtrips With Kids{% endblock %}
     </head>
     <body>
-        <form action="/login">
-            Username: <input type="text" name="username"><br>
-            Password: <input type="password" name="password"><br><br>
-            <input type="submit">
-        </form>
+        {% if session.get('user_id') %}
+            <button type='button'><a href="/log-out">Log out</a></button>
+        {% else %}
+            <form action="/login">
+                Username: <input type="text" name="username"><br>
+                Password: <input type="password" name="password"><br><br>
+                <input type="submit">
+            </form>
+        {% endif %}
         
         <ul>
             {% for message in get_flashed_messages() %}

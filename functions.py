@@ -3,6 +3,7 @@
 
 def test_the_password(password1, password2):
     """Test if the password matches the requirements"""
+    """Write some doctest here!"""
 
     if password1 != password2:
         return (False, "Passwords do not match")
