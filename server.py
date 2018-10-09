@@ -26,7 +26,9 @@ def display_homepage():
 def display_signup():
     """Display sign up details"""
 
-    return render_template("signup.html", error=False)
+    return render_template("signup.html", 
+                            error=False,
+                            questions = Question.query.all())
 
 
 @app.route("/signup", methods=["POST"])
@@ -58,7 +60,12 @@ def get_signup_info():
     email = request.form.get('email')
 
     user = User(username=username, password=password, email=email)
-    db.session.add(user)
+
+    question_id = request.form.get('question')
+    user_answer = request.form.get('answer')
+    answer = Answer(question_id=question_id, user=user, answer=user_answer)
+
+    db.session.add_all([user, answer])
     db.session.commit()
 
     return render_template("homepage.html")
@@ -69,12 +76,42 @@ def login_user():
     """Login user to the website"""
     username = request.args.get('username')
     password = request.args.get('password')
-    user = User.query.filter(User.username == username)
+    user = User.query.filter(User.username == username).first()
+    if user is None:
+        error = False
     if password == user.password:
-        error_message = False
+        error = False
     else:
-        error_message = True
-    return render_template("login.html", error=error_message)
+        error = True
+    return render_template("login.html", error=error)
+
+
+@app.route("/forgot-password")
+def forgot_password():
+    """Get question and answer for the user login"""
+    email = request.args.get('email')
+    if email is None:
+        flash("This user does not exist. Please sign up here")
+        return render_template("signup.html")
+
+    question = db.session.query(Question.question)
+                .filter(Question.user.email == email).first()
+    return render_template("check_answer.html", question=question)
+
+
+@aap.route("/check-answer")
+def check_answer():
+    user_email = session.get('email')
+    user_answer = db.session.query(Answer.answer)
+                .filter(User.email == user_email).first()
+    answer = request.args.get('answer')
+    if answer.lower() == user_answer.lower():
+        return render_template("new_password.html")
+    else:
+        flash("Answers do not match please try again!")
+        question = db.session.query(Question.question)
+                .filter(Question.user.email == email).first()
+        return render_template("check_answer.html", question=question)
 
 
 if __name__ == "__main__":

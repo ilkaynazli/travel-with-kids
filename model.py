@@ -264,14 +264,14 @@ def example_data():
     db.session.commit()
 
 
-
+db_name = 'travels'
 
 if __name__ == '__main__':
     """For running this interactively"""
 
     from server import app
 
-    db_name = 'travels'
+
     connect_to_db(app, db_name)
 
     db.create_all()

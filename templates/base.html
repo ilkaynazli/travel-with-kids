@@ -9,7 +9,13 @@
             Password: <input type="password" name="password"><br><br>
             <input type="submit">
         </form>
-     
+        
+        <ul>
+            {% for message in get_flashed_messages() %}
+                <li>{{message}}</li>
+            {% endfor %}
+        </ul>
+
         {% block body %}Body content goes here{% endblock %}
     </body>
 </html>
