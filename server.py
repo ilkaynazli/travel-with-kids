@@ -8,6 +8,7 @@ from model import (User, Business, Comment, Rating, BusinessTip,
 from functions import test_the_password
 import os
 from flask import jsonify
+import json
 
 
 
@@ -159,18 +160,16 @@ def get_locations():
     start_location = request.args.get("start_location")
     end_location = request.args.get("end_location")
 
+    route = {'start': start_location,
+            'end': end_location}
+    my_route = json.dumps(route)
   
     return render_template("show_directions.html", 
-                            start=start_location,
-                            end=end_location,
+                            myRoute=my_route,
                             YOUR_API_KEY=GOOGLE_MAPS)
+                            # start=start_location,
+                            # end=end_location,
 
-
-@app.route("/show-map")
-def show_map():
-    """show map on the browser"""
-
-    return render_template("show_directions.html", YOUR_API_KEY=GOOGLE_MAPS)
 
 
 if __name__ == "__main__":

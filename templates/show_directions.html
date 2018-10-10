@@ -26,16 +26,14 @@
 {% endblock %}
 
 {% block body %}
-<div id="floating-panel">
-    <b>Start: </b>
-    <button id="start">{{start}}</button>
-    <b>End: </b>
-    <button id="end">{{end}}</button>
-</div>
-
 
 <div id="map"></div>
 <script>
+    console.log({{ myRoute|safe }});
+    let start = {{ myRoute|safe }}['start'];
+    console.log(start);
+    let end = {{ myRoute|safe }}.end;
+    console.log(end);
     let result;         //This would have response.routes[0].legs[0].steps latlng data
     console.log('hi');
     function createMap() {
@@ -48,18 +46,13 @@
         let directionsService = new google.maps.DirectionsService;
         let directionsDisplay = new google.maps.DirectionsRenderer;
         directionsDisplay.setMap(map);
-        var onChangeHandler = function() {
-          calculateAndDisplayRoute(directionsService, directionsDisplay);
-        };
-        document.getElementById('start').addEventListener('click', onChangeHandler);
-        document.getElementById('end').addEventListener('click', onChangeHandler);
-      }
-        
+        calculateAndDisplayRoute(directionsService, directionsDisplay);
+    }
 
     function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         directionsService.route({
-            origin: document.getElementById('start').value,
-            destination: document.getElementById('end').value,
+            origin: start,
+            destination: end,
             travelMode: 'DRIVING'
         }, function (response, status){
             console.log(start, end);
