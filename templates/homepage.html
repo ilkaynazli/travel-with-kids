@@ -4,9 +4,10 @@
 
 <h1>Hello there!</h1>
 
-<form action="/get-locations">
-    From: <input type="text" name="start_location" required><br>
-    To: <input type="text" name="end_location" required><br>
+<!-- <a href="/show-map">Click here to see the map and get directions</a> -->
+<form action="/get-locations" id='route-form'>
+    From: <input type="text" name="start_location" required id='start'><br>
+    To: <input type="text" name="end_location" required id='end'><br>
     <input type="submit">
 </form>
 

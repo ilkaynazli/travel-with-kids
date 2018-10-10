@@ -7,6 +7,8 @@ from model import (User, Business, Comment, Rating, BusinessTip,
                     TripTip, Question, Answer, connect_to_db, db)
 from functions import test_the_password
 import os
+from flask import jsonify
+
 
 
 GOOGLE_MAPS = os.environ['GOOGLE_MAPS_API']
@@ -157,9 +159,18 @@ def get_locations():
     start_location = request.args.get("start_location")
     end_location = request.args.get("end_location")
 
+  
     return render_template("show_directions.html", 
-                            start=start_location, 
-                            end=end_location)
+                            start=start_location,
+                            end=end_location,
+                            YOUR_API_KEY=GOOGLE_MAPS)
+
+
+@app.route("/show-map")
+def show_map():
+    """show map on the browser"""
+
+    return render_template("show_directions.html", YOUR_API_KEY=GOOGLE_MAPS)
 
 
 if __name__ == "__main__":
