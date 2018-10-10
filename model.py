@@ -24,6 +24,7 @@ class User(db.Model):
     business_tips = db.relationship('BusinessTip')
     trip_tips = db.relationship('TripTip')
     answers = db.relationship('Answer')
+    favorites = db.relationship('Favorite')
 
     def __repr__(self):
         """Human readable data"""
@@ -48,6 +49,7 @@ class Business(db.Model):
     comments = db.relationship('Comment')
     ratings = db.relationship('Rating')
     business_tips = db.relationship('BusinessTip')
+    favorites = db.relationship('Favorite')
        
     def __repr__(self):
         """Human readable data"""
@@ -56,6 +58,28 @@ class Business(db.Model):
                     Business type: {self.business_type},\
                     Description: {self.description}>"
 
+class Favorite(db.Model):
+    """Saved businesses by the user"""
+
+    __tablename__ = 'favorites'
+
+    favorite_id = db.Column(db.Integer,
+                            primary_key = True,
+                            autoincrement = True)
+    user_id = db.Column(db.Integer,
+                        db.ForeignKey('users.user_id'),
+                        )
+    business_id = db.Column(db.Integer,
+                            db.ForeignKey('businesses.business_id'),
+                            )
+    user = db.relationship('User')
+    business = db.relationship('Business')
+
+    def __repr__(self):
+        """Human readable"""
+        return f"<Favorite id: {self.favorite_id},\
+                    user id: {self.user_id},\
+                    business id: {self.business_id}>"
 
 class Comment(db.Model):
     """Comments of users on the businesses"""

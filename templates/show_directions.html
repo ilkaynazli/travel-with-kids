@@ -1,73 +1,60 @@
 {% extends 'base.html' %}
 {% block title %}Maps{% endblock %}
 {% block head %}
-<meta name="viewport" content="initial-scale=1.0">
-<meta charset="utf-8">
-<style>
-    #map {
-        height: 600px;
-        width: 500px;
-    }
-    #floating-panel {
-        position: absolute;
-        top: 10px;
-        left: 25%;
-        z-index: 5;
-        background-color: #fff;
-        padding: 5px;
-        border: 1px solid #999;
-        text-align: center;
-        font-family: 'Roboto','sans-serif';
-        line-height: 30px;
-        padding-left: 10px;
-      }
-</style>
 
 {% endblock %}
 
 {% block body %}
+<!-- <form action="/show-map" id='route-form'>
+    From: <input type="text" name="start_location" required id="start"><br>
+    To: <input type="text" name="end_location" required id="end"><br>
+    <input type="submit">
+</form> -->
 
-<div id="map"></div>
+<div id="map" data-start='{{start}}' data-end="{{end}}"></div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script>
-    console.log({{ myRoute|safe }});
-    let start = {{ myRoute|safe }}['start'];
-    console.log(start);
-    let end = {{ myRoute|safe }}.end;
-    console.log(end);
-    let result;         //This would have response.routes[0].legs[0].steps latlng data
-    console.log('hi');
-    function createMap() {
-        console.log('there')
-        let map = new google.maps.Map(document.getElementById('map'), {
-                center: {lat: 37.38 , lng: -121.94 },
-                zoom: 10
-            });
-        console.log('hi');
-        let directionsService = new google.maps.DirectionsService;
-        let directionsDisplay = new google.maps.DirectionsRenderer;
-        directionsDisplay.setMap(map);
-        calculateAndDisplayRoute(directionsService, directionsDisplay);
-    }
+    function myCallBack(){
+        const route = $("#map").data()
+        console.log(route);
+        const start = route['start'];
+        const end = route['end'];
+        console.log(start, end);
 
-    function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-        directionsService.route({
-            origin: start,
-            destination: end,
-            travelMode: 'DRIVING'
-        }, function (response, status){
-            console.log(start, end);
-            if (status == 'OK') {
-                directionsDisplay.setDirections(response);
-                result = response;
-            } else {
-                window.alert('Directions request failed due to ' + status);
-            }
-        } );
+        function createMap() {
+            const map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: 37.38 , lng: -121.94 },
+                    zoom: 10
+                });
+           
+            
+            const directionsService = new google.maps.DirectionsService;
+            const directionsDisplay = new google.maps.DirectionsRenderer;
+            directionsDisplay.setMap(map);
+            calculateAndDisplayRoute(directionsService, directionsDisplay);
+        };
+        function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+            directionsService.route({
+                origin: start,
+                destination: end,
+                travelMode: 'DRIVING'
+            }, function (response, status){
+                if (status == 'OK') {
+                    directionsDisplay.setDirections(response);
+                    console.log(response)
+                    // $.post("/get-route", response);  
+                } else {
+                    alert('Directions request failed due to ' + status);
+                }
+            });
+        };
+        createMap();
     }
 </script>
 
 <script 
-  src="https://maps.googleapis.com/maps/api/js?key={{YOUR_API_KEY}}&callback=createMap" async defer>
+  src="https://maps.googleapis.com/maps/api/js?key={{YOUR_API_KEY}}&callback=myCallBack" async defer>
 </script>
 
 {% endblock %}

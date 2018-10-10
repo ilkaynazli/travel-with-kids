@@ -3,7 +3,9 @@
     <head>
         {% block title %}Roadtrips With Kids{% endblock %}
         {% block head %}{% endblock %}
+        <link rel="stylesheet" href="/static/css/my_css.css">
     </head>
+
     <body>
         {% if session.get('user_id') %}
             <button type='button'><a href="/log-out">Log out</a></button>

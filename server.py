@@ -154,22 +154,23 @@ def logout_user():
     return redirect("/")
 
 
-@app.route("/get-locations")
-def get_locations():
-    """Get start and end locations for the directions"""
+@app.route("/show-map")
+def show_map():
+    """Show map and directions"""
     start_location = request.args.get("start_location")
     end_location = request.args.get("end_location")
 
-    route = {'start': start_location,
-            'end': end_location}
-    my_route = json.dumps(route)
-  
-    return render_template("show_directions.html", 
-                            myRoute=my_route,
-                            YOUR_API_KEY=GOOGLE_MAPS)
-                            # start=start_location,
-                            # end=end_location,
+    return render_template("show_directions.html",
+                            YOUR_API_KEY=GOOGLE_MAPS,
+                            start=start_location,
+                            end=end_location) 
 
+
+# @app.route("/get-route", methods=["POST"])
+# def get_route_data():
+
+#     route = request.form.get('response')
+#     print(route)
 
 
 if __name__ == "__main__":
