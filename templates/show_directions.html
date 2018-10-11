@@ -43,7 +43,7 @@
                                     'end_location_lng': parseFloat(steps[i].end_location.lng())};  
                     }
                     const myJSON = stringify(stepMap);
-                    $.get('/get-route', myJSON);   
+                    $.ajax({method: 'GET', url:'/get-route', data: myJSON});   
                 } else {
                     alert('Directions request failed due to ' + status);
                 }
