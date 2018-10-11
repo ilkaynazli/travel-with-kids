@@ -9,6 +9,7 @@ from functions import test_the_password
 import os
 from flask import jsonify
 import json
+import requests
 
 
 
@@ -170,10 +171,17 @@ def show_map():
 @app.route("/get-route")
 def get_route_data():
     """Get the response that has the directions info"""
-    steps = request.args.get('stepMap')
-    route = json.loads(steps)
 
+    steps = request.args.get('myJSON')
+    print('\n\n\n\n', steps, '\n\n\n\n\n')
+
+    route = json.loads(steps)
     print('\n\n\n\n', route, '\n\n\n\n\n')
+    requests.get('https://api.yelp.com/v3/businesses/search', 
+                headers={'Authorization': f"Bearer {YELP}"},
+                params={'latitude': latitude,
+                        'longitude': longitude,
+                        'attributes': 'good-for-kids'})
 
 
 if __name__ == "__main__":

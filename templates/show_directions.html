@@ -9,10 +9,13 @@
 <div id="map" data-start='{{start}}' data-end="{{end}}"></div>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script>
+    const stepMap = {};
+    let steps;
     function myCallBack(){
         const route = $("#map").data()
         const start = route['start'];
         const end = route['end'];
+
 
         function createMap() {
             const map = new google.maps.Map(document.getElementById('map'), {
@@ -35,15 +38,29 @@
                     directionsDisplay.setDirections(response);
                     console.log(response);
                     const myRoute = response;
-                    const steps = myRoute.routes[0].legs[0].steps;
-                    const stepMap = {}; 
-                    for (let i=0; steps.length; i++){
-                        stepMap[i] = {'distance': parseFloat(steps[i].distance.text),
-                                    'end_location_lat': parseFloat(steps[i].end_location.lat()),
-                                    'end_location_lng': parseFloat(steps[i].end_location.lng())};  
+                    steps = myRoute.routes[0].legs[0].steps;
+                    let index = 0;
+                    for (let i=0; i < steps.length; i++){
+                        let distance = parseFloat(steps[i].distance.text);
+                        if (distance < 40) {
+                            stepMap[index] = {'lat': parseFloat(steps[i].end_location.lat()),
+                                        'lng': parseFloat(steps[i].end_location.lng())};
+                            index += 1;   
+                        } else {
+                            let j = 0;
+                            while (j < steps[i].lat_lngs.length) {
+                                stepMap[index] = {'lat': parseFloat(steps[i].lat_lngs[j].lat()),
+                                                'lng': parseFloat(steps[i].lat_lngs[j].lng())};
+                                index += 1;
+                                j = j + 250;
+                            }
+                        }
                     }
-                    const myJSON = stringify(stepMap);
-                    $.ajax({method: 'GET', url:'/get-route', data: myJSON});   
+                    console.log(stepMap);
+                    const myJSON = JSON.stringify(stepMap);
+                    console.log(myJSON);
+                    $.get('/get-route', myJSON, function(){console.log('success');});  
+
                 } else {
                     alert('Directions request failed due to ' + status);
                 }
