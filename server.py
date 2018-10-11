@@ -177,11 +177,11 @@ def get_route_data():
 
     route = json.loads(steps)
     print('\n\n\n\n', route, '\n\n\n\n\n')
-    requests.get('https://api.yelp.com/v3/businesses/search', 
-                headers={'Authorization': f"Bearer {YELP}"},
-                params={'latitude': latitude,
-                        'longitude': longitude,
-                        'attributes': 'good-for-kids'})
+    # requests.get('https://api.yelp.com/v3/businesses/search', 
+    #             headers={'Authorization': f"Bearer {YELP}"},
+    #             params={'latitude': latitude,
+    #                     'longitude': longitude,
+    #                     'attributes': 'good-for-kids'})
 
 
 if __name__ == "__main__":

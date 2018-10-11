@@ -59,7 +59,10 @@
                     console.log(stepMap);
                     const myJSON = JSON.stringify(stepMap);
                     console.log(myJSON);
-                    $.get('/get-route', myJSON, function(){console.log('success');});  
+                    var formInputs = {
+                        'myJSON': myJSON
+                    };
+                    $.get('/get-route', formInputs, function(){console.log('success');});  
 
                 } else {
                     alert('Directions request failed due to ' + status);
