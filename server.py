@@ -79,7 +79,8 @@ def login_user():
         error = False
     else:
         session['user_id'] = user.user_id
-        error = True
+        return redirect('/')
+
     return render_template("login.html", error=error)
 
 
@@ -166,11 +167,13 @@ def show_map():
                             end=end_location) 
 
 
-# @app.route("/get-route", methods=["POST"])
-# def get_route_data():
+@app.route("/get-route")
+def get_route_data():
+    """Get the response that has the directions info"""
+    steps = request.args.get('stepMap')
+    route = json.loads(steps)
 
-#     route = request.form.get('response')
-#     print(route)
+    print('\n\n\n\n', route, '\n\n\n\n\n')
 
 
 if __name__ == "__main__":
