@@ -2,9 +2,6 @@
 const coordinates = [];
 let steps;
 let map;
-let marker;
-const markers = [];
-const contentString = new Map();
 function myCallBack(){
     const route = $("#map").data()
     const start = route['start'];
@@ -47,44 +44,25 @@ function myCallBack(){
                         }
                     }  
                 };
-                const myJSON = JSON.stringify(coordinates);
-                const formInputs = {
-                    'myJSON': myJSON
-                };
-
-                let infowindow = new google.maps.InfoWindow(); 
-
-                function show_playgrounds(results) {
-                    const playgroundDetails = results;
-                    for (let i = 0; i < playgroundDetails.length; i++) {
-                        const coords = playgroundDetails[i]['coords'];
-                        const latLng = new google.maps.LatLng(coords['latitude'],
-                                                              coords['longitude']);
-                        const name = playgroundDetails[i]['name'];
-                        marker = new google.maps.Marker({
+                console.log(coordinates);
+                function show_saved_points(points) {
+                    for (let i = 0; i < points.length; i++) {
+                        console.log(points[i]);
+                        const latLng = new google.maps.LatLng(points[i].lat,
+                                                              points[i].lng);
+                        const marker = new google.maps.Marker({
                             position: latLng,
-                            map: map, 
-                            name : name                           
+                            map: map,  
                         });
-                        markers.push(marker);              
                     }
                 }
 
-                $.get('/get-route.json', 
-                        formInputs, 
-                        show_playgrounds)
-                
-                for (marker of markers) {
-                    $(marker).on('click', function() {
-                        infowindow.setContent('<div id="info-window">' + name + '</div>');
-                        infowindow.open(map, marker)                    
-                    });  
-                }        
+                show_saved_points(coordinates);
+                } else {
+                    alert('Directions request failed due to ' + status);
+                }
 
-            } else {
-                alert('Directions request failed due to ' + status);
-            }
         });
-    };
+    }
     createMap();
 }

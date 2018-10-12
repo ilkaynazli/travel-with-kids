@@ -57,7 +57,6 @@ def get_playgrounds(coordinates):
             latitude = playground['coordinates']['latitude']
             longitude = playground['coordinates']['longitude']
             name = playground['name']
-            print('**********', name, '***********')
             playground_list.append({'name': name,
                                     'coords': {'latitude': latitude,
                                                 'longitude': longitude}
