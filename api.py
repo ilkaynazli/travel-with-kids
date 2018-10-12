@@ -44,7 +44,7 @@ def get_playgrounds(coordinates):
         payload = {'latitude': latitude,
                     'longitude': longitude,
                     'categories': 'playgrounds',
-                    'limit': 1
+                    'radius': 20000
                     }
         header = {'Authorization': f"Bearer {YELP}"}
         result = requests.get(YELP_SEARCH_URL, 
@@ -57,6 +57,7 @@ def get_playgrounds(coordinates):
             latitude = playground['coordinates']['latitude']
             longitude = playground['coordinates']['longitude']
             name = playground['name']
+            print('**********', name, '***********')
             playground_list.append({'name': name,
                                     'coords': {'latitude': latitude,
                                                 'longitude': longitude}

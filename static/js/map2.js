@@ -7,7 +7,6 @@ function myCallBack(){
     const start = route['start'];
     const end = route['end'];
 
-
     function createMap() {
         map = new google.maps.Map(document.getElementById('map'), {
                 center: {lat: 37.38 , lng: -121.94 },
@@ -31,41 +30,32 @@ function myCallBack(){
                 const myRoute = response;
                 steps = myRoute.routes[0].legs[0].steps;
                 let index = 0;
+                let totalDistance = 0;
                 for (let i=0; i < steps.length; i++){
-                    let distance = parseFloat(steps[i].distance.text);
-                    if (distance < 40) {
-                        let myItem = {'lat': parseFloat(steps[i].end_location.lat()),
-                                        'lng': parseFloat(steps[i].end_location.lng())
+                    for (let j=0; j < (steps[i].lat_lngs.length-1); j++) {
+                        let distance = google.maps.geometry.spherical.computeDistanceBetween(steps[i].lat_lngs[j], steps[i].lat_lngs[j+1]);
+                        totalDistance += distance;
+                        if (totalDistance > 40000) {
+                            let myItem = {'lat': parseFloat(steps[i].lat_lngs[j+1].lat()),
+                                        'lng': parseFloat(steps[i].lat_lngs[j+1].lng())
                                         };
-                        coordinates.push(myItem);
-                        index += 1;   
-                    } else {
-                        let j = 0;
-                        while (j < steps[i].lat_lngs.length) {
-                            let myItem = {'lat': parseFloat(steps[i].lat_lngs[j].lat()),
-                                            'lng': parseFloat(steps[i].lat_lngs[j].lng())
-                                            };
                             coordinates.push(myItem);
-                            index += 1;
-                            j = j + 1000;
+                            totalDistance = 0;
                         }
-                    }
-                }
-                
+                    }  
+                };
                 const myJSON = JSON.stringify(coordinates);
                 const formInputs = {
                     'myJSON': myJSON
                 };
+
                 function show_playgrounds(results) {
                     const playgroundDetails = results;
-                    console.log(playgroundDetails);
-                    console.log(map);
                     for (let i = 0; i < playgroundDetails.length; i++) {
                         const coords = playgroundDetails[i]['coords'];
                         const latLng = new google.maps.LatLng(coords['latitude'],
                                                               coords['longitude']);
-                        const name = playgroundDetails['name'];
-                        console.log(map);
+                        const name = playgroundDetails[i]['name'];
                         const marker = new google.maps.Marker({
                             position: latLng,
                             map: map,
