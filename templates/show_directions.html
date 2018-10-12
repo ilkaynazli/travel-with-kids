@@ -8,73 +8,8 @@
 
 <div id="map" data-start='{{start}}' data-end="{{end}}"></div>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-<script>
-    const stepMap = {};
-    let steps;
-    function myCallBack(){
-        const route = $("#map").data()
-        const start = route['start'];
-        const end = route['end'];
-
-
-        function createMap() {
-            const map = new google.maps.Map(document.getElementById('map'), {
-                    center: {lat: 37.38 , lng: -121.94 },
-                    zoom: 10
-                });      
-            const directionsService = new google.maps.DirectionsService;
-            const directionsDisplay = new google.maps.DirectionsRenderer;
-            directionsDisplay.setMap(map);
-            calculateAndDisplayRoute(directionsService, directionsDisplay);
-        };
-
-        function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-            directionsService.route({
-                origin: start,
-                destination: end,
-                travelMode: 'DRIVING'
-            }, function (response, status){
-                if (status == 'OK') {
-                    directionsDisplay.setDirections(response);
-                    console.log(response);
-                    const myRoute = response;
-                    steps = myRoute.routes[0].legs[0].steps;
-                    let index = 0;
-                    for (let i=0; i < steps.length; i++){
-                        let distance = parseFloat(steps[i].distance.text);
-                        if (distance < 40) {
-                            stepMap[index] = {'lat': parseFloat(steps[i].end_location.lat()),
-                                        'lng': parseFloat(steps[i].end_location.lng())};
-                            index += 1;   
-                        } else {
-                            let j = 0;
-                            while (j < steps[i].lat_lngs.length) {
-                                stepMap[index] = {'lat': parseFloat(steps[i].lat_lngs[j].lat()),
-                                                'lng': parseFloat(steps[i].lat_lngs[j].lng())};
-                                index += 1;
-                                j = j + 250;
-                            }
-                        }
-                    }
-                    console.log(stepMap);
-                    const myJSON = JSON.stringify(stepMap);
-                    console.log(myJSON);
-                    var formInputs = {
-                        'myJSON': myJSON
-                    };
-                    $.get('/get-route', formInputs, function(){console.log('success');});  
-
-                } else {
-                    alert('Directions request failed due to ' + status);
-                }
-            });
-        };
-        createMap();
-    }
-</script>
-
+<script src='/static/js/map.js'></script>
 <script 
   src="https://maps.googleapis.com/maps/api/js?key={{YOUR_API_KEY}}&callback=myCallBack" async defer>
 </script>
-
 {% endblock %}

@@ -10,11 +10,10 @@ import os
 from flask import jsonify
 import json
 import requests
-
+from api import get_my_business_details, get_playgrounds
 
 
 GOOGLE_MAPS = os.environ['GOOGLE_MAPS_API']
-YELP = os.environ['YELP_API']
 
 app = Flask(__name__)
 
@@ -168,21 +167,18 @@ def show_map():
                             end=end_location) 
 
 
-@app.route("/get-route")
+@app.route("/get-route.json")
 def get_route_data():
     """Get the response that has the directions info"""
 
     steps = request.args.get('myJSON')
-    print('\n\n\n\n', steps, '\n\n\n\n\n')
+    coordinates = json.loads(steps)
 
-    route = json.loads(steps)
-    print('\n\n\n\n', route, '\n\n\n\n\n')
-    # requests.get('https://api.yelp.com/v3/businesses/search', 
-    #             headers={'Authorization': f"Bearer {YELP}"},
-    #             params={'latitude': latitude,
-    #                     'longitude': longitude,
-    #                     'attributes': 'good-for-kids'})
+    results = get_playgrounds(coordinates)
+        
+    return jsonify(results)
 
+    
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
