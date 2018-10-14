@@ -1,4 +1,5 @@
 "use strict"
+
 function myCallBack(){
     const route = $("#map").data()      //Get start and end address from user
     let map;
@@ -35,7 +36,9 @@ function myCallBack(){
                 //then 0 the total distance and continue until you reach the end point
                 for (let i=0; i < steps.length; i++){
                     for (let j=0; j < (steps[i].lat_lngs.length-1); j++) {
-                        let distance = google.maps.geometry.spherical.computeDistanceBetween(steps[i].lat_lngs[j], steps[i].lat_lngs[j+1]);
+                        let distance = google.maps.geometry.spherical
+                                        .computeDistanceBetween(steps[i].lat_lngs[j], 
+                                                                steps[i].lat_lngs[j+1]);
                         totalDistance += distance;
                         if (totalDistance > 40000) {
                             let myItem = {'lat': parseFloat(steps[i].lat_lngs[j+1].lat()),
@@ -47,14 +50,23 @@ function myCallBack(){
                     }  
                 };
 
-                const formInputs = {
-                    'myJSON': JSON.stringify(coordinates)
-                };
-
-                let marker;
+                const formInputs = {'myJSON': JSON.stringify(coordinates)};
                 let infoWindow = new google.maps.InfoWindow();
-                let myContent;
+                let marker;
 
+                //function to open, close and set content of the info window
+                function displayMyInfoWindow(marker, map, infoWindow, content) {
+                    google.maps.event.addListener(marker, 'click', function () {
+                        infoWindow.close();
+                        infoWindow.setContent(content);
+                        infoWindow.open(map, marker);
+                    });
+                } 
+
+                //function to create markers at a specific location and open 
+                //info windows when clicked on the marker
+                //markers also has the names of the places you can see it when
+                //you do mouseover
                 function show_playgrounds(results) {
                     const playgroundDetails = results;
                     for (let i = 0; i < playgroundDetails.length; i++) {
@@ -67,23 +79,21 @@ function myCallBack(){
                             map: map, 
                             title : name                           
                         });
-                        myContent = '<div id="info-window">My Info Window</div>';  
-                        displayMyInfoWindow(marker, map,infoWindow, myContent);           
+
+                        //need to add more info to info window
+                        $('#business-name').html = name;
+                        let myContent = '<div id="info-window">\
+                                        <a href="/business/{{name}}" id="business-name"></a>\
+                                        <br>Hi there!<br>\
+                                            </div>';  
+                        displayMyInfoWindow(marker, map, infoWindow, myContent);           
                     }
                 }
 
-                $.get('/get-route.json', 
-                        formInputs, 
-                        show_playgrounds)
+                //send coordinates (points every 40000 meters) to server and get 
+                //yelp api data from the server
+                $.get('/get-route.json', formInputs, show_playgrounds);              
                 
-                function displayMyInfoWindow(marker, map, infoWindow, content) {
-                    google.maps.event.addListener(marker, 'click', function () {
-                        infoWindow.close();
-                        infoWindow.setContent(content);
-                        infoWindow.open(map, marker);
-                });
-
-            } 
             } else {
                 alert('Directions request failed due to ' + status);
             }

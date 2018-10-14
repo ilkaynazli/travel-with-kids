@@ -73,15 +73,17 @@ def login_user():
     username = request.args.get('username')
     password = request.args.get('password')
     user = User.query.filter(User.username == username).first()
-    if user is None:
-        error = False
-    if password == user.password:
-        error = False
-    else:
-        session['user_id'] = user.user_id
-        return redirect('/')
 
-    return render_template("login.html", error=error)
+    if user is None:
+        error = True
+        return render_template("login.html", error=error)
+   
+    if password != user.password:
+        error = True
+        return render_template("login.html", error=error)
+
+    session['user_id'] = user.user_id
+    return redirect('/') 
 
 
 @app.route("/wrong-password")
@@ -173,8 +175,17 @@ def get_route_data():
 
     steps = request.args.get('myJSON')
     coordinates = json.loads(steps)
-
     results = get_playgrounds(coordinates)
+
+    for result in results:
+        business_id = result.get('business_id')
+        business_type = result.get('type')
+        name = result.get('name')
+        business = Business(business_id=business_id,
+                            business_type=business_type,
+                            business_name=name)
+        db.session.add(business)
+        db.session.commit()
         
     return jsonify(results)
 

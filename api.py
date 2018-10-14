@@ -19,7 +19,7 @@ def get_my_business_details(coordinates):
         result = requests.get(YELP_SEARCH_URL, 
                             headers=header,
                              params=payload)
-        my_results = json.loads(result.text)
+        my_results = result.json()
         businesses = my_results['businesses']
 
         print('\n\n\n\n\n', businesses, '\n\n\n\n\n\n')
@@ -50,16 +50,19 @@ def get_playgrounds(coordinates):
         result = requests.get(YELP_SEARCH_URL, 
                             headers=header,
                              params=payload)
-        my_results = json.loads(result.text)
+        my_results = result.json()
         playgrounds = my_results['businesses']
 
         for playground in playgrounds:
             latitude = playground['coordinates']['latitude']
             longitude = playground['coordinates']['longitude']
             name = playground['name']
+            playground_id = playground['id']
             playground_list.append({'name': name,
                                     'coords': {'latitude': latitude,
-                                                'longitude': longitude}
+                                                'longitude': longitude},
+                                    'business_id': playground_id,
+                                    'type': 'plygr'
                                     })
 
     return playground_list

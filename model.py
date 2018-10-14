@@ -39,7 +39,7 @@ class Business(db.Model):
 
     __tablename__ = 'businesses'
 
-    business_id = db.Column(db.Integer,                 #taken from Yelp API
+    business_id = db.Column(db.String(100),                 #taken from Yelp API
                             primary_key = True,
                             )
     business_name = db.Column(db.String(50), nullable = False)
@@ -69,7 +69,7 @@ class Favorite(db.Model):
     user_id = db.Column(db.Integer,
                         db.ForeignKey('users.user_id'),
                         )
-    business_id = db.Column(db.Integer,
+    business_id = db.Column(db.String(100),
                             db.ForeignKey('businesses.business_id'),
                             )
     user = db.relationship('User')
@@ -93,7 +93,7 @@ class Comment(db.Model):
     user_id = db.Column(db.Integer, 
                         db.ForeignKey('users.user_id'),
                         )
-    business_id = db.Column(db.Integer,
+    business_id = db.Column(db.String(100),
                             db.ForeignKey('businesses.business_id'),
                             )
     comment = db.Column(db.String(500), nullable = True)
@@ -121,7 +121,7 @@ class Rating(db.Model):
     user_id = db.Column(db.Integer, 
                         db.ForeignKey('users.user_id'),
                         )
-    business_id = db.Column(db.Integer,
+    business_id = db.Column(db.String(100),
                             db.ForeignKey('businesses.business_id'),
                             )
     rating = db.Column(db.Integer, nullable = True)
@@ -149,7 +149,7 @@ class BusinessTip(db.Model):
     user_id = db.Column(db.Integer,
                         db.ForeignKey('users.user_id'),
                         )
-    business_id = db.Column(db.Integer,
+    business_id = db.Column(db.String(100),
                             db.ForeignKey('businesses.business_id'),
                             )
     business_tip = db.Column(db.Text, nullable = True)
@@ -255,7 +255,7 @@ def example_data():
 
     #add user, business, comment, rating, tips, question, answer
     sample_user = User(username='ilkay', 
-                        password='12345Qwe/',
+                        password='123Qwe/',
                         email='ilkay@ilkay.com')
     sample_business = Business(business_id=1, 
                                 business_name='test', 
