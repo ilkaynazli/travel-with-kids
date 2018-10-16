@@ -67,13 +67,14 @@ function myCallBack(){
                 //info windows when clicked on the marker
                 //markers also has the names of the places you can see it when
                 //you do mouseover
-                function show_playgrounds(results) {
+                function showPlaygrounds(results) {
                     const playgroundDetails = results;
                     for (let i = 0; i < playgroundDetails.length; i++) {
                         const coords = playgroundDetails[i]['coords'];
                         const latLng = new google.maps.LatLng(coords['latitude'],
                                                               coords['longitude']);
                         const name = playgroundDetails[i]['name'];
+                        const business_id = playgroundDetails[i]['business_id'];
                         marker = new google.maps.Marker({
                             position: latLng,
                             map: map, 
@@ -81,18 +82,20 @@ function myCallBack(){
                         });
 
                         //need to add more info to info window
-                        $('#business-name').html = name;
-                        let myContent = '<div id="info-window">\
-                                        <a href="/business/{{name}}" id="business-name"></a>\
-                                        <br>Hi there!<br>\
-                                            </div>';  
+                        
+                        let myContent = ('<div id="info-window">' +
+                                        '<a href="/business/'+business_id+'" id="business-name">' +
+                                        name + '</a>' +
+                                        '<br>Hi there!<br>' + 
+                                            '</div>'
+                                        );  
                         displayMyInfoWindow(marker, map, infoWindow, myContent);           
                     }
                 }
 
                 //send coordinates (points every 40000 meters) to server and get 
                 //yelp api data from the server
-                $.get('/get-route.json', formInputs, show_playgrounds);              
+                $.get('/get-route.json', formInputs, showPlaygrounds);              
                 
             } else {
                 alert('Directions request failed due to ' + status);

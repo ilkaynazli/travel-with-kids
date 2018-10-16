@@ -26,7 +26,7 @@ def get_my_business_details(coordinates):
 
         for business in businesses:
             business_id = business['id']
-            business_details = requests.get(f"{YELP_BUSINESS_URL} {business_id}",
+            business_details = requests.get(f"{YELP_BUSINESS_URL}{business_id}",
                                             headers=header)
             if "good-for-kids" in json.loads(business_details.text).attributes:
                 business_list.append(business)
@@ -67,4 +67,23 @@ def get_playgrounds(coordinates):
 
     return playground_list
 
-    
+
+def get_playground_info(playground_id):
+    """Get info on playground given its YELP id"""
+
+    header = {'Authorization': f"Bearer {YELP}"}
+
+    playground = requests.get(f"{YELP_BUSINESS_URL}{playground_id}",
+                                        headers=header)
+
+    playground = playground.json()
+
+    playground_info = {
+        'name': playground['name'],
+        'phone': playground['phone'],
+        'url': playground['url'],
+        'photos': playground['photos'],
+        'address': " ".join(playground['location']['display_address'])
+    } 
+
+    return playground_info

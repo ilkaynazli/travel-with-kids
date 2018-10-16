@@ -12,12 +12,12 @@ class User(db.Model):
     __tablename__ = 'users'
 
     user_id = db.Column(db.Integer,
-                        primary_key = True,
-                        autoincrement = True,
+                        primary_key=True,
+                        autoincrement=True,
                         )
-    username = db.Column(db.String(25), nullable = False, unique=True)
-    password = db.Column(db.String(25), nullable = False)
-    email = db.Column(db.String(50), nullable = False)
+    username = db.Column(db.String(25), nullable=False, unique=True)
+    password = db.Column(db.String(25), nullable=False)
+    email = db.Column(db.String(50), nullable=False)
 
     comments = db.relationship('Comment')
     ratings = db.relationship('Rating')
@@ -42,9 +42,11 @@ class Business(db.Model):
     business_id = db.Column(db.String(100),                 #taken from Yelp API
                             primary_key = True,
                             )
-    business_name = db.Column(db.String(50), nullable = False)
-    business_type = db.Column(db.String(5), nullable = False)
-    description = db.Column(db.Text, nullable = True)
+    business_name = db.Column(db.String(50), nullable=False)
+    business_type = db.Column(db.String(5), nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+
 
     comments = db.relationship('Comment')
     ratings = db.relationship('Rating')
@@ -56,7 +58,8 @@ class Business(db.Model):
         return f"<Business id: {self.business_id}, \
                     Business name: {self.business_name},\
                     Business type: {self.business_type},\
-                    Description: {self.description}>"
+                    lat: {self.latitude},\
+                    lng: {self.longitude}>"
 
 class Favorite(db.Model):
     """Saved businesses by the user"""
@@ -64,13 +67,15 @@ class Favorite(db.Model):
     __tablename__ = 'favorites'
 
     favorite_id = db.Column(db.Integer,
-                            primary_key = True,
-                            autoincrement = True)
+                            primary_key=True,
+                            autoincrement=True)
     user_id = db.Column(db.Integer,
                         db.ForeignKey('users.user_id'),
+                        nullable=False
                         )
     business_id = db.Column(db.String(100),
                             db.ForeignKey('businesses.business_id'),
+                            nullable=False
                             )
     user = db.relationship('User')
     business = db.relationship('Business')
@@ -87,16 +92,18 @@ class Comment(db.Model):
     __tablename__ = 'comments'
 
     comment_id = db.Column(db.Integer,
-                            primary_key = True,
-                            autoincrement = True,
+                            primary_key=True,
+                            autoincrement=True,
                             )
     user_id = db.Column(db.Integer, 
                         db.ForeignKey('users.user_id'),
+                        nullable=False
                         )
     business_id = db.Column(db.String(100),
                             db.ForeignKey('businesses.business_id'),
+                            nullable=False
                             )
-    comment = db.Column(db.String(500), nullable = True)
+    comment = db.Column(db.String(500), nullable=True)
 
     user = db.relationship('User')
     business = db.relationship('Business')
@@ -115,16 +122,18 @@ class Rating(db.Model):
     __tablename__ = 'ratings'
 
     rating_id = db.Column(db.Integer,
-                            primary_key = True,
-                            autoincrement = True,
+                            primary_key=True,
+                            autoincrement=True,
                             )
     user_id = db.Column(db.Integer, 
                         db.ForeignKey('users.user_id'),
+                        nullable=False
                         )
     business_id = db.Column(db.String(100),
                             db.ForeignKey('businesses.business_id'),
+                            nullable=False
                             )
-    rating = db.Column(db.Integer, nullable = True)
+    rating = db.Column(db.Integer, nullable=True)
 
     user = db.relationship('User')
     business = db.relationship('Business')
@@ -143,16 +152,18 @@ class BusinessTip(db.Model):
     __tablename__ = 'business_tips'
 
     business_tip_id = db.Column(db.Integer,
-                        primary_key = True,
-                        autoincrement = True,
+                        primary_key=True,
+                        autoincrement=True,
                         )
     user_id = db.Column(db.Integer,
                         db.ForeignKey('users.user_id'),
+                        nullable=False
                         )
     business_id = db.Column(db.String(100),
                             db.ForeignKey('businesses.business_id'),
+                            nullable=False
                             )
-    business_tip = db.Column(db.Text, nullable = True)
+    business_tip = db.Column(db.Text, nullable=True)
 
     user = db.relationship('User')
     business = db.relationship('Business')
@@ -170,13 +181,14 @@ class TripTip(db.Model):
     __tablename__ = 'trip_tips'
 
     trip_tip_id = db.Column(db.Integer,
-                        primary_key = True,
-                        autoincrement = True,
+                        primary_key=True,
+                        autoincrement=True,
                         )
     user_id = db.Column(db.Integer,
                         db.ForeignKey('users.user_id'),
+                        nullable=False
                         )
-    trip_tip = db.Column(db.Text, nullable = True)
+    trip_tip = db.Column(db.Text, nullable=True)
     
     user = db.relationship('User')
 
@@ -192,10 +204,10 @@ class Question(db.Model):
     __tablename__ = 'questions'
 
     question_id = db.Column(db.Integer, 
-                            primary_key = True,
-                            autoincrement = True,
+                            primary_key=True,
+                            autoincrement=True,
                             )
-    question = db.Column(db.String(150), nullable = False)
+    question = db.Column(db.String(150), nullable=False)
 
     answers = db.relationship('Answer')
 
@@ -211,16 +223,18 @@ class Answer(db.Model):
     __tablename__ = 'answers'
 
     answer_id = db.Column(db.Integer,
-                            primary_key = True,
-                            autoincrement = True,
+                            primary_key=True,
+                            autoincrement=True,
                             )
     question_id = db.Column(db.Integer,
                             db.ForeignKey('questions.question_id'),
+                            nullable=False
                             )
     user_id = db.Column(db.Integer,
                         db.ForeignKey('users.user_id'),
+                        nullable=False
                         )
-    answer = db.Column(db.String(25), nullable = False)
+    answer = db.Column(db.String(25), nullable=False)
 
     user = db.relationship('User')
     question = db.relationship('Question')

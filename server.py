@@ -10,7 +10,7 @@ import os
 from flask import jsonify
 import json
 import requests
-from api import get_my_business_details, get_playgrounds
+from api import get_my_business_details, get_playgrounds, get_playground_info
 
 
 GOOGLE_MAPS = os.environ['GOOGLE_MAPS_API']
@@ -67,7 +67,7 @@ def get_signup_info():
     return render_template("homepage.html")
 
 
-@app.route("/login")
+@app.route("/login")    #use a post request
 def login_user():
     """Login user to the website"""
     username = request.args.get('username')
@@ -99,7 +99,7 @@ def forgot_password():
     session['email'] = email
     if email is None:
         flash("This user does not exist. Please sign up here:")
-        return render_template("signup.html")
+        return redirect("/signup")
 
     user = User.query.filter(User.email == email).first()
     question_id = db.session.query(Answer.question_id).filter(Answer.user_id == user.user_id).first()
@@ -178,18 +178,42 @@ def get_route_data():
     results = get_playgrounds(coordinates)
 
     for result in results:
-        business_id = result.get('business_id')
-        business_type = result.get('type')
-        name = result.get('name')
-        business = Business(business_id=business_id,
-                            business_type=business_type,
-                            business_name=name)
-        db.session.add(business)
-        db.session.commit()
-        
+        if Business.query.filter(Business.business_id == result.get('business_id')).first():
+            continue
+        else:
+            business_id = result.get('business_id')
+            business_type = result.get('type')
+            name = result.get('name')
+            coords = result.get('coords')
+            lat = coords['latitude']
+            lng = coords['longitude']
+            business = Business(business_id=business_id,
+                                business_type=business_type,
+                                business_name=name,
+                                latitude=lat,
+                                longitude=lng)
+            db.session.add(business)
+            db.session.commit()    
+
     return jsonify(results)
 
-    
+@app.route("/business/<business_id>")
+def display_business_page(business_id):
+    """Display info on a business like name, address, phone, images, url to yelp"""
+
+    playground = get_playground_info(business_id)
+
+    return render_template("businesses.html", business=playground)
+
+
+@app.route("/users/<int:user_id>")
+def display_user_info(user_id):
+    """Display user info: Name, id, last search, favorited businesses, etc.""" 
+
+    user = User.query.filter(User.user_id == user_id).first()
+
+    return render_template("users.html", user=user)
+   
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the

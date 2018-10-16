@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}{{business.name}}{% endblock %}
+
+{% block body %}
+    <h1>Welcome to the {{business.name}} page</h1>
+    <div>
+        Address: {{business.address}}<br>
+        Phone: {{business.phone}}<br>
+        <a href="{{business.url}}">Click here to see the Yelp reviews on this place</a>
+        <br><br>
+    </div>
+
+    <div id="photos">
+        {% if business.photos %}
+            {% for photo in business.photos %}
+                <img src="{{photo}}" class='photos'>
+            {% endfor %}
+        {% else %}
+            Unfortunately, this place does not have any pictures!
+        {% endif %}
+    </div>
+
+{% endblock %}
