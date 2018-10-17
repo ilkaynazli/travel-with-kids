@@ -86,8 +86,7 @@ function myCallBack(){
                         let myContent = ('<div id="info-window">' +
                                         '<a href="/business/'+business_id+'" id="business-name">' +
                                         name + '</a>' +
-                                        '<br>Hi there!<br>' + 
-                                            '</div>'
+                                        '</div>'
                                         );  
                         displayMyInfoWindow(marker, map, infoWindow, myContent);           
                     }

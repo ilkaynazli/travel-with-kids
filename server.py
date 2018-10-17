@@ -118,7 +118,7 @@ def check_answer():
     answer = request.args.get('answer')
 
     if answer.lower() == user_answer[0].lower():
-        return render_template("new_password.html")
+        return render_template("new_password.html", error=False, username=user.username)
     else:
         flash("Answers do not match please try again!")
         user = User.query.filter(User.email == user_email).first()
@@ -130,6 +130,8 @@ def check_answer():
 @app.route("/new-password", methods=["POST"])
 def assign_new_password():
     """Assign a new password for the existing user"""
+    user_email = session.get('email')
+    user = User.query.filter(User.email == user_email).first()
 
     password = request.form.get('password')
     password2 = request.form.get('password2')
@@ -138,7 +140,8 @@ def assign_new_password():
     if not result[0]:
         return render_template("new_password.html", 
                                 error=True, 
-                                message=result[1])
+                                message=result[1],
+                                username=user.username)
 
     user_email = session.get('email')
     user = User.query.filter(User.email == user_email).first()

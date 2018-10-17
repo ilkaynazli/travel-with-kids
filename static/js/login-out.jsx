@@ -5,21 +5,19 @@ class LoginForm extends React.Component {
             username: '',
             password:'',
         }
-        this.handleChange = this.handleChange.bind(this);
+        this.handleUserChange = this.handleUserChange.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleChange(evt) {
-        const target = evt.target;
-        let value;
-        if (target.id === 'username') {
-            value = target.username.value;
-        } else {
-            value = target.password.value;
-        }
-        const name = target.name;
+    handleUserChange(evt) {
         this.setState(
-            [name]: value    
+            username: evt.target.value    
+        );
+    }
+    handlePasswordChange(evt) {
+        this.setState(
+            password: evt.target.value
         );
     }
 
@@ -35,16 +33,14 @@ class LoginForm extends React.Component {
                 Username: 
                 <input type="text" 
                         name="username"
-                        id="username"
                         value={this.state.username}
-                        onChange={this.handleChange} /><br/>         
+                        onChange={this.handleUserChange} /><br/>         
                 Password:
-                <input type="text"
+                <input type="password"
                         name="password"
-                        id="password" 
                         value={this.state.password}
-                        onChange={this.handleChange} /><br/>
-                <input type="submit" value="Login" /><br/>
+                        onChange={this.handlePasswordChange} /><br/>
+                <input type="submit" value="Submit" /><br/>
                 Forgot password/username? <a href="/wrong-password">Click Here</a>
             </form>
         )
