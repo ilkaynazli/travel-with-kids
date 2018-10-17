@@ -11,13 +11,14 @@ class LoginForm extends React.Component {
     }
 
     handleUserChange(evt) {
-        this.setState(
+        this.setState({
             username: evt.target.value    
-        );
+        });
     }
     handlePasswordChange(evt) {
-        this.setState(
+        this.setState({
             password: evt.target.value
+        }
         );
     }
 
