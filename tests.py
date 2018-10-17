@@ -1,5 +1,6 @@
 """Tests for this project"""
 
+from unittest import TestCase
 import unittest
 
 from server import app
@@ -18,33 +19,29 @@ class FlaskTests(TestCase):
 
         result = self.client.get("/")
         self.assertEqual(result.status_code, 200)
-        self.assertIn(b'<h1>Hello there!</h1>', result.data)
+        self.assertIn(b'From:', result.data)
+        self.assertIn(b'To:', result.data)
 
     def test_login(self):
         """Test login page."""
 
         result = self.client.post("/login",
-                                  data={"user_id": "ilkayn", 
-                                        "password": "123QWe/"},
-                                  follow_redirects=True)
-        self.assertIn(b"You have logged in.", result.data)
-
-    def test_login_wrong(self):
-        """test wrong password or username"""
-
-        result = self.client.post("/login",
                                   data={"user_id": "ilkay", 
                                         "password": "123QWe/"},
                                   follow_redirects=True)
-        self.assertIn(b"Wrong username or password.", result.data)
+        self.assertIn(b"My page", result.data)
 
-    def test_signup(self):
-        """test signup page"""
+    def test_login_wrong_username(self):
+        """test wrong password or username"""
 
-        pass
+        result = self.client.post("/login",
+                                  data={"user_id": "ilkayn", 
+                                        "password": "123QWe/"},
+                                  follow_redirects=True)
+        self.assertIn(b"Username does not exist. Please sign up.", result.data)
 
-    def test_forgot_password(self):
-        """Forgot password page"""
+    def test_wrong_password(self):
+        """Wrong password page"""
 
         result = self.client.get("/wrong-password")
         self.assertEqual(result.status_code, 200)
@@ -52,9 +49,13 @@ class FlaskTests(TestCase):
 
     def test_forgot_password(self):
         """check answers"""
-
+        
         pass
 
+    def test_signup(self):
+        """test signup page"""
+
+        pass
 
 class TravelTestsDatabase(unittest.TestCase):
     """Flask tests that use the database."""

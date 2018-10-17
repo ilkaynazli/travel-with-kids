@@ -67,11 +67,11 @@ def get_signup_info():
     return render_template("homepage.html")
 
 
-@app.route("/login")    #use a post request
+@app.route("/login", methods=['POST'])    
 def login_user():
     """Login user to the website"""
-    username = request.args.get('username')
-    password = request.args.get('password')
+    username = request.form.get('username')
+    password = request.form.get('password')
     user = User.query.filter(User.username == username).first()
 
     if user is None:
