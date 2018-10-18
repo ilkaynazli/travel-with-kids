@@ -4,8 +4,8 @@ class LoginForm extends React.Component {
         this.state = {
             username: '',
             password: '',
-            userId: '',
-            error: ''
+            userId: null,
+            error: false
         }
         this.handleUserChange = this.handleUserChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -26,22 +26,26 @@ class LoginForm extends React.Component {
     handleSubmit(evt) {
         evt.preventDefault();
         postData('/login.json', this.state)
-            .then((data) => {
-                this.setState({userId: data['user_id'],
-                                error: data['error']});
+            .then((response) => {
+                console.log('Userid is: ' + response['user_id']);
+                console.log('All data received from server is: %O' , response);
+                localStorage.setItem('cachedId', response['user_id']);
+                this.setState({userId: response['user_id'],
+                                error: response['error']});
             })
-            .catch((error) => console.error(error));        
+            .catch((error) => console.error(error));
     }
 
     render() {
+        const cachedId = localStorage.getItem('cachedId');
+        console.log('This is render. userID is: ' + cachedId);
         if (this.state.error == true) {
             return <LoginError />
-        } else if (this.state.userId != '') {
-            const userId = this.state.userId;
+        } else if (cachedId != null) {
             return (
                 <div>
                 <LogoutButton />
-                <MyPageButton userId={userId} />
+                <MyPageButton userId={cachedId} />
                 </div>
             );
         } else {
@@ -78,6 +82,7 @@ function postData(url='', data={}) {
         }
 
 function LogoutButton(props) {
+    localStorage.removeItem('cachedId');
     return (
         <button type='button'>
             <a href="/log-out">Log out</a>
@@ -95,56 +100,17 @@ function MyPageButton(props) {
     );
 }
 
-function SignupRoute(props) {
-    return (
-        <div>
-            User does not exist. Please sign up <a href="/signup">here</a>.
-        </div>
-        );
-}
-
-class LoginError extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            email:'',
-            question: ''
-        };
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleEmailChange = this.handleEmailChange.bind(this);
-    }
-
-    handleEmailChange(evt) {
-        this.setState({
-            email: evt.target.value    
-        });
-        console.log(this.state.email);
-    }
-
-    handleSubmit(evt) {
-        evt.preventDefault();
-        postData('/forgot-password.json', this.state)
-            .then((data) => {
-                    console.log(data);
-                    console.log(data['question'])
-                })
-            .catch((error) => console.error(error));;
-    }
-
-    render() {
-        return (
-            <form onSubmit={this.handleSubmit}>
-                Wrong username or password! <br/>
-                Please enter your email: 
-                <input type="text" name="email" value={this.state.email}
-                            onChange={this.handleEmailChange} /><br />
-                <input type="submit" value="Submit" />
-            </form>
-        );  
-    }
-}
-
 
 ReactDOM.render(
     <LoginForm />, document.getElementById('root')
 );
+
+
+            // .then((question) => {
+            //         console.log(question);
+            //         if (question != '') {
+            //             return <QuestionRoute question=question />
+            //         } else {
+            //             return <SignupRoute />
+            //         }
+            //     })

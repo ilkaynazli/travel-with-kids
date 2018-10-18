@@ -79,7 +79,7 @@ def login_user():
 
     if user is None:
         my_response = {
-                        'user_id': '',
+                        'user_id': None,
                         'error': True
                         }
         return jsonify(my_response) 
@@ -99,12 +99,6 @@ def login_user():
     return jsonify(my_response) 
 
 
-@app.route("/wrong-password")
-def wrong_password():
-    """User forgot the password render the page to forgot_password"""
-    return render_template("forgot_password.html")
-
-
 @app.route("/forgot-password.json", methods=['POST'])
 def forgot_password():
     """Get question and answer for the user login"""
@@ -115,9 +109,8 @@ def forgot_password():
     session['email'] = email
     user = User.query.filter(User.email == email).first()
     if user is None:
-        flash("This user does not exist. Please sign up here:")
-        return redirect("/signup")
-
+        my_response = {'question': ''}
+        return jsonify(my_response)
     
     question_id = db.session.query(Answer.question_id).filter(Answer.user_id == user.user_id).first()
     question = db.session.query(Question.question).filter(Question.question_id == question_id).first()
