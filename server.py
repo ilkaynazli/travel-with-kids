@@ -67,23 +67,36 @@ def get_signup_info():
     return render_template("homepage.html")
 
 
-@app.route("/login", methods=['POST'])    
+@app.route("/login.json", methods=['POST'])    
 def login_user():
     """Login user to the website"""
-    username = request.form.get('username')
-    password = request.form.get('password')
+    
+    data_dict = request.json
+    username = data_dict.get('username')
+    password = data_dict.get('password')
+
     user = User.query.filter(User.username == username).first()
 
     if user is None:
-        error = True
-        return render_template("login.html", error=error)
+        my_response = {
+                        'user_id': '',
+                        'error': True
+                        }
+        return jsonify(my_response) 
    
     if password != user.password:
-        error = True
-        return render_template("login.html", error=error)
+        my_response = {
+                        'user_id': '',
+                        'error': True
+                        }
+        return jsonify(my_response)
 
     session['user_id'] = user.user_id
-    return redirect('/') 
+    my_response = {
+                    'user_id': user.user_id,
+                    'error': False
+                    }
+    return jsonify(my_response) 
 
 
 @app.route("/wrong-password")
@@ -92,19 +105,24 @@ def wrong_password():
     return render_template("forgot_password.html")
 
 
-@app.route("/forgot-password")
+@app.route("/forgot-password.json", methods=['POST'])
 def forgot_password():
     """Get question and answer for the user login"""
-    email = request.args.get('email')
+    email = request.json['email']
+
+    print('\n\n\n\n', email, '\n\n\n\n')
+
     session['email'] = email
-    if email is None:
+    user = User.query.filter(User.email == email).first()
+    if user is None:
         flash("This user does not exist. Please sign up here:")
         return redirect("/signup")
 
-    user = User.query.filter(User.email == email).first()
+    
     question_id = db.session.query(Answer.question_id).filter(Answer.user_id == user.user_id).first()
     question = db.session.query(Question.question).filter(Question.question_id == question_id).first()
-    return render_template("check_answer.html", question=question)
+    my_response = {'question': question[0]}
+    return jsonify(my_response)
 
 
 @app.route("/check-answer")

@@ -7,25 +7,12 @@
     </head>
 
     <body>
-<!--         <div id='login-out' align="right">          
-            {% if session.get('user_id') %}
-                <button type='button'><a href="/log-out">Log out</a></button>
-                <button type='button'><a href="/users/{{session.get('user_id')}}">My page</a></button>
-            {% else %}
-                <form action="/login" method='POST'>
-                    Username: <input type="text" name="username"><br>
-                    Password: <input type="password" name="password"><br><br>
-                    <input type="submit" value="Login"><br>
-                    Forgot password/username? <a href="/wrong-password">Click Here</a>
-                </form>
-                <button type="button"><a href="/signup">Sign up</a></button>
-            {% endif %}
-        </div>
+
         <div>
             {% for message in get_flashed_messages() %}
                 {{message}}
             {% endfor %}
-        </div> -->
+        </div>
 
         <div id='root'></div>
         <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
