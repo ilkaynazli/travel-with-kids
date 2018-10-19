@@ -1,6 +1,4 @@
 
-
-
 def test_the_password(password1, password2):
     """Test if the password matches the requirements"""
     """Write some doctest here!"""
@@ -19,4 +17,4 @@ def test_the_password(password1, password2):
         if upper or lower or character:     ##If it doesn't match the requirements return False
             return (True, "Password doesn't fit the requirements")    
 
-    return (False, "")
+    return (False, "You have successfully changed your password")

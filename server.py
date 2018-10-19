@@ -125,20 +125,12 @@ def check_answer():
     user_answer = db.session.query(Answer.answer).filter(Answer.user_id == user.user_id).first()
     
     answer = request.json['answer']
-    print('\n\n\n\n\n', answer, '\n\n\n\n\n\n')
-
     if answer.lower() == user_answer[0].lower():
         my_response = {'error': False, 'username': user.username}
         return jsonify(my_response)
     else:
         my_response = {'error': True, 'username': ''}
         return jsonify(my_response)
-
-        # flash("Answers do not match please try again!")
-        # user = User.query.filter(User.email == user_email).first()
-        # question_id = db.session.query(Answer.question_id).filter(Answer.user_id == user.user_id).first()
-        # question = db.session.query(Question.question).filter(Question.question_id == question_id).first()
-        # return render_template("check_answer.html", question=question)
 
 
 @app.route("/new-password.json", methods=["POST"])
@@ -161,7 +153,10 @@ def assign_new_password():
 
     user.password = password
     db.session.commit()
-    return redirect('/')
+    my_response = {'error': result[0],
+                    'message': result[1]
+                    }
+    return jsonify(my_response)
 
 
 @app.route("/log-out")
