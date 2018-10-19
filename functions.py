@@ -5,8 +5,6 @@ def test_the_password(password1, password2):
     """Test if the password matches the requirements"""
     """Write some doctest here!"""
 
-    if password1 != password2:
-        return (False, "Passwords do not match")
     if password1.isalnum():
         upper = True
         lower = True
@@ -19,6 +17,6 @@ def test_the_password(password1, password2):
             if char in ['!@#$%^&*(){}[]/?'] and character:
                 character = False
         if upper or lower or character:     ##If it doesn't match the requirements return False
-            return (False, "Password doesn't fit the requirements")    
+            return (True, "Password doesn't fit the requirements")    
 
-    return (True, "")
+    return (False, "")

@@ -86,7 +86,7 @@ def login_user():
    
     if password != user.password:
         my_response = {
-                        'user_id': '',
+                        'user_id': None,
                         'error': True
                         }
         return jsonify(my_response)
@@ -103,22 +103,20 @@ def login_user():
 def forgot_password():
     """Get question and answer for the user login"""
     email = request.json['email']
+    user = User.query.filter(User.email == email).first()
 
-    print('\n\n\n\n', email, '\n\n\n\n')
+    if user is None:
+        my_response = {'question': None}
+        return jsonify(my_response)
 
     session['email'] = email
-    user = User.query.filter(User.email == email).first()
-    if user is None:
-        my_response = {'question': ''}
-        return jsonify(my_response)
-    
     question_id = db.session.query(Answer.question_id).filter(Answer.user_id == user.user_id).first()
     question = db.session.query(Question.question).filter(Question.question_id == question_id).first()
     my_response = {'question': question[0]}
     return jsonify(my_response)
 
 
-@app.route("/check-answer")
+@app.route("/check-answer.json", methods=['POST'])
 def check_answer():
     """Check if the answer matches to the one at the database"""
     user_email = session.get('email')
@@ -126,19 +124,24 @@ def check_answer():
     user = User.query.filter(User.email == user_email).first()
     user_answer = db.session.query(Answer.answer).filter(Answer.user_id == user.user_id).first()
     
-    answer = request.args.get('answer')
+    answer = request.json['answer']
+    print('\n\n\n\n\n', answer, '\n\n\n\n\n\n')
 
     if answer.lower() == user_answer[0].lower():
-        return render_template("new_password.html", error=False, username=user.username)
+        my_response = {'error': False, 'username': user.username}
+        return jsonify(my_response)
     else:
-        flash("Answers do not match please try again!")
-        user = User.query.filter(User.email == user_email).first()
-        question_id = db.session.query(Answer.question_id).filter(Answer.user_id == user.user_id).first()
-        question = db.session.query(Question.question).filter(Question.question_id == question_id).first()
-        return render_template("check_answer.html", question=question)
+        my_response = {'error': True, 'username': ''}
+        return jsonify(my_response)
+
+        # flash("Answers do not match please try again!")
+        # user = User.query.filter(User.email == user_email).first()
+        # question_id = db.session.query(Answer.question_id).filter(Answer.user_id == user.user_id).first()
+        # question = db.session.query(Question.question).filter(Question.question_id == question_id).first()
+        # return render_template("check_answer.html", question=question)
 
 
-@app.route("/new-password", methods=["POST"])
+@app.route("/new-password.json", methods=["POST"])
 def assign_new_password():
     """Assign a new password for the existing user"""
     user_email = session.get('email')
@@ -148,11 +151,10 @@ def assign_new_password():
     password2 = request.form.get('password2')
     
     result = test_the_password(password, password2)
-    if not result[0]:
-        return render_template("new_password.html", 
-                                error=True, 
-                                message=result[1],
-                                username=user.username)
+    if result[0]:
+        my_response = {'error': result[0],
+                        'message': result[1]}
+        return jsonify(my_response)
 
     user_email = session.get('email')
     user = User.query.filter(User.email == user_email).first()
