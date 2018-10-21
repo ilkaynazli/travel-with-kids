@@ -22,6 +22,7 @@ class LoginError extends React.Component {
             .then((response) => {
                     console.log(response);
                     console.log(response['question']);
+                    console.log(localStorage.getItem('cachedId'));
                     this.setState({question: response['question']});                
                 })
             .catch((error) => console.error(error));

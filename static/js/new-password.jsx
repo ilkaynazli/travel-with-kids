@@ -6,7 +6,6 @@ class NewPassword extends React.Component {
             password: '',
             password2: '',
             error: null,
-            message: null,
             passwordHasError: false
         }
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -14,7 +13,7 @@ class NewPassword extends React.Component {
     }
 
     checkPassword() {
-         if(!this.state.password || this.state.password != this.state.password2) {
+         if(this.state.password != this.state.password2) {
             this.setState({passwordHasError:true});
         }
         else {
@@ -23,7 +22,7 @@ class NewPassword extends React.Component {
     }
 
     handleChange(event) {
-        const { name, value } = event.target
+        const { name, value } = event.target;
 
         this.setState({
                 [name] : value 
@@ -32,8 +31,8 @@ class NewPassword extends React.Component {
                     this.checkPassword();
                 }
             );
-        console.log(password);
-        console.log(password2);
+        // console.log(this.state.password);
+        // console.log(this.state.password2);
     }
 
     handleSubmit(evt) {
@@ -42,33 +41,31 @@ class NewPassword extends React.Component {
             .then((response) => {
                     console.log(response);
                     console.log(response['message']);
-                    this.setState({message: response['message'],
-                                    error: response['error']});                
+                    console.log(localStorage.getItem('cachedId'));
+                    this.setState({error: response['error']});                
                 })
             .catch((error) => console.error(error));
     }
 
     render() {
         const error = this.state.error;
-        const message = this.state.message;
         const passwordHasError = this.state.passwordHasError;
-        console.log('this is render:' + error + message + passwordHasError);
+        console.log('this is render:' + error + passwordHasError);
 
         if (error == false) {
             return (
                     <div>
-                        {message}<br/>
+                        You have successfully changed your password<br/>
                         <a href="/">Click here to go to homepage</a>
                     </div>
                 );
         } else {
             return (
                 <div>
-                {passwordHasError && The passwords do not match! Please try again!<br/>}
-
-                {error && {message}<br/>}
-
-                <form on Submit={this.handleSubmit}>
+                {error && alert("Password doesn't fit the requirements. Please try again!")}
+                {passwordHasError && 'The passwords do not match! Please try again!'}
+                <br/>
+                <form onSubmit={this.handleSubmit}>
                     Password*: <input type="password" name="password" 
                                     value={this.state.password} 
                                     onChange={(event)=>this.handleChange(event)}/><br/>

@@ -21,7 +21,9 @@ class LoginForm extends React.Component {
         evt.preventDefault();
         postData('/login.json', this.state)
             .then((response) => {
-                localStorage.setItem('cachedId', response['user_id']);
+                if (response['error'] == false) {
+                    localStorage.setItem('cachedId', response['user_id']);
+                }
                 this.setState({userId: response['user_id'],
                                 error: response['error']});
             })
@@ -53,7 +55,7 @@ class LoginForm extends React.Component {
                             value={this.state.password}
                             onChange={(event) => this.handleChange(event)} /><br/>
                     <input type="submit" value="Submit" /><br/>
-                    Forgot password/username? <a href="/wrong-password">Click Here</a>
+                    Forgot password/username? <a href="/forgot-password">Click Here</a>
                 </form>
             );
         }

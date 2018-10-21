@@ -98,6 +98,11 @@ def login_user():
                     }
     return jsonify(my_response) 
 
+# @app.route("/forgot-password")              #I do not know how to do this yet!
+# def display_email_form():
+#     """Display the email request form for password recovery"""
+#     return render_template("")
+
 
 @app.route("/forgot-password.json", methods=['POST'])
 def forgot_password():
@@ -139,22 +144,19 @@ def assign_new_password():
     user_email = session.get('email')
     user = User.query.filter(User.email == user_email).first()
 
-    password = request.form.get('password')
-    password2 = request.form.get('password2')
-    
+    password = request.json['password']
+    password2 = request.json['password2']
+    print('\n\n\n\n\n\n', password, '\n\n\n\n\n\n')
+    print('\n\n\n\n\n\n', password2, '\n\n\n\n\n\n')
+
     result = test_the_password(password, password2)
-    if result[0]:
-        my_response = {'error': result[0],
-                        'message': result[1]}
-        return jsonify(my_response)
+    if result == False:    #if error is false
+        user_email = session.get('email')
+        user = User.query.filter(User.email == user_email).first()
 
-    user_email = session.get('email')
-    user = User.query.filter(User.email == user_email).first()
-
-    user.password = password
-    db.session.commit()
-    my_response = {'error': result[0],
-                    'message': result[1]
+        user.password = password
+        db.session.commit()
+    my_response = {'error': result,
                     }
     return jsonify(my_response)
 

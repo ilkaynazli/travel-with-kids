@@ -15,6 +15,6 @@ def test_the_password(password1, password2):
             if char in ['!@#$%^&*(){}[]/?'] and character:
                 character = False
         if upper or lower or character:     ##If it doesn't match the requirements return False
-            return (True, "Password doesn't fit the requirements")    
+            return True
 
-    return (False, "You have successfully changed your password")
+    return False 
