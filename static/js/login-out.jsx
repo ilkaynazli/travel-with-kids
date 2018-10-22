@@ -5,10 +5,12 @@ class LoginForm extends React.Component {
             username: '',
             password: '',
             userId: null,
-            error: false
+            error: false,
+            message: 'Wrong username or password!'
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.doThisAfterClick = this.doThisAfterClick.bind(this);
     }
 
     handleChange(event) {
@@ -30,10 +32,18 @@ class LoginForm extends React.Component {
             .catch((error) => console.error(error));
     }
 
+    doThisAfterClick(evt) {
+        evt.preventDefault();
+        this.setState({
+            error: true,
+            message: ''
+        });
+    }
+
     render() {
         const cachedId = localStorage.getItem('cachedId');
         if (this.state.error == true) {
-            return <LoginError />
+            return <LoginError message={this.state.message}/>
         } else if (cachedId != null) {
             return (
                 <div>
@@ -55,7 +65,8 @@ class LoginForm extends React.Component {
                             value={this.state.password}
                             onChange={(event) => this.handleChange(event)} /><br/>
                     <input type="submit" value="Submit" /><br/>
-                    Forgot password/username? <a href="/forgot-password.json">Click Here</a>
+                    Forgot password/username? 
+                    <a href="#" onClick={(evt) => this.doThisAfterClick(evt)}>Click Here</a>
                 </form>
             );
         }

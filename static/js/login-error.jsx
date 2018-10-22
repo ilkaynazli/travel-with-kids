@@ -2,6 +2,7 @@ class LoginError extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            message: props.message,
             email:'',
             question: ''
         };
@@ -41,7 +42,7 @@ class LoginError extends React.Component {
         } else {
             return (
                 <form onSubmit={this.handleSubmit}>
-                    Wrong username or password! <br/>
+                    {this.state.message} <br/>
                     Please enter your email: 
                     <input type="text" name="email" value={this.state.email}
                                 onChange={(event)=>this.handleChange(event)} /><br />
