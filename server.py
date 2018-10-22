@@ -10,7 +10,7 @@ import os
 from flask import jsonify
 import json
 import requests
-from api import get_my_business_details, get_playgrounds, get_playground_info
+from api import get_businesses, get_playground_info
 
 
 GOOGLE_MAPS = os.environ['GOOGLE_MAPS_API']
@@ -47,10 +47,10 @@ def get_signup_info():
     password2 = request.form.get('password2')
     
     result = test_the_password(password, password2)
-    if not result[0]:
+    if result:
         return render_template("signup.html", 
                                 error=True, 
-                                message=result[1])
+                                )
 
     username = request.form.get('username')
     email = request.form.get('email')
@@ -64,7 +64,7 @@ def get_signup_info():
     db.session.add_all([user, answer])
     db.session.commit()
 
-    return render_template("homepage.html")
+    return redirect('/')
 
 
 @app.route("/login.json", methods=['POST'])    
@@ -164,9 +164,7 @@ def assign_new_password():
 @app.route("/log-out")
 def logout_user():
     """Log out user from the website and remove session from system"""
-
     session.pop('user_id', None)
-
     return redirect("/")
 
 
@@ -175,11 +173,64 @@ def show_map():
     """Show map and directions"""
     start_location = request.args.get("start_location")
     end_location = request.args.get("end_location")
+    options = []
+    food1 = request.args.get('food1')
+    if food1 is not None:
+        options.append(food1)
+
+    food2 = request.args.get('food2')
+    if food2 is not None:
+        options.append(food2)
+
+    food3 = request.args.get('food3')
+    if food3 is not None:
+        options.append(food3)
+
+    food4 = request.args.get('food4')
+    if food4 is not None:
+        options.append(food4)
+
+    food5 = request.args.get('food5')
+    if food5 is not None:
+        options.append(food5)
+
+    food6 = request.args.get('food6')
+    if food6 is not None:
+        options.append(food6)
+
+    play1 = request.args.get('play1')
+    if play1 is not None:
+        options.append(play1)
+        
+    play2 = request.args.get('play2')
+    if play2 is not None:
+        options.append(play2)
+
+    play3 = request.args.get('play3')
+    if play3 is not None:
+        options.append(play3)
+
+    play4 = request.args.get('play4')
+    if play4 is not None:
+        options.append(play4)
+
+    play5 = request.args.get('play5')
+    if play5 is not None:
+        options.append(play5)
+
+    play6 = request.args.get('play6')
+    if play6 is not None:
+        options.append(play6)    
+
+    print('\n\n\n\n\n', options, '\n\n\n\n\n')
+    categories = ','.join(options)
+    print('\n\n\n\n\n', categories, type(categories), '\n\n\n\n\n')
 
     return render_template("show_directions.html",
                             YOUR_API_KEY=GOOGLE_MAPS,
                             start=start_location,
-                            end=end_location) 
+                            end=end_location,
+                            options=categories) 
 
 
 @app.route("/get-route.json")
@@ -188,7 +239,11 @@ def get_route_data():
 
     steps = request.args.get('myJSON')
     coordinates = json.loads(steps)
-    results = get_playgrounds(coordinates)
+    options = request.args.get('categories')
+    print('\n\n\n\n', options, '\n\n\n\n')
+    categories = json.loads(options)
+    
+    results = get_businesses(coordinates, categories)
 
     for result in results:
         if Business.query.filter(Business.business_id == result.get('business_id')).first():

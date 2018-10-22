@@ -43,7 +43,6 @@ class Business(db.Model):
                             primary_key = True,
                             )
     business_name = db.Column(db.String(50), nullable=False)
-    business_type = db.Column(db.String(5), nullable=False)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
 
@@ -57,7 +56,6 @@ class Business(db.Model):
         """Human readable data"""
         return f"<Business id: {self.business_id}, \
                     Business name: {self.business_name},\
-                    Business type: {self.business_type},\
                     lat: {self.latitude},\
                     lng: {self.longitude}>"
 

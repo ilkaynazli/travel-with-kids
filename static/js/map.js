@@ -3,6 +3,7 @@
 function myCallBack(){
     const route = $("#map").data()      //Get start and end address from user
     let map;
+    console.log(route['options']);
 
     //Create Map and call calculate and display route function
     function createMap() {
@@ -50,7 +51,9 @@ function myCallBack(){
                     }  
                 };
 
-                const formInputs = {'myJSON': JSON.stringify(coordinates)};
+
+                const formInputs = {'myJSON': JSON.stringify(coordinates)
+                                    'categories': JSON.stringify(route['options'])};
                 let infoWindow = new google.maps.InfoWindow();
                 let marker;
 
