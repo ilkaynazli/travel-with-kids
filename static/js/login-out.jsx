@@ -55,7 +55,7 @@ class LoginForm extends React.Component {
                             value={this.state.password}
                             onChange={(event) => this.handleChange(event)} /><br/>
                     <input type="submit" value="Submit" /><br/>
-                    Forgot password/username? <a href="/forgot-password">Click Here</a>
+                    Forgot password/username? <a href="/forgot-password.json">Click Here</a>
                 </form>
             );
         }

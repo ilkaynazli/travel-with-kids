@@ -10,6 +10,7 @@ class NewPassword extends React.Component {
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.componentDidUpdate = this.componentDidUpdate.bind(this);
     }
 
     checkPassword() {
@@ -47,6 +48,12 @@ class NewPassword extends React.Component {
             .catch((error) => console.error(error));
     }
 
+    componentDidUpdate(prevState) {
+        if (this.state.error == true) {
+            this.setState({error: null});
+        }
+    }
+
     render() {
         const error = this.state.error;
         const passwordHasError = this.state.passwordHasError;
@@ -62,7 +69,8 @@ class NewPassword extends React.Component {
         } else {
             return (
                 <div>
-                {error && alert("Password doesn't fit the requirements. Please try again!")}
+                {error && alert("Password doesn't fit the requirements. Please try again!")
+                        && this.componentDidUpdate(this.state.error)}
                 {passwordHasError && 'The passwords do not match! Please try again!'}
                 <br/>
                 <form onSubmit={this.handleSubmit}>

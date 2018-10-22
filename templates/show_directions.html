@@ -6,7 +6,26 @@
 
 {% block body %}
 
-<div id="map" data-start='{{start}}' data-end="{{end}}" data-options="{{options}}"></div>
+<div id="map" data-start='{{start}}' data-end="{{end}}"></div>
+
+<form action="/get-route.json">
+  <h3>Where do you want to stop?</h3>
+    <h4>Food?</h4>
+        <input type="checkbox" name="food1" value="breakfast_brunch">Breakfast/Brunch
+        <input type="checkbox" name="food2" value="bbq">Barbeque
+        <input type="checkbox" name="food3" value="burgers">Burgers<br>
+        <input type="checkbox" name="food4" value="pizza">Pizza
+        <input type="checkbox" name="food5" value="sandwiches">Sandwiches
+        <input type="checkbox" name="food6" value="icecream">Icecream
+    <h4>Play?</h4>
+        <input type="checkbox" name="play1" value="playground">Playground
+        <input type="checkbox" name="play2" value="indoor_playcenter">Indoor Playcenter
+        <input type="checkbox" name="play3" value="carousels">Carousels<br>
+        <input type="checkbox" name="play4" value="farms">Farms
+        <input type="checkbox" name="play5" value="zoos">Zoo
+        <input type="checkbox" name="play6" value="aquariums">Aquariums
+    <input type="submit">
+</form>
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src='/static/js/map.js'></script>
