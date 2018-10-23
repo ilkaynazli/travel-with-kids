@@ -42,19 +42,19 @@ class FlaskTests(TestCase):
         result = self.client.post("/login.json",
                                     data=json.dumps({'username': "ilkay", 
                                                         'password': "123Qwe/"}),
-                                content_type='application/json')
+                                    content_type='application/json')
 
         self.assertEqual(result.status_code, 200)                       
         self.assertIs(json.loads(result.data)['user_id'], 1)
 
-    # def test_login_wrong_username(self):
-    #     """test wrong password or username"""
-
-    #     result = self.client.post("/login",
-    #                               data={"user_id": "ilkayn", 
-    #                                     "password": "123QWe/"},
-    #                               follow_redirects=True)
-    #     self.assertIn(b"Username does not exist. Please sign up.", result.data)
+    def test_login_wrong_username(self):
+        """test wrong password or username"""
+        result = self.client.post("/login",
+                                  data=json.dumps({"user_id": "ilkayn", 
+                                        "password": "123QWe/"}),
+                                  content_type='application/json')
+        
+        self.assertIs(json.loads(result.data)['error'], True)
 
 
     # def test_login_wrong_password(self):
@@ -63,8 +63,10 @@ class FlaskTests(TestCase):
     #     result = self.client.post("/login",
     #                               data={"user_id": "ilkay", 
     #                                     "password": "123qwE/"},
-    #                               follow_redirects=True)
-    #     self.assertIn(b"Username does not exist. Please sign up.", result.data)
+    #                               content_type='application/json')
+    #     self.assertIn(json.loads(result.data)['user_id'], 1)
+
+
     # def test_wrong_password(self):
     #     """Wrong password page"""
 

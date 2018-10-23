@@ -30,32 +30,31 @@ def display_homepage():
     """Display homepage"""
     return render_template("homepage.html")
 
-@app.route("/signup")
+@app.route("/show-signupjson", methods=['POST'])
 def display_signup():
     """Display sign up details"""
-
-    return render_template("signup.html", 
-                            error=False,
-                            questions = Question.query.all())
+    questions = Question.query.all()
+    my_response = {'questions': questions}
+    return jsonify(my_response)
 
 
 @app.route("/signup.json", methods=["POST"])
 def get_signup_info():
     """Add user info to database"""
-    password = request.form.get('password')
-    password2 = request.form.get('password2')
+    password = request.json['password']
+    password2 = request.json['password2']
     
     result = test_the_password(password, password2)
     if result:
         return jsonify({'error': result})
 
-    username = request.form.get('username')
-    email = request.form.get('email')
+    username = request.json['username']
+    email = request.json['email']
 
     user = User(username=username, password=password, email=email)
 
-    question_id = request.form.get('question')
-    user_answer = request.form.get('answer')
+    question_id = request.json['question']
+    user_answer = request.json['answer']
     answer = Answer(question_id=question_id, user=user, answer=user_answer)
 
     db.session.add_all([user, answer])

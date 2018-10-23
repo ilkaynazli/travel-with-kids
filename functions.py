@@ -14,7 +14,7 @@ def test_the_password(password1, password2):
                 lower = False
             if char in ['!@#$%^&*(){}[]/?'] and character:
                 character = False
-        if upper or lower or character:     ##If it doesn't match the requirements return False
+        if upper or lower or character:     ##If it doesn't match the requirements return True
             return True
 
     return False 
