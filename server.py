@@ -10,7 +10,7 @@ import os
 from flask import jsonify
 import json
 import requests
-from api import get_businesses, get_playground_info
+from api import get_businesses, get_business_info
 
 
 GOOGLE_MAPS = os.environ['GOOGLE_MAPS_API']
@@ -222,9 +222,9 @@ def show_business_markers():
 def display_business_page(business_id):
     """Display info on a business like name, address, phone, images, url to yelp"""
 
-    playground = get_playground_info(business_id)
+    business = get_business_info(business_id)
 
-    return render_template("businesses.html", business=playground)
+    return render_template("businesses.html", business=business)
 
 
 @app.route("/users/<int:user_id>")

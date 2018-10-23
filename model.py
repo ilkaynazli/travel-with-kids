@@ -42,7 +42,8 @@ class Business(db.Model):
     business_id = db.Column(db.String(100),                 #taken from Yelp API
                             primary_key = True,
                             )
-    business_name = db.Column(db.String(50), nullable=False)
+    business_name = db.Column(db.String(150), nullable=False)
+    business_type = db.Column(db.String(5), nullable=True)
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
 

@@ -16,6 +16,7 @@ def get_businesses(coordinates, categories):
         payload = {'latitude': latitude,
                     'longitude': longitude,
                     'categories': categories,
+                    'attributes': 'good_for_kids',
                     'radius': 20000
                     }
         header = {'Authorization': f"Bearer {YELP}"}
@@ -39,51 +40,22 @@ def get_businesses(coordinates, categories):
     return business_list
 
 
-def get_playground_info(playground_id):
-    """Get info on playground given its YELP id"""
+def get_business_info(business_id):
+    """Get info on business given its YELP id"""
 
     header = {'Authorization': f"Bearer {YELP}"}
 
-    playground = requests.get(f"{YELP_BUSINESS_URL}{playground_id}",
+    business = requests.get(f"{YELP_BUSINESS_URL}{business_id}",
                                         headers=header)
 
-    playground = playground.json()
+    business = business.json()
 
-    playground_info = {
-        'name': playground['name'],
-        'phone': playground['phone'],
-        'url': playground['url'],
-        'photos': playground['photos'],
-        'address': " ".join(playground['location']['display_address'])
+    business_info = {
+        'name': business['name'],
+        'phone': business['phone'],
+        'url': business['url'],
+        'photos': business['photos'],
+        'address': " ".join(business['location']['display_address'])
     } 
 
-    return playground_info
-# def get_my_business_details(coordinates):
-#     """Get business details from YELP API given a list of coordinates"""
-#     business_list = []
-#     for coordinate in coordinates:
-#         latitude = coordinate['lat']
-#         longitude = coordinate['lng']
-#         payload = {'latitude': latitude,
-#                     'longitude': longitude,
-#                     }
-#         header = {'Authorization': f"Bearer {YELP}"}
-#         result = requests.get(YELP_SEARCH_URL, 
-#                             headers=header,
-#                              params=payload)
-#         my_results = result.json()
-#         businesses = my_results['businesses']
-
-#         print('\n\n\n\n\n', businesses, '\n\n\n\n\n\n')
-
-#         for business in businesses:
-#             business_id = business['id']
-#             business_details = requests.get(f"{YELP_BUSINESS_URL}{business_id}",
-#                                             headers=header)
-#             if "good-for-kids" in json.loads(business_details.text).attributes:
-#                 business_list.append(business)
-
-
-#     print('\n\n\n\n\n', business_list, '\n\n\n\n\n\n')
-#     return business_list
-
+    return business_info
