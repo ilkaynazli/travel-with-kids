@@ -181,24 +181,18 @@ def show_business_markers():
     """Get the response that has the directions info"""
 
     coordinates = json.loads(request.args.get('coordinates'))
-    print('\n\n\n\n\n', coordinates, '\n\n\n\n\n')
 
-    options = json.loads(request.args.get('categories')) 
-    print('\n\n\n\n\n', options, '\n\n\n\n\n')
-    
+    options = json.loads(request.args.get('categories'))    
     options_list = options.split('categories=')
-    print('\n\n\n\n\n', options_list, '\n\n\n\n\n')
     categories_list = []
     for option in options_list:
         if option is not '':
             categories_list.append(option.rstrip('&'))
+    radius = categories_list[0].lstrip('points=')
+    print('\n\n\n\n\n', radius, '\n\n\n\n\n')
+    categories = ','.join(categories_list[1:])
 
-    print('\n\n\n\n\n', categories_list, '\n\n\n\n\n')
-
-    categories = ','.join(categories_list)
-    print('\n\n\n\n\n', categories, '\n\n\n\n\n')
-
-    results = get_businesses(coordinates, categories)
+    results = get_businesses(coordinates, categories, radius)
 
     for result in results:
         if Business.query.filter(Business.business_id == result.get('business_id')).first():

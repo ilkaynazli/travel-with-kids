@@ -9,7 +9,9 @@
 <div id="map" data-start='{{start}}' data-end="{{end}}"></div>
 
 <form action="/show-markers.json" id='categories-form'>
-  <h3>Where do you want to stop?</h3>
+    <h3>How far away from the main route would you like to travel?</h3>
+    5<input type="range" name="points" min="5000" max="20000">20 (km)
+    <h3>Where do you want to stop?</h3>
     <h4>Food?</h4>
         <input type="checkbox" name="categories" value="breakfast_brunch">Breakfast/Brunch<br>
         <input type="checkbox" name="categories" value="bbq">Barbeque<br>
