@@ -189,7 +189,6 @@ def show_business_markers():
         if option is not '':
             categories_list.append(option.rstrip('&'))
     radius = categories_list[0].lstrip('points=')
-    print('\n\n\n\n\n', radius, '\n\n\n\n\n')
     categories = ','.join(categories_list[1:])
 
     results = get_businesses(coordinates, categories, radius)
@@ -203,8 +202,10 @@ def show_business_markers():
             coords = result.get('coords')
             lat = coords['latitude']
             lng = coords['longitude']
+            business_type = result.get('business_type')
             business = Business(business_id=business_id,
                                 business_name=name,
+                                business_type=business_type,
                                 latitude=lat,
                                 longitude=lng)
             db.session.add(business)
