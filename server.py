@@ -98,11 +98,6 @@ def login_user():
                     }
     return jsonify(my_response) 
 
-# @app.route("/forgot-password")              #I do not know how to do this yet!
-# def display_email_form():
-#     """Display the email request form for password recovery"""
-#     return render_template("")
-
 
 @app.route("/forgot-password.json", methods=['POST'])
 def forgot_password():
@@ -172,77 +167,37 @@ def logout_user():
 def show_map():
     """Show map and directions"""
     start_location = request.args.get("start_location")
-    end_location = request.args.get("end_location")
-    options = []
-    food1 = request.args.get('food1')
-    if food1 is not None:
-        options.append(food1)
-
-    food2 = request.args.get('food2')
-    if food2 is not None:
-        options.append(food2)
-
-    food3 = request.args.get('food3')
-    if food3 is not None:
-        options.append(food3)
-
-    food4 = request.args.get('food4')
-    if food4 is not None:
-        options.append(food4)
-
-    food5 = request.args.get('food5')
-    if food5 is not None:
-        options.append(food5)
-
-    food6 = request.args.get('food6')
-    if food6 is not None:
-        options.append(food6)
-
-    play1 = request.args.get('play1')
-    if play1 is not None:
-        options.append(play1)
-        
-    play2 = request.args.get('play2')
-    if play2 is not None:
-        options.append(play2)
-
-    play3 = request.args.get('play3')
-    if play3 is not None:
-        options.append(play3)
-
-    play4 = request.args.get('play4')
-    if play4 is not None:
-        options.append(play4)
-
-    play5 = request.args.get('play5')
-    if play5 is not None:
-        options.append(play5)
-
-    play6 = request.args.get('play6')
-    if play6 is not None:
-        options.append(play6)    
-
-    print('\n\n\n\n\n', options, '\n\n\n\n\n')
-    categories = ','.join(options)
-    print('\n\n\n\n\n', categories, type(categories), '\n\n\n\n\n')
+    end_location = request.args.get("end_location")   
 
     return render_template("show_directions.html",
                             YOUR_API_KEY=GOOGLE_MAPS,
                             start=start_location,
                             end=end_location,
-                            options=categories) 
+                            )
 
 
-@app.route("/get-route.json")
-def get_route_data():
+@app.route("/show-markers.json")
+def show_business_markers():
     """Get the response that has the directions info"""
 
-    steps = request.args.get('myJSON')
-    coordinates = json.loads(steps)
-    options = request.args.get('categories')
-    print('\n\n\n\n', options, '\n\n\n\n')
-    categories = json.loads(options)
+    coordinates = json.loads(request.args.get('coordinates'))
+    print('\n\n\n\n\n', coordinates, '\n\n\n\n\n')
+
+    options = json.loads(request.args.get('categories')) 
+    print('\n\n\n\n\n', options, '\n\n\n\n\n')
     
+    options_list = options.split('categories=')
+    print('\n\n\n\n\n', options_list, '\n\n\n\n\n')
+    categories_list = []
+    for option in options_list:
+        if option is not '':
+            categories_list.append(option.rstrip('&'))
+
+    print('\n\n\n\n\n', categories_list, '\n\n\n\n\n')
+
+    categories = ','.join(categories_list)
+    print('\n\n\n\n\n', categories, '\n\n\n\n\n')
+
     results = get_businesses(coordinates, categories)
 
     for result in results:
@@ -250,13 +205,11 @@ def get_route_data():
             continue
         else:
             business_id = result.get('business_id')
-            business_type = result.get('type')
             name = result.get('name')
             coords = result.get('coords')
             lat = coords['latitude']
             lng = coords['longitude']
             business = Business(business_id=business_id,
-                                business_type=business_type,
                                 business_name=name,
                                 latitude=lat,
                                 longitude=lng)

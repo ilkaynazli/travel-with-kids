@@ -3,7 +3,6 @@
 function myCallBack(){
     const route = $("#map").data()      //Get start and end address from user
     let map;
-    console.log(route['options']);
 
     //Create Map and call calculate and display route function
     function createMap() {
@@ -50,10 +49,20 @@ function myCallBack(){
                         }
                     }  
                 };
-
-
-                const formInputs = {'myJSON': JSON.stringify(coordinates)
-                                    'categories': JSON.stringify(route['options'])};
+                
+                // Create event listener attached to form that listens for submit
+                $('#categories-form').on('submit', getCategories);
+                
+                function getCategories(evt) {   
+                    evt.preventDefault();
+                    let categories = $(this).serialize();
+                    let formInputs = {'categories': JSON.stringify(categories), 
+                                      'coordinates': JSON.stringify(coordinates)};            
+                    console.log(formInputs);
+                    // make get request to api, callback is showBusinesses()
+                    $.get('/show-markers.json', formInputs, showBusinesses);   
+                }
+                           
                 let infoWindow = new google.maps.InfoWindow();
                 let marker;
 
@@ -70,14 +79,14 @@ function myCallBack(){
                 //info windows when clicked on the marker
                 //markers also has the names of the places you can see it when
                 //you do mouseover
-                function showPlaygrounds(results) {
-                    const playgroundDetails = results;
-                    for (let i = 0; i < playgroundDetails.length; i++) {
-                        const coords = playgroundDetails[i]['coords'];
+                function showBusinesses(results) {
+                    const businessDetails = results;
+                    for (let i = 0; i < businessDetails.length; i++) {
+                        const coords = businessDetails[i]['coords'];
                         const latLng = new google.maps.LatLng(coords['latitude'],
                                                               coords['longitude']);
-                        const name = playgroundDetails[i]['name'];
-                        const business_id = playgroundDetails[i]['business_id'];
+                        const name = businessDetails[i]['name'];
+                        const business_id = businessDetails[i]['business_id'];
                         marker = new google.maps.Marker({
                             position: latLng,
                             map: map, 
@@ -97,7 +106,7 @@ function myCallBack(){
 
                 //send coordinates (points every 40000 meters) to server and get 
                 //yelp api data from the server
-                $.get('/get-route.json', formInputs, showPlaygrounds);              
+                          
                 
             } else {
                 alert('Directions request failed due to ' + status);
