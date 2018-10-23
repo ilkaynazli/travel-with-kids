@@ -28,7 +28,6 @@ app.jinja_env.undefined = StrictUndefined
 @app.route("/")
 def display_homepage():
     """Display homepage"""
-
     return render_template("homepage.html")
 
 @app.route("/signup")
@@ -40,7 +39,7 @@ def display_signup():
                             questions = Question.query.all())
 
 
-@app.route("/signup", methods=["POST"])
+@app.route("/signup.json", methods=["POST"])
 def get_signup_info():
     """Add user info to database"""
     password = request.form.get('password')
@@ -48,9 +47,7 @@ def get_signup_info():
     
     result = test_the_password(password, password2)
     if result:
-        return render_template("signup.html", 
-                                error=True, 
-                                )
+        return jsonify({'error': result})
 
     username = request.form.get('username')
     email = request.form.get('email')
@@ -141,8 +138,6 @@ def assign_new_password():
 
     password = request.json['password']
     password2 = request.json['password2']
-    print('\n\n\n\n\n\n', password, '\n\n\n\n\n\n')
-    print('\n\n\n\n\n\n', password2, '\n\n\n\n\n\n')
 
     result = test_the_password(password, password2)
     if result == False:    #if error is false

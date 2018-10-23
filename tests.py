@@ -3,33 +3,49 @@
 from unittest import TestCase
 import unittest
 
-from server import app
+import server
 from model import db, example_data, connect_to_db
+import json
 
 class FlaskTests(TestCase):
 
     def setUp(self):
         """Stuff to do before every test."""
 
-        self.client = app.test_client()
-        app.config['TESTING'] = True
+        self.client = server.app.test_client()
+        server.app.config['TESTING'] = True
+
+        # Connect to test database (uncomment when testing database)
+        connect_to_db(server.app, "testdb")
+
+        # Create tables and add sample data (uncomment when testing database)
+        db.create_all()
+        example_data()
+
+
+    def tearDown(self):
+        """Do at end of every test."""
+
+        db.session.close()
+        db.drop_all()
 
     def test_homepage(self):          #have to change this later
         """Test homepage"""
 
         result = self.client.get("/")
         self.assertEqual(result.status_code, 200)
-        self.assertIn(b'From:', result.data)
-        self.assertIn(b'To:', result.data)
+        self.assertIn(b'<form action="/show-map"', result.data)
 
-    # def test_login(self):
-    #     """Test login page."""
 
-    #     result = self.client.post("/login.json",
-    #                               data={"user_id": "ilkay", 
-    #                                     "password": "123qwE/"},
-    #                               follow_redirects=True)
-    #     self.assertIn(b"My page", result.data)
+    def test_login(self):
+        """Test login page."""
+        result = self.client.post("/login.json",
+                                    data=json.dumps({'username': "ilkay", 
+                                                        'password': "123Qwe/"}),
+                                content_type='application/json')
+
+        self.assertEqual(result.status_code, 200)                       
+        self.assertIs(json.loads(result.data)['user_id'], 1)
 
     # def test_login_wrong_username(self):
     #     """test wrong password or username"""
@@ -40,6 +56,15 @@ class FlaskTests(TestCase):
     #                               follow_redirects=True)
     #     self.assertIn(b"Username does not exist. Please sign up.", result.data)
 
+
+    # def test_login_wrong_password(self):
+    #     """test wrong password or username"""
+
+    #     result = self.client.post("/login",
+    #                               data={"user_id": "ilkay", 
+    #                                     "password": "123qwE/"},
+    #                               follow_redirects=True)
+    #     self.assertIn(b"Username does not exist. Please sign up.", result.data)
     # def test_wrong_password(self):
     #     """Wrong password page"""
 
@@ -56,30 +81,6 @@ class FlaskTests(TestCase):
     #     """test signup page"""
 
     #     pass
-
-class TravelTestsDatabase(unittest.TestCase):
-    """Flask tests that use the database."""
-
-    def setUp(self):
-        """Stuff to do before every test."""
-
-        self.client = app.test_client()
-        app.config['TESTING'] = True
-        
-        # Connect to test database (uncomment when testing database)
-        connect_to_db(app, "testdb")
-
-        # Create tables and add sample data (uncomment when testing database)
-        db.create_all()
-        example_data()
-
-    def tearDown(self):
-        """Do at end of every test."""
-
-        db.session.close()
-        db.drop_all()
-
-
 
 
 if __name__ == "__main__":

@@ -265,6 +265,7 @@ def example_data():
     TripTip.query.delete()
     Question.query.delete()
     Answer.query.delete()
+    Favorite.query.delete()
 
     #add user, business, comment, rating, tips, question, answer
     sample_user = User(username='ilkay', 
@@ -272,7 +273,11 @@ def example_data():
                         email='ilkay@ilkay.com')
     sample_business = Business(business_id=1, 
                                 business_name='test', 
-                                business_type='food')
+                                business_type='food',
+                                latitude=32,
+                                longitude=120)
+    sample_favorite = Favorite(user=sample_user,
+                                business=sample_business)
     sample_comment = Comment(user=sample_user, 
                                 business=sample_business,
                                 comment='hi there')
@@ -297,7 +302,8 @@ def example_data():
                         sample_tip_b,
                         sample_tip_t,
                         sample_question,
-                        sample_answer])
+                        sample_answer,
+                        sample_favorite])
     db.session.commit()
 
 

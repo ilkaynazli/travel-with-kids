@@ -53,7 +53,6 @@ def get_businesses(coordinates, categories, radius):
                     break
                 else:
                     business_type = ''
-
             
             business_list.append({'name': name,
                                     'coords': {'latitude': latitude,
