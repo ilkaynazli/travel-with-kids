@@ -1,13 +1,13 @@
 
-def test_the_password(password1, password2):
+def test_the_password(password):
     """Test if the password matches the requirements"""
     """Write some doctest here!"""
 
-    if password1.isalnum():
+    if password.isalnum():
         upper = True
         lower = True
         character = True
-        for char in password1:
+        for char in password:
             if char.isupper() and upper:
                 upper = False
             if char.islower() and lower:

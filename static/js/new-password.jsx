@@ -60,7 +60,7 @@ class NewPassword extends React.Component {
         console.log('this is render:' + error + passwordHasError);
 
         if (error == false) {
-            return (
+            return (        
                     <div>
                         You have successfully changed your password<br/>
                         <a href="/">Click here to go to homepage</a>

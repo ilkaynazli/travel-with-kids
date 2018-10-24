@@ -21,9 +21,6 @@ class ShowQuestion extends React.Component {
         evt.preventDefault();
         postData('/check-answer.json', this.state)
             .then((response) => {
-                    // console.log(response);
-                    // console.log('this is handlesubmit: ' + response['error']);
-                    // console.log(localStorage.getItem('cachedId'));
                     this.setState({error: response['error'],
                                     username: response['username']});                
                 })

@@ -56,7 +56,7 @@ class LoginError extends React.Component {
 function SignupRoute(props) {
     return (
         <div>
-            Please sign up <a href="/signup">here</a>.
+            Please sign up <a href="/signup.json">here</a>.
         </div>
         );
 }

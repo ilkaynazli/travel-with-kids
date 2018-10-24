@@ -30,7 +30,7 @@ def display_homepage():
     """Display homepage"""
     return render_template("homepage.html")
 
-@app.route("/show-signupjson", methods=['POST'])
+@app.route("/show-signup.json", methods=['POST'])
 def display_signup():
     """Display sign up details"""
     questions = Question.query.all()
@@ -132,22 +132,16 @@ def check_answer():
 @app.route("/new-password.json", methods=["POST"])
 def assign_new_password():
     """Assign a new password for the existing user"""
-    user_email = session.get('email')
-    user = User.query.filter(User.email == user_email).first()
-
     password = request.json['password']
-    password2 = request.json['password2']
+    result = test_the_password(password)
 
-    result = test_the_password(password, password2)
     if result == False:    #if error is false
         user_email = session.get('email')
         user = User.query.filter(User.email == user_email).first()
-
         user.password = password
         db.session.commit()
-    my_response = {'error': result,
-                    }
-    return jsonify(my_response)
+
+    return jsonify({'error': result})
 
 
 @app.route("/log-out")
