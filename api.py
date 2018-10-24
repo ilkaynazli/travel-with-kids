@@ -1,6 +1,7 @@
 import os
 import requests
 import json
+from functions import add_business_to_database
 
 YELP = os.environ['YELP_API']
 YELP_SEARCH_URL = 'https://api.yelp.com/v3/businesses/search'
@@ -53,13 +54,15 @@ def get_businesses(coordinates, categories, radius):
                     break
                 else:
                     business_type = ''
-            
-            business_list.append({'name': name,
-                                    'coords': {'latitude': latitude,
-                                                'longitude': longitude},
-                                    'business_id': business_id,
-                                    'business_type': business_type
-                                    })
+            my_business = {'name': name,
+                                'coords': {'latitude': latitude,
+                                            'longitude': longitude},
+                                'business_id': business_id,
+                                'business_type': business_type
+                                }
+
+            add_business_to_database(my_business)
+            business_list.append(my_business)
 
     return business_list
 

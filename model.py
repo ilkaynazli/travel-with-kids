@@ -256,16 +256,6 @@ def connect_to_db(app, db_name):
 
 def example_data():
     """Create example data for the test database."""
-    
-    User.query.delete()
-    Business.query.delete()
-    Comment.query.delete()
-    Rating.query.delete()
-    BusinessTip.query.delete()
-    TripTip.query.delete()
-    Question.query.delete()
-    Answer.query.delete()
-    Favorite.query.delete()
 
     #add user, business, comment, rating, tips, question, answer
     sample_user = User(username='ilkay', 

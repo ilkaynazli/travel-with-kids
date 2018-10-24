@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 from model import (User, Business, Comment, Rating, BusinessTip,
                     TripTip, Question, Answer, connect_to_db, db)
-from functions import test_the_password
+from functions import test_the_password, hash_password, check_hashed_password
 import os
 from flask import jsonify
 import json
@@ -30,30 +30,34 @@ def display_homepage():
     """Display homepage"""
     return render_template("homepage.html")
 
-@app.route("/show-signup.json", methods=['POST'])
+@app.route("/show-signup-button.json", methods=['POST'])
 def display_signup():
     """Display sign up details"""
     questions = Question.query.all()
-    my_response = {'questions': questions}
+    my_questions =[]
+    for question in questions:
+        my_questions.append({'id': question.question_id,
+                            'question': question.question})
+    my_response = {'questions': my_questions}
     return jsonify(my_response)
 
 
 @app.route("/signup.json", methods=["POST"])
 def get_signup_info():
     """Add user info to database"""
-    password = request.json['password']
-    password2 = request.json['password2']
-    
-    result = test_the_password(password, password2)
+    password = request.json['password']   
+    result = test_the_password(password)
+
     if result:
         return jsonify({'error': result})
 
     username = request.json['username']
     email = request.json['email']
+    
+    hashed_password = hash_password(password)
+    user = User(username=username, password=hashed_password, email=email)
 
-    user = User(username=username, password=password, email=email)
-
-    question_id = request.json['question']
+    question_id = request.json['userQuestion']
     user_answer = request.json['answer']
     answer = Answer(question_id=question_id, user=user, answer=user_answer)
 
@@ -80,7 +84,7 @@ def login_user():
                         }
         return jsonify(my_response) 
    
-    if password != user.password:
+    if not check_hashed_password(password, user.password):  #if password doesn't match function returns False
         my_response = {
                         'user_id': None,
                         'error': True
@@ -138,7 +142,9 @@ def assign_new_password():
     if result == False:    #if error is false
         user_email = session.get('email')
         user = User.query.filter(User.email == user_email).first()
-        user.password = password
+        hashed_password = hash_password(password)
+        del password
+        user.password = hashed_password
         db.session.commit()
 
     return jsonify({'error': result})
@@ -171,33 +177,11 @@ def show_business_markers():
     coordinates = json.loads(request.args.get('coordinates'))
 
     options = json.loads(request.args.get('categories'))    
-    options_list = options.split('categories=')
-    categories_list = []
-    for option in options_list:
-        if option is not '':
-            categories_list.append(option.rstrip('&'))
+    categories_list = options.split('&categories=')
     radius = categories_list[0].lstrip('points=')
     categories = ','.join(categories_list[1:])
 
     results = get_businesses(coordinates, categories, radius)
-
-    for result in results:
-        if Business.query.filter(Business.business_id == result.get('business_id')).first():
-            continue
-        else:
-            business_id = result.get('business_id')
-            name = result.get('name')
-            coords = result.get('coords')
-            lat = coords['latitude']
-            lng = coords['longitude']
-            business_type = result.get('business_type')
-            business = Business(business_id=business_id,
-                                business_name=name,
-                                business_type=business_type,
-                                latitude=lat,
-                                longitude=lng)
-            db.session.add(business)
-            db.session.commit()    
 
     return jsonify(results)
 

@@ -7,6 +7,7 @@ import server
 from model import db, example_data, connect_to_db
 import json
 
+
 class FlaskTests(TestCase):
 
     def setUp(self):
@@ -28,6 +29,17 @@ class FlaskTests(TestCase):
         db.create_all()
         example_data()
 
+        def _mock_get_businesses(coordinates, categories, radius):
+            """Mock results of get_businesses() function at api.py"""
+            business_list = [{'name': 'test',
+                                'coords': {'latitude': 32,
+                                             'longitude': 120},
+                                'business_id': 1,
+                                'business_type': 'food'
+                                }]
+            return business_list
+
+        server.get_businesses = _mock_get_businesses ### Now get_businesses() will return mock data
 
     def tearDown(self):
         """Do at end of every test."""
@@ -138,6 +150,14 @@ class FlaskTests(TestCase):
 
         self.assertIn(b'<form action="/show-map"', result.data)
         # self.assertNotEqual(sess['user_id'], 1)                   ### How can I test if a session is removed?
+
+    def test_show_markers(self):
+        """Test the /show-markers.json route"""
+        result = self.client.get('/show-markers.json?categories=%22points%3D5000\
+                                    %26categories%3Dfood%22&coordinates=%5B%7B\
+                                    %22lat%22%3A32%2C%22lng%22%3A120%7D%5D')
+
+        self.assertEqual(json.loads(result.data)[0]['name'], 'test')
 
 
 
