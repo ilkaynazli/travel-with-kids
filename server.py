@@ -64,7 +64,7 @@ def get_signup_info():
     db.session.add_all([user, answer])
     db.session.commit()
 
-    return redirect('/')
+    return jsonify({'error': result})
 
 
 @app.route("/login.json", methods=['POST'])    

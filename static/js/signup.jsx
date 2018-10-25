@@ -14,7 +14,6 @@ class SignUp extends React.Component {
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        // this.componentDidMount = this.componentDidMount.bind(this);
     }
 
     checkPassword() {
@@ -60,32 +59,54 @@ class SignUp extends React.Component {
 
     render () {
         const questions = this.state.questions;
-        return (
-            <form onSubmit={this.handleSubmit}>
-                Username*: <input type="text" 
-                                    name="username" 
-                                    value={this.state.username}/><br/>
-                Password*: <input type="password" 
-                                    name="password" 
-                                    value={this.state.password}/><br/>
-                Please use at least one lowercase, one uppercase letter, one number, 
-                and one character (!@#$%^&*(){}[]/?)<br/>
-                Re-enter Password*: <input type="password" 
-                                            name="password2" 
-                                            value={this.state.password2}/><br/>
-                Email*: <input type="text" name="email" value={this.state.email}/><br/>
+        const error = this.state.error;
+        const passwordHasError = this.state.passwordHasError;
+        if (error == false) {
+            return (        
+                    <div>
+                        You have successfully signed up<br/>
+                        <a href="/">Click here to go to homepage</a>
+                    </div>
+                );
+        } else { 
+            return (
+                <div>
+                    {error && alert("Password doesn't fit the requirements. Please try again!")
+                                && this.componentDidUpdate(this.state.error)}
+                    {passwordHasError && 'The passwords do not match! Please try again!'}
+                    <form onSubmit={this.handleSubmit}>
+                        Username*: <input type="text" 
+                                            name="username" 
+                                            value={this.state.username}
+                                            onChange={(event)=>this.handleChange(event)}/><br/>
+                        Password*: <input type="password" 
+                                            name="password" 
+                                            value={this.state.password}
+                                            onChange={(event)=>this.handleChange(event)}/><br/>
+                        Please use at least one lowercase, one uppercase letter, one number, 
+                        and one character (!@#$%^&*(){}[]/?)<br/>
+                        Re-enter Password*: <input type="password" 
+                                                    name="password2" 
+                                                    value={this.state.password2}
+                                                    onChange={(event)=>this.handleChange(event)}/><br/>
+                        Email*: <input type="text" 
+                                        name="email" 
+                                        value={this.state.email}
+                                        onChange={(event)=>this.handleChange(event)}/><br/>
 
-                <select name="userQuestion" value={this.state.value} onChange={this.handleChange}>
-                    {this.componentDidMount()}
-                    
-                    questions.map(question=question.question, id=question['id']) => {<option value={id}>{question}</option>}
-                    
-                </select><br/>
-                Answer*: <input type="text" name="answer" value={this.state.answer}/>
-                <input type="submit" value="Submit"/><br/><br/>
-                *These fields are required!
-            </form>
-        )
+                        <select name="userQuestion" value={this.state.value} onChange={(event)=>this.handleChange(event)}>
+                            {questions.map((question) => <option value={question['id']}>{question['question']}</option>)}
+                        </select><br/>
+
+                        Answer*: <input type="text" 
+                                        name="answer" 
+                                        value={this.state.answer}
+                                        onChange={(event)=>this.handleChange(event)}/>
+                        <input type="submit" value="Submit"/><br/><br/>
+                        *These fields are required!
+                    </form>
+                </div>
+        )}
     }
 }
 
