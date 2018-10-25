@@ -14,6 +14,7 @@ class SignUp extends React.Component {
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.componentDidUpdate = this.componentDidUpdate.bind(this);
     }
 
     checkPassword() {
@@ -46,6 +47,11 @@ class SignUp extends React.Component {
             .catch((error) => console.error(error));
     }
 
+    componentDidUpdate(prevState) {
+        if (this.state.error == true) {
+            this.setState({error: null});
+        }
+    }
 
     handleSubmit(evt) {
         evt.preventDefault();
@@ -94,7 +100,10 @@ class SignUp extends React.Component {
                                         value={this.state.email}
                                         onChange={(event)=>this.handleChange(event)}/><br/>
 
-                        <select name="userQuestion" value={this.state.value} onChange={(event)=>this.handleChange(event)}>
+                        <select name="userQuestion" 
+                                key="userQuestion" 
+                                value={this.state.value} 
+                                onChange={(event)=>this.handleChange(event)}>
                             {questions.map((question) => <option value={question['id']}>{question['question']}</option>)}
                         </select><br/>
 
@@ -110,22 +119,41 @@ class SignUp extends React.Component {
     }
 }
 
-function SignUpButton() {
-    return (
-        <button type='button'>
-            <SignUp />
-        </button>
-    ) 
+class SignUpButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {myClick: false};
+        this.handleClick = this.handleClick.bind(this);
+        this.componentDidUpdate = this.componentDidUpdate.bind(this);
+    }
+
+    handleClick(evt) {
+        evt.preventDefault();
+        console.log('button pressed');
+        this.setState({myClick: true});
+    }
+
+    componentDidUpdate(prevState) {
+        if (this.state.myClick == true) {
+            this.setState({myClick: false});
+        }
+    }
+
+    render() { 
+        const myClick = this.state.myClick;
+        return (
+            <div>
+            <button type='button' 
+                    onClick={this.handleClick}>
+                {myClick && <SignUp /> && 
+                    this.componentDidUpdate(myClick)}
+                Sign Up
+            </button>
+            </div>
+        ) 
+    }
 }
 
 ReactDOM.render(
     <SignUpButton />, document.getElementById('signup')
 );
-
-//                     <option value='1'>What is your favorite color?</option>
-//                     <option value='2'>What was the name of your first teacher?</option>
-//                     <option value='3'>What was the model of your first car?</option>
-//                     <option value='4'>What was your favorite toy as a child?</option>
-//                     <option value='5'>Where is your favorite vacation destination?</option>
-//                     <option value='6'>What was the name of your first pet?</option>
-//             
