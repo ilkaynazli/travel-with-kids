@@ -47,7 +47,7 @@ def get_signup_info():
     """Add user info to database"""
     password = request.json['password']   
     result = test_the_password(password)
-
+    print('\n\n\n\n\n', request.json, '\n\n\n\n\n')
     if result:
         return jsonify({'error': result})
 

@@ -99,13 +99,13 @@ class SignUp extends React.Component {
                                         value={this.state.email}
                                         onChange={(event)=>this.handleChange(event)}/><br/>
 
-                        <select name="userQuestion" 
-                                key={questions.map((question) => {question['id']})}
-                                value={this.state.value}
+                        <select name="userQuestion"                                 
+                                value={this.state.userQuestion}
                                 onChange={(event)=>this.handleChange(event)}>
                             {questions.map((question) => 
-                                <option value={question['id']}
-                                        key={question['id']}>{question['question']}
+                                <option value={question['id']} 
+                                        key={question['id']}>
+                                            {question['question']}
                                         </option>)}
                         </select><br/>
 
