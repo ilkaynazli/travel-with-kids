@@ -4,7 +4,7 @@ from unittest import TestCase
 import unittest
 
 import server
-from model import db, example_data, connect_to_db
+from model import db, example_data, connect_to_db, Business
 import json
 import functions
 import api
@@ -42,6 +42,40 @@ class FlaskTests(TestCase):
             return business_list
 
         server.get_businesses = _mock_get_businesses ### Now get_businesses() will return mock data
+
+        def _mock_request_get(YELP_SEARCH_URL, headers, params):
+            """Mock results of yelp api request"""
+            class _mock_result:
+                """Mock result class"""
+                def json(self):
+                    """Mock json() method for result class"""
+                    return {'businesses': {'id': 'BgKmy9wX5GH6w-Llk5LW_Q', 
+                        'alias': 'jacobs-farms-san-jose-2', 
+                        'name': 'Jacobs Farms', 
+                        'image_url': 'https://s3-media3.fl.yelpcdn.com/bphoto/AqEVq-1C42yPDhTJe0RD7A/o.jpg', 
+                        'is_closed': False, 
+                        'url': 'https://www.yelp.com/biz/jacobs-farms-san-jose-2?adjust_creative=vxvAyk47rIbZXQHuMg79ww&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=vxvAyk47rIbZXQHuMg79ww', 
+                        'review_count': 19, 
+                        'categories': [{'alias': 'pumpkinpatches', 'title': 'Pumpkin Patches'}, 
+                                        {'alias': 'markets', 'title': 'Fruits & Veggies'}, 
+                                        {'alias': 'pickyourown', 'title': 'Pick Your Own Farms'}], 
+                        'rating': 4.5, 
+                        'coordinates': {'latitude': 37.2595209380423, 
+                                        'longitude': -121.831776984036}, 
+                        'transactions': [], 
+                        'price': '$$', 
+                        'location': {'address1': '5285 Snell Ave', 
+                                        'address2': '', 
+                                        'address3': '', 
+                                        'city': 'San Jose', 
+                                        'zip_code': '95136', 
+                                        'country': 'US', 
+                                        'state': 'CA', 
+                                        'display_address': ['5285 Snell Ave', 'San Jose, CA 95136']}, 
+                        'phone': '+14083359136', 
+                        'display_phone': '(408) 335-9136', 
+                        'distance': 10673.690101679851}}
+        api.yelp_api_call = _mock_result.json()
 
     def tearDown(self):
         """Do at end of every test."""
@@ -85,7 +119,7 @@ class FlaskTests(TestCase):
                                         "password": "123qwE/"}),
                                   content_type='application/json')
 
-        self.assertIs(json.loads(result.data)['error'], True)
+        self.assertIs(json.loads(result.data)['user_id'], None)
 
 
     def test_forgot_password(self):
@@ -171,10 +205,172 @@ class FlaskTests(TestCase):
         self.assertIn(b"<script src='/static/js/map.js'></script>", result.data)
 
 
-    # def test_signup(self):
-    #     """test signup page"""
+    def test_display_signup(self):
+        """test display signup page"""
 
-    #     pass
+        result = self.client.post('/show-signup-button.json',
+                                    content_type='application/json')
+        question_id = json.loads(result.data)['questions'][0]['id']
+        self.assertEqual(question_id, 1)
+
+    def test_signup(self):
+        """test signup page"""
+        result = self.client.post('/signup.json',
+                                    data=json.dumps({'username':'ilkayn', 
+                                                     'password':'123Qwe/',
+                                                     'email':'ilkay@ilkay.com',
+                                                     'userQuestion': 1,
+                                                     'answer':'pink'}),
+                                    content_type='application/json')
+        
+        self.assertEqual(json.loads(result.data)['error'], False)
+
+    def test_find_the_category_of_business(self):
+        """test if the returned value is correct"""
+        categories = [{'alias':'parks'},
+                      {'alias': 'churches'},
+                      {'alias': 'playgrounds'},
+                      {'alias': 'zoos'}]
+        self.assertEqual(api.find_the_category_of_business(categories), 'plygr')
+
+    def test_find_the_category_of_business_not_there(self):
+        """test if the returned value is correct"""
+        categories = [{'alias':'daycares'},
+                      {'alias': 'schools'}]
+        self.assertEqual(api.find_the_category_of_business(categories), '')
+
+    def test_add_business_info_to_list(self):
+        """Test if the function can successfully add a business dictionary to a list"""
+
+        businesses = [ {'id': 'BgKmy9wX5GH6w-Llk5LW_Q', 
+                        'alias': 'jacobs-farms-san-jose-2', 
+                        'name': 'Jacobs Farms', 
+                        'image_url': 'https://s3-media3.fl.yelpcdn.com/bphoto/AqEVq-1C42yPDhTJe0RD7A/o.jpg', 
+                        'is_closed': False, 
+                        'url': 'https://www.yelp.com/biz/jacobs-farms-san-jose-2?adjust_creative=vxvAyk47rIbZXQHuMg79ww&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=vxvAyk47rIbZXQHuMg79ww', 
+                        'review_count': 19, 
+                        'categories': [{'alias': 'pumpkinpatches', 'title': 'Pumpkin Patches'}, 
+                                        {'alias': 'markets', 'title': 'Fruits & Veggies'}, 
+                                        {'alias': 'pickyourown', 'title': 'Pick Your Own Farms'}], 
+                        'rating': 4.5, 
+                        'coordinates': {'latitude': 37.2595209380423, 
+                                        'longitude': -121.831776984036}, 
+                        'transactions': [], 
+                        'price': '$$', 
+                        'location': {'address1': '5285 Snell Ave', 
+                                        'address2': '', 
+                                        'address3': '', 
+                                        'city': 'San Jose', 
+                                        'zip_code': '95136', 
+                                        'country': 'US', 
+                                        'state': 'CA', 
+                                        'display_address': ['5285 Snell Ave', 'San Jose, CA 95136']}, 
+                        'phone': '+14083359136', 
+                        'display_phone': '(408) 335-9136', 
+                        'distance': 10673.690101679851}, 
+                       {'id': 'GLW_lWB5K-4eHX-2RfzJ5g', 
+                        'alias': 'davis-poultry-farms-gilroy-2', 
+                        'name': 'Davis Poultry Farms', 
+                        'image_url': 'https://s3-media1.fl.yelpcdn.com/bphoto/iRY9a_oHXJtLi1W8NDrSbQ/o.jpg', 
+                        'is_closed': False, 
+                        'url': 'https://www.yelp.com/biz/davis-poultry-farms-gilroy-2?adjust_creative=vxvAyk47rIbZXQHuMg79ww&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=vxvAyk47rIbZXQHuMg79ww', 
+                        'review_count': 15, 
+                        'categories': [{'alias': 'ranches', 'title': 'Ranches'}], 
+                        'rating': 4.5, 
+                        'coordinates': {'latitude': 37.0531099, 
+                                        'longitude': -121.59012}, 
+                        'transactions': [], 
+                        'location': {'address1': '155 Santa Clara Ave', 
+                                        'address2': '',
+                                        'address3': '', 
+                                        'city': 'Gilroy', 
+                                        'zip_code': '95020', 
+                                        'country': 'US', 
+                                        'state': 'CA', 
+                                        'display_address': ['155 Santa Clara Ave', 'Gilroy, CA 95020']}, 
+                        'phone': '+14088424894', 
+                        'display_phone': '(408) 842-4894', 
+                        'distance': 21479.493719243506}, 
+                       {'id': 'NdLOM_QH6POZ9cd2IH6LTA', 
+                        'alias': 'bernal-gulnac-joice-ranch-san-jose', 
+                        'name': 'Bernal Gulnac Joice Ranch', 
+                        'image_url': 'https://s3-media4.fl.yelpcdn.com/bphoto/2z-J9VXWmbx29lmcrDB7oQ/o.jpg', 
+                        'is_closed': False, 
+                        'url': 'https://www.yelp.com/biz/bernal-gulnac-joice-ranch-san-jose?adjust_creative=vxvAyk47rIbZXQHuMg79ww&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=vxvAyk47rIbZXQHuMg79ww', 
+                        'review_count': 2, 
+                        'categories': [{'alias': 'ranches', 'title': 'Ranches'}], 
+                        'rating': 4.5, 
+                        'coordinates': {'latitude': 37.2263304364867, 
+                                        'longitude': -121.798300668597}, 
+                        'transactions': [], 
+                        'location': {'address1': '372 Manila Dr', 
+                                     'address2': '', 
+                                     'address3': '', 
+                                     'city': 'San Jose', 
+                                     'zip_code': '95119', 
+                                     'country': 'US', 
+                                     'state': 'CA', 
+                                     'display_address': ['372 Manila Dr', 'San Jose, CA 95119']}, 
+                        'phone': '+14082265453', 
+                        'display_phone': '(408) 226-5453',
+                        'distance': 6537.030263122577}]
+        business_list = []
+        api.add_business_info_to_list(business_list, businesses)
+        self.assertEqual(business_list[2]['business_id'], 'NdLOM_QH6POZ9cd2IH6LTA')
+
+    def test_add_business_info_to_list_wrong(self):
+        """Test if the function can successfully add a business dictionary to a list"""
+
+        businesses = [ {'id': 'BgKmy9wX5GH6w-Llk5LW_Q', 
+                        'alias': 'jacobs-farms-san-jose-2', 
+                        'name': 'Jacobs Farms', 
+                        'image_url': 'https://s3-media3.fl.yelpcdn.com/bphoto/AqEVq-1C42yPDhTJe0RD7A/o.jpg', 
+                        'is_closed': False, 
+                        'url': 'https://www.yelp.com/biz/jacobs-farms-san-jose-2?adjust_creative=vxvAyk47rIbZXQHuMg79ww&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=vxvAyk47rIbZXQHuMg79ww', 
+                        'review_count': 19, 
+                        'categories': [{'alias': 'pumpkinpatches', 'title': 'Pumpkin Patches'}, 
+                                        {'alias': 'markets', 'title': 'Fruits & Veggies'}, 
+                                        {'alias': 'pickyourown', 'title': 'Pick Your Own Farms'}], 
+                        'rating': 4.5, 
+                        'coordinates': {'latitude': 37.2595209380423, 
+                                        'longitude': -121.831776984036}, 
+                        'transactions': [], 
+                        'price': '$$', 
+                        'location': {'address1': '5285 Snell Ave', 
+                                        'address2': '', 
+                                        'address3': '', 
+                                        'city': 'San Jose', 
+                                        'zip_code': '95136', 
+                                        'country': 'US', 
+                                        'state': 'CA', 
+                                        'display_address': ['5285 Snell Ave', 'San Jose, CA 95136']}, 
+                        'phone': '+14083359136', 
+                        'display_phone': '(408) 335-9136', 
+                        'distance': 10673.690101679851}]
+        business_list = []
+        api.add_business_info_to_list(business_list, businesses)
+        self.assertNotEqual(business_list[0]['name'], 'Davis Poultry Farms')
+
+    def test_get_businesses(self):
+        """Test get businesses from yelp api"""
+        coordinates = {'lat': 37.2595209380423, 
+                        'lng': -121.831776984036}
+        categories = 'markets, playgrounds, icecream'
+        radius = 12500
+        my_result = api.get_businesses(coordinates, categories, radius)[0]['name']
+        self.assertEqual(my_result, 'Jacobs Farms')
+
+    # def test_business_info_page(self):
+    #     """Test the display business info page"""
+    #     result = self.client.get('/business/<business_id>')
+
+    #     self.assertIn(b"<div>Address:", result.data)
+
+    # def test_user_info_page(self):
+    #     """Test the display user info page"""
+    #     result = self.client.get('/users/<int:user_id>')
+
+    #     self.assertIn(b'<a href="/">Click here to return to homepage</a>', result.data)
 
 
 class MyFunctionsUnitTests(TestCase):
@@ -205,33 +401,10 @@ class MyFunctionsUnitTests(TestCase):
         self.assertEqual(functions.test_the_password('aBcDefg123'), True)
 
 
-class MyApiUnitTests(TestCase):
-    """Test the functions in api.py"""
-
-    def test_find_the_category_of_business(self):
-        """test if the returned value is correct"""
-        categories = [{'alias':'parks'},
-                      {'alias': 'churches'},
-                      {'alias': 'playgrounds'},
-                      {'alias': 'zoos'}]
-        self.assertEqual(api.find_the_category_of_business(categories), 'plygr')
-
-    def test_find_the_category_of_business_not_there(self):
-        """test if the returned value is correct"""
-        categories = [{'alias':'daycares'},
-                      {'alias': 'schools'}]
-        self.assertEqual(api.find_the_category_of_business(categories), '')
-
-    def test_add_business_info_to_list(self):
-        """Test if the function can successfully add a business dictionary to a list"""
-
-        businesses = [{'name': 'Wafflecomb', 
-                        'coordinates': {'latitude': 34.4212832612959, 
-                                        'longitude': -118.541697375972}, 
-                        'business_id': 'zG8hviVOWtoLQe1ehYU8og', 
-                        'business_type': 'icecr'}]
 
 
+
+ 
 if __name__ == "__main__":
     unittest.main()
 

@@ -26,26 +26,29 @@ BUSINESS_TYPES = {
 def get_businesses(coordinates, categories, radius):
     """Get a list of businesses from YELP API"""
     business_list = []
-    for coordinate in coordinates:
-        latitude = coordinate['lat']
-        longitude = coordinate['lng']
 
-        payload = {'latitude': latitude,
-                    'longitude': longitude,
-                    'categories': categories,
-                    'attributes': 'good_for_kids',
-                    'radius': radius
-                    }
-        header = {'Authorization': f"Bearer {YELP}"}
-        result = requests.get(YELP_SEARCH_URL, 
-                            headers=header,
-                             params=payload)
-        import pdb; pdb.set_trace()
-        my_results = result.json()
-
+    for coordinate in coordinates:   
+        my_results = yelp_api_call(coordinate, categories, radius)
         add_business_info_to_list(business_list, my_results['businesses'])
                                 
     return business_list
+
+
+def yelp_api_call(coordinate, categories, radius):
+    """Yelp API call for a single coordinate data from google maps"""
+    latitude = coordinate['lat']
+    longitude = coordinate['lng']
+    payload = {'latitude': latitude,
+                'longitude': longitude,
+                'categories': categories,
+                'attributes': 'good_for_kids',
+                'radius': radius
+                }
+    header = {'Authorization': f"Bearer {YELP}"}
+    result = requests.get(YELP_SEARCH_URL, 
+                        headers=header,
+                         params=payload)
+    return result.json()
 
 
 def get_business_info(business_id):
@@ -54,7 +57,6 @@ def get_business_info(business_id):
     header = {'Authorization': f"Bearer {YELP}"}
     business = requests.get(f"{YELP_BUSINESS_URL}{business_id}",
                                         headers=header)
-
     business = business.json()
     business_info = {
         'name': business['name'],
@@ -68,8 +70,6 @@ def get_business_info(business_id):
 
 def add_business_info_to_list(business_list, businesses):
     """List of coordinates, name, business id and type dictionaries"""
-
-    print('\n\n\n\n', businesses, '\n\n\n\n')
 
     for business in businesses:
         latitude = business['coordinates']['latitude']

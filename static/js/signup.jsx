@@ -41,7 +41,6 @@ class SignUp extends React.Component {
     componentDidMount(evt) {
         postData('/show-signup-button.json', this.state)
             .then((response) => {
-                    console.log(response);
                     this.setState({questions: response['questions']});                
                 })
             .catch((error) => console.error(error));
@@ -57,7 +56,6 @@ class SignUp extends React.Component {
         evt.preventDefault();
         postData('/signup.json', this.state)
             .then((response) => {
-                    console.log('this is signup handleSubmit ' + response);
                     this.setState({error: response['error']});                
                 })
             .catch((error) => console.error(error));
@@ -130,7 +128,6 @@ class SignUpButton extends React.Component {
 
     handleClick(evt) {
         evt.preventDefault();
-        console.log('this is signUpButton: button pressed');
         this.setState({myClick: true});
     }
 

@@ -1,5 +1,4 @@
 function postData(url='', data={}) {
-            console.log('this is postData: ' + JSON.stringify(data));
             return fetch(url, {
                 method: 'POST',
                 headers: {
