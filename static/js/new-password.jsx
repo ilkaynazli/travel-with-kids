@@ -69,8 +69,7 @@ class NewPassword extends React.Component {
         } else {
             return (
                 <div>
-                {error && alert("Password doesn't fit the requirements. Please try again!")
-                        && this.componentDidUpdate(this.state.error)}
+                {error && alert("Password doesn't fit the requirements. Please try again!")}
                 {passwordHasError && 'The passwords do not match! Please try again!'}
                 <br/>
                 <form onSubmit={this.handleSubmit}>

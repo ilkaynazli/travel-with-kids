@@ -1,6 +1,7 @@
 """Models the database for the Roadtrips with Kids project"""
 
 from flask_sqlalchemy import SQLAlchemy  
+from passlib.hash import argon2
 
 """Import SQLAlchemy object from flask_sqlalchemy library and make the 
     connection to PostgreSQL"""
@@ -259,13 +260,13 @@ def example_data():
 
     #add user, business, comment, rating, tips, question, answer
     sample_user = User(username='ilkay', 
-                        password='123Qwe/',
+                        password=argon2.hash('123Qwe/'),
                         email='ilkay@ilkay.com')
-    sample_business = Business(business_id=1, 
-                                business_name='test', 
-                                business_type='food',
-                                latitude=32,
-                                longitude=120)
+    sample_business = Business(business_id='IBZbaTy-_Ds7GITu4QimHQ', 
+                                business_name='Wildhaven Ranch', 
+                                business_type='zoo',
+                                latitude=34.256787,
+                                longitude=-117.161389)
     sample_favorite = Favorite(user=sample_user,
                                 business=sample_business)
     sample_comment = Comment(user=sample_user, 

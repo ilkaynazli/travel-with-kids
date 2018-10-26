@@ -57,7 +57,7 @@ class SignUp extends React.Component {
         evt.preventDefault();
         postData('/signup.json', this.state)
             .then((response) => {
-                    console.log(response);
+                    console.log('this is signup handleSubmit ' + response);
                     this.setState({error: response['error']});                
                 })
             .catch((error) => console.error(error));
@@ -77,8 +77,7 @@ class SignUp extends React.Component {
         } else { 
             return (
                 <div>
-                    {error && alert("Password doesn't fit the requirements. Please try again!")
-                                && this.componentDidUpdate(this.state.error)}
+                    {error && alert("Password doesn't fit the requirements. Please try again!")}
                     {passwordHasError && 'The passwords do not match! Please try again!'}
                     <form onSubmit={this.handleSubmit}>
                         Username*: <input type="text" 
@@ -101,10 +100,13 @@ class SignUp extends React.Component {
                                         onChange={(event)=>this.handleChange(event)}/><br/>
 
                         <select name="userQuestion" 
-                                key="userQuestion" 
-                                value={this.state.value} 
+                                key={questions.map((question) => {question['id']})}
+                                value={this.state.value}
                                 onChange={(event)=>this.handleChange(event)}>
-                            {questions.map((question) => <option value={question['id']}>{question['question']}</option>)}
+                            {questions.map((question) => 
+                                <option value={question['id']}
+                                        key={question['id']}>{question['question']}
+                                        </option>)}
                         </select><br/>
 
                         Answer*: <input type="text" 
@@ -124,35 +126,27 @@ class SignUpButton extends React.Component {
         super(props);
         this.state = {myClick: false};
         this.handleClick = this.handleClick.bind(this);
-        this.componentDidUpdate = this.componentDidUpdate.bind(this);
     }
 
     handleClick(evt) {
         evt.preventDefault();
-        console.log('button pressed');
+        console.log('this is signUpButton: button pressed');
         this.setState({myClick: true});
-    }
-
-    componentDidUpdate(prevState) {
-        if (this.state.myClick == true) {
-            this.setState({myClick: false});
-        }
     }
 
     render() { 
         const myClick = this.state.myClick;
         return (
             <div>
-            <button type='button' 
-                    onClick={this.handleClick}>
-                {myClick && <SignUp /> && 
-                    this.componentDidUpdate(myClick)}
-                Sign Up
-            </button>
+            {myClick ? <SignUp /> : <button type='button' 
+                                            onClick={this.handleClick}>                
+                                    Sign Up
+                                </button>}           
             </div>
         ) 
     }
 }
+
 
 ReactDOM.render(
     <SignUpButton />, document.getElementById('signup')

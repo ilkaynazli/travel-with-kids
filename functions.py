@@ -1,4 +1,3 @@
-from model import Business
 from passlib.hash import argon2
 
 def test_the_password(password):
@@ -21,22 +20,6 @@ def test_the_password(password):
 
     return False 
 
-def add_business_to_database(result):
-    """Add the business info to database"""
-    if Business.query.filter(Business.business_id != result.get('business_id')).first():
-        business_id = result.get('business_id')
-        name = result.get('name')
-        coords = result.get('coords')
-        lat = coords['latitude']
-        lng = coords['longitude']
-        business_type = result.get('business_type')
-        business = Business(business_id=business_id,
-                            business_name=name,
-                            business_type=business_type,
-                            latitude=lat,
-                            longitude=lng)
-        db.session.add(business)
-        db.session.commit()    
 
 def hash_password(password):
     """hash the password before adding to database"""

@@ -1,11 +1,27 @@
 import os
 import requests
 import json
-from functions import add_business_to_database
+from model import Business, db
+
 
 YELP = os.environ['YELP_API']
 YELP_SEARCH_URL = 'https://api.yelp.com/v3/businesses/search'
 YELP_BUSINESS_URL = 'https://api.yelp.com/v3/businesses/'
+BUSINESS_TYPES = {
+                    'breakfast_brunch': 'br_br',
+                    'bbq':'bbq',
+                    'burgers': 'brgr',
+                    'pizza': 'pizza',
+                    'sandwiches': 'sndwc',
+                    'icecream': 'icecr',
+                    'playgrounds': 'plygr',
+                    'indoor_playcenter': 'inply',
+                    'carousels': 'crsl',
+                    'farms': 'farm',
+                    'zoos': 'zoo',
+                    'aquariums': 'aquar'
+                    }
+
 
 def get_businesses(coordinates, categories, radius):
     """Get a list of businesses from YELP API"""
@@ -24,46 +40,11 @@ def get_businesses(coordinates, categories, radius):
         result = requests.get(YELP_SEARCH_URL, 
                             headers=header,
                              params=payload)
+        import pdb; pdb.set_trace()
         my_results = result.json()
-        businesses = my_results['businesses']
 
-        for business in businesses:
-            latitude = business['coordinates']['latitude']
-            longitude = business['coordinates']['longitude']
-            name = business['name']
-            business_id = business['id']
-            business_types = {
-                        'breakfast_brunch': 'br_br',
-                        'bbq':'bbq',
-                        'burgers': 'brgr',
-                        'pizza': 'pizza',
-                        'sandwiches': 'sndwc',
-                        'icecream': 'icecr',
-                        'playgrounds': 'plygr',
-                        'indoor_playcenter': 'inply',
-                        'carousels': 'crsl',
-                        'farms': 'farm',
-                        'zoos': 'zoo',
-                        'aquariums': 'aquar'
-                        }
-            categories_list = business['categories']
-            for category in categories_list:
-                alias = category['alias']
-                if alias in business_types:
-                    business_type = business_types[alias]
-                    break
-                else:
-                    business_type = ''
-            my_business = {'name': name,
-                                'coords': {'latitude': latitude,
-                                            'longitude': longitude},
-                                'business_id': business_id,
-                                'business_type': business_type
-                                }
-
-            add_business_to_database(my_business)
-            business_list.append(my_business)
-
+        add_business_info_to_list(business_list, my_results['businesses'])
+                                
     return business_list
 
 
@@ -71,12 +52,10 @@ def get_business_info(business_id):
     """Get info on business given its YELP id"""
 
     header = {'Authorization': f"Bearer {YELP}"}
-
     business = requests.get(f"{YELP_BUSINESS_URL}{business_id}",
                                         headers=header)
 
     business = business.json()
-
     business_info = {
         'name': business['name'],
         'phone': business['phone'],
@@ -84,5 +63,52 @@ def get_business_info(business_id):
         'photos': business['photos'],
         'address': " ".join(business['location']['display_address'])
     } 
-
     return business_info
+
+
+def add_business_info_to_list(business_list, businesses):
+    """List of coordinates, name, business id and type dictionaries"""
+
+    print('\n\n\n\n', businesses, '\n\n\n\n')
+
+    for business in businesses:
+        latitude = business['coordinates']['latitude']
+        longitude = business['coordinates']['longitude']
+        name = business['name']
+        business_id = business['id']
+        categories_list = business['categories']
+        business_type = find_the_category_of_business(categories_list)
+        my_business = {'name': name,
+                        'coords': {'latitude': latitude,
+                                    'longitude': longitude},
+                        'business_id': business_id,
+                        'business_type': business_type
+                        }
+
+        if Business.query.filter(Business.business_id == my_business.get('business_id')).first() == None:
+            add_business_to_database(business_id, name, business_type, latitude, longitude)
+
+        business_list.append(my_business)
+
+
+def find_the_category_of_business(categories):
+    """Find the category of the business and return its type"""
+
+    for category in categories:
+        alias = category['alias']
+        if alias in BUSINESS_TYPES:
+            business_type = BUSINESS_TYPES[alias]
+            break
+        else:
+            business_type = ''
+    return business_type
+
+def add_business_to_database(business_id, name, business_type, latitude, longitude):
+    """Add business to the database"""
+    business = Business(business_id=business_id,
+                                business_name=name,
+                                business_type=business_type,
+                                latitude=latitude,
+                                longitude=longitude)
+    db.session.add(business)
+    db.session.commit()  
