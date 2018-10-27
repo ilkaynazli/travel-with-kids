@@ -8,6 +8,7 @@ from model import db, example_data, connect_to_db, Business
 import json
 import functions
 import api
+from api import YELP_SEARCH_URL, YELP_BUSINESS_URL
 
 
 class FlaskTests(TestCase):
@@ -43,6 +44,8 @@ class FlaskTests(TestCase):
 
         server.get_businesses = _mock_get_businesses ### Now get_businesses() will return mock data
 
+        self.old_api = api.yelp_api_call
+
         def _mock_yelp_api_call(coordinate, categories, radius):
             """Mock results of yelp api call at api.py"""
             return {'businesses':[ {'id': 'BgKmy9wX5GH6w-Llk5LW_Q', 
@@ -76,64 +79,13 @@ class FlaskTests(TestCase):
         api.yelp_api_call = _mock_yelp_api_call
 
 
-        def _mock_request_get(self, YELP_SEARCH_URL, headers, params):
-            """Mock yelp api request for business search"""
-            class MockResult:
-                """Mock result of api request"""
-                def json(self):
-                    return {'businesses':[{'id': 'GLW_lWB5K-4eHX-2RfzJ5g', 
-                                        'alias': 'davis-poultry-farms-gilroy-2', 
-                                        'name': 'Davis Poultry Farms', 
-                                        'image_url': 'https://s3-media1.fl.yelpcdn.com/bphoto/iRY9a_oHXJtLi1W8NDrSbQ/o.jpg', 
-                                        'is_closed': False, 
-                                        'url': 'https://www.yelp.com/biz/davis-poultry-farms-gilroy-2?adjust_creative=vxvAyk47rIbZXQHuMg79ww&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=vxvAyk47rIbZXQHuMg79ww', 
-                                        'review_count': 15, 
-                                        'categories': [{'alias': 'ranches', 'title': 'Ranches'}], 
-                                        'rating': 4.5, 
-                                        'coordinates': {'latitude': 37.0531099, 
-                                                        'longitude': -121.59012}, 
-                                        'transactions': [], 
-                                        'location': {'address1': '155 Santa Clara Ave', 
-                                                        'address2': '',
-                                                        'address3': '', 
-                                                        'city': 'Gilroy', 
-                                                        'zip_code': '95020', 
-                                                        'country': 'US', 
-                                                        'state': 'CA', 
-                                                        'display_address': ['155 Santa Clara Ave', 'Gilroy, CA 95020']}, 
-                                        'phone': '+14088424894', 
-                                        'display_phone': '(408) 842-4894', 
-                                        'distance': 21479.493719243506}, ]}
-            my_result = MockResult()
-            return my_result
-
-        api.requests.get = _mock_request_get
-
-    def test_yelp_api_call(self):
-        """Test the yelp api call function"""
-        coordinate = {'lat': 37.2595209380423, 
-                      'lng': -121.831776984036}
-        categories = 'markets, playgrounds, icecream, ranches'
-        radius = 12500
-        test_result = api.yelp_api_call(coordinate, categories, radius)
-        self.assertEqual(test_result.json()['businesses'][0]['name'],'Davis Poultry Farms')
-
-
     def tearDown(self):
         """Do at end of every test."""
 
+        api.yelp_api_call = self.old_api
+
         db.session.close()
         db.drop_all()
-
-
-    def test_get_businesses(self):
-        """Test get businesses from yelp api"""
-        coordinates = [{'lat': 37.2595209380423, 
-                        'lng': -121.831776984036}]
-        categories = 'markets, playgrounds, icecream'
-        radius = 12500
-        my_result = api.get_businesses(coordinates, categories, radius)[0]['name']
-        self.assertEqual(my_result, 'Jacobs Farms')
 
 
     def test_homepage(self):          #have to change this later
@@ -405,6 +357,15 @@ class FlaskTests(TestCase):
         self.assertNotEqual(business_list[0]['name'], 'Davis Poultry Farms')
 
     
+    def test_get_businesses(self):
+        """Test get businesses from yelp api"""
+        coordinates = [{'lat': 37.2595209380423, 
+                        'lng': -121.831776984036}]
+        categories = 'markets, playgrounds, icecream'
+        radius = 12500
+        my_result = api.get_businesses(coordinates, categories, radius)[0]['name']
+        self.assertEqual(my_result, 'Jacobs Farms')
+
 
     def test_business_info_page(self):
         """Test the display business info page"""
@@ -447,21 +408,67 @@ class MyFunctionsUnitTests(TestCase):
         self.assertEqual(functions.test_the_password('aBcDefg123'), True)
 
 
+class ApiCallTestUnitTests(TestCase):
+    """Test that mocks yelp api call"""
+    def setUp(self):
+        """Stuff to do before every test."""
+
+        self.client = server.app.test_client()
+        server.app.config['TESTING'] = True
+        server.app.config['SECRET_KEY'] = 'key'
+
+
+        def _mock_request_get(YELP_SEARCH_URL, headers, params):
+            """Mock yelp api request for business search"""
+            class MockResult:
+                """Mock result of api request"""
+                def json(self):
+                    return {'businesses':[{'id': 'GLW_lWB5K-4eHX-2RfzJ5g', 
+                                        'alias': 'davis-poultry-farms-gilroy-10', 
+                                        'name': 'Davis Poultry Farms', 
+                                        'image_url': 'https://s3-media1.fl.yelpcdn.com/bphoto/iRY9a_oHXJtLi1W8NDrSbQ/o.jpg', 
+                                        'is_closed': False, 
+                                        'url': 'https://www.yelp.com/biz/davis-poultry-farms-gilroy-2?adjust_creative=vxvAyk47rIbZXQHuMg79ww&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=vxvAyk47rIbZXQHuMg79ww', 
+                                        'review_count': 15, 
+                                        'categories': [{'alias': 'ranches', 'title': 'Ranches'}], 
+                                        'rating': 4.5, 
+                                        'coordinates': {'latitude': 37.0531099, 
+                                                        'longitude': -121.59012}, 
+                                        'transactions': [], 
+                                        'location': {'address1': '155 Santa Clara Ave', 
+                                                        'address2': '',
+                                                        'address3': '', 
+                                                        'city': 'Gilroy', 
+                                                        'zip_code': '95020', 
+                                                        'country': 'US', 
+                                                        'state': 'CA', 
+                                                        'display_address': ['155 Santa Clara Ave', 'Gilroy, CA 95020']}, 
+                                        'phone': '+14088424894', 
+                                        'display_phone': '(408) 842-4894', 
+                                        'distance': 21479.493719243506}]}
+            my_result = MockResult()
+            return my_result
+
+        api.requests.get = _mock_request_get
+
+
+    def test_yelp_api_call(self):
+        """Test the yelp api call function"""
+        coordinate = {'lat': 37.2595209380423, 
+                      'lng': -121.831776984036}
+        categories = 'markets, playgrounds, icecream, ranches'
+        radius = 12500
+        url = YELP_SEARCH_URL
+        # import pdb; pdb.set_trace()
+        test_result = api.yelp_api_call(coordinate, categories, radius)
+        self.assertEqual(test_result['businesses'][0]['name'],'Davis Poultry Farms')
 
 
 
- 
 if __name__ == "__main__":
     unittest.main()
 
 
 
- # {'name': 'Wafflecomb', 'coords': {'latitude': 34.4212832612959, 'longitude': -118.541697375972}, 'business_id': 'zG8hviVOWtoLQe1ehYU8og', 'business_type': 'icecr'}
 
 
-
-# result=request to yelp
- # result = <Response [200]>
-# {'id': 'BgKmy9wX5GH6w-Llk5LW_Q', 'alias': 'jacobs-farms-san-jose-2', 'name': 'Jacobs Farms', 'image_url': 'https://s3-media3.fl.yelpcdn.com/bphoto/AqEVq-1C42yPDhTJe0RD7A/o.jpg', 'is_closed': False, 'url': 'https://www.yelp.com/biz/jacobs-farms-san-jose-2?adjust_creative=vxvAyk47rIbZXQHuMg79ww&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=vxvAyk47rIbZXQHuMg79ww', 'review_count': 19, 'categories': [{'alias': 'pumpkinpatches', 'title': 'Pumpkin Patches'}, {'alias': 'markets', 'title': 'Fruits & Veggies'}, {'alias': 'pickyourown', 'title': 'Pick Your Own Farms'}], 'rating': 4.5, 'coordinates': {'latitude': 37.2595209380423, 'longitude': -121.831776984036}, 'transactions': [], 'price': '$$', 'location': {'address1': '5285 Snell Ave', 'address2': '', 'address3': '', 'city': 'San Jose', 'zip_code': '95136', 'country': 'US', 'state': 'CA', 'display_address': ['5285 Snell Ave', 'San Jose, CA 95136']}, 'phone': '+14083359136', 'display_phone': '(408) 335-9136', 'distance': 10673.690101679851}, 
-# {'id': 'GLW_lWB5K-4eHX-2RfzJ5g', 'alias': 'davis-poultry-farms-gilroy-2', 'name': 'Davis Poultry Farms', 'image_url': 'https://s3-media1.fl.yelpcdn.com/bphoto/iRY9a_oHXJtLi1W8NDrSbQ/o.jpg', 'is_closed': False, 'url': 'https://www.yelp.com/biz/davis-poultry-farms-gilroy-2?adjust_creative=vxvAyk47rIbZXQHuMg79ww&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=vxvAyk47rIbZXQHuMg79ww', 'review_count': 15, 'categories': [{'alias': 'ranches', 'title': 'Ranches'}], 'rating': 4.5, 'coordinates': {'latitude': 37.0531099, 'longitude': -121.59012}, 'transactions': [], 'location': {'address1': '155 Santa Clara Ave', 'address2': '', 'address3': '', 'city': 'Gilroy', 'zip_code': '95020', 'country': 'US', 'state': 'CA', 'display_address': ['155 Santa Clara Ave', 'Gilroy, CA 95020']}, 'phone': '+14088424894', 'display_phone': '(408) 842-4894', 'distance': 21479.493719243506}, 
-# {'id': 'NdLOM_QH6POZ9cd2IH6LTA', 'alias': 'bernal-gulnac-joice-ranch-san-jose', 'name': 'Bernal Gulnac Joice Ranch', 'image_url': 'https://s3-media4.fl.yelpcdn.com/bphoto/2z-J9VXWmbx29lmcrDB7oQ/o.jpg', 'is_closed': False, 'url': 'https://www.yelp.com/biz/bernal-gulnac-joice-ranch-san-jose?adjust_creative=vxvAyk47rIbZXQHuMg79ww&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_search&utm_source=vxvAyk47rIbZXQHuMg79ww', 'review_count': 2, 'categories': [{'alias': 'ranches', 'title': 'Ranches'}], 'rating': 4.5, 'coordinates': {'latitude': 37.2263304364867, 'longitude': -121.798300668597}, 'transactions': [], 'location': {'address1': '372 Manila Dr', 'address2': '', 'address3': '', 'city': 'San Jose', 'zip_code': '95119', 'country': 'US', 'state': 'CA', 'display_address': ['372 Manila Dr', 'San Jose, CA 95119']}, 'phone': '+14082265453', 'display_phone': '(408) 226-5453', 'distance': 6537.030263122577}

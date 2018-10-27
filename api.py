@@ -45,9 +45,7 @@ def yelp_api_call(coordinate, categories, radius):
                 'radius': radius
                 }
     header = {'Authorization': f"Bearer {YELP}"}
-    result = requests.get(YELP_SEARCH_URL, 
-                        headers=header,
-                         params=payload)
+    result = requests.get(YELP_SEARCH_URL, headers=header, params=payload)
     return result.json()
 
 
@@ -60,7 +58,7 @@ def get_business_info(business_id):
     business = business.json()
     business_info = {
         'name': business['name'],
-        'phone': business['phone'],
+        'phone': business['display_phone'],
         'url': business['url'],
         'photos': business['photos'],
         'address': " ".join(business['location']['display_address'])
