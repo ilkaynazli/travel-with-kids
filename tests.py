@@ -463,6 +463,74 @@ class ApiCallTestUnitTests(TestCase):
         test_result = api.yelp_api_call(coordinate, categories, radius)
         self.assertEqual(test_result['businesses'][0]['name'],'Davis Poultry Farms')
 
+class ApiCallSecondTestUnitTests(TestCase):
+    """Test that mocks yelp api call"""
+    def setUp(self):
+        """Stuff to do before every test."""
+
+        self.client = server.app.test_client()
+        server.app.config['TESTING'] = True
+        server.app.config['SECRET_KEY'] = 'key'
+
+        def _mock_request_get2(YELP_BUSINESS_URL, headers):
+            """Mock yelp api request for business search"""
+            class MockResult:
+                """Mock result of api request"""
+                def json(self):
+                    return {'id': '9tR_vXF3ugf6zvcRVqf0VA', 
+                              'alias': 'mooyah-burger-fries-and-shakes-morgan-hill-5', 
+                              'name': 'Mooyah Burger Fries & Shakes', 
+                              'image_url': 'https://s3-media1.fl.yelpcdn.com/bphoto/DDdDDKARApoNg2fJo6yxYg/o.jpg', 
+                              'is_claimed': True, 
+                              'is_closed': False, 
+                              'url': 'https://www.yelp.com/biz/mooyah-burger-fries-and-shakes-morgan-hill-5?adjust_creative=vxvAyk47rIbZXQHuMg79ww&utm_campaign=yelp_api_v3&utm_medium=api_v3_business_lookup&utm_source=vxvAyk47rIbZXQHuMg79ww', 
+                              'phone': '+14087792255', 
+                              'display_phone': '(408) 779-2255', 
+                              'review_count': 258, 
+                              'categories': [
+                                        {'alias': 'burgers', 'title': 'Burgers'}, 
+                                        {'alias': 'icecream', 'title': 'Ice Cream & Frozen Yogurt'}, 
+                                        {'alias': 'hotdogs', 'title': 'Fast Food'}], 
+                               'rating': 3.5, 
+                               'location': {'address1': '255 Vineyard Town Ctr', 
+                                            'address2': '', 
+                                            'address3': '', 
+                                            'city': 'Morgan Hill', 
+                                            'zip_code': '95037', 
+                                            'country': 'US', 
+                                            'state': 'CA', 
+                                            'display_address': ['255 Vineyard Town Ctr', 'Morgan Hill, CA 95037'], 
+                                            'cross_streets': ''}, 
+                               'coordinates': {'latitude': 37.1121749699774, 
+                                               'longitude': -121.643401704356}, 
+                               'photos': ['https://s3-media1.fl.yelpcdn.com/bphoto/DDdDDKARApoNg2fJo6yxYg/o.jpg', 
+                                          'https://s3-media4.fl.yelpcdn.com/bphoto/jLvyfQR_S6WQztoxDKqKTA/o.jpg', 
+                                          'https://s3-media2.fl.yelpcdn.com/bphoto/ezG4-V8whbnhGYWXAQ1pYg/o.jpg'], 
+                               'price': '$$', 
+                               'hours': [{'open': 
+                                            [{'is_overnight': False, 'start': '1100', 'end': '2100', 'day': 0}, 
+                                             {'is_overnight': False, 'start': '1100', 'end': '2100', 'day': 1}, 
+                                             {'is_overnight': False, 'start': '1100', 'end': '2100', 'day': 2}, 
+                                             {'is_overnight': False, 'start': '1100', 'end': '2100', 'day': 3}, 
+                                             {'is_overnight': False, 'start': '1100', 'end': '2200', 'day': 4}, 
+                                             {'is_overnight': False, 'start': '1100', 'end': '2200', 'day': 5}, 
+                                             {'is_overnight': False, 'start': '1100', 'end': '2100', 'day': 6}], 
+                                          'hours_type': 'REGULAR', 
+                                          'is_open_now': True}], 
+                               'transactions': []}
+ 
+            my_result = MockResult()
+            return my_result
+
+        api.requests.get = _mock_request_get2
+
+
+    def test_get_business_info(self):
+        """Test the yelp api call function"""
+        business_id = '9tR_vXF3ugf6zvcRVqf0VA'
+ 
+        test_result = api.get_business_info(business_id)
+        self.assertEqual(test_result['name'],'Mooyah Burger Fries & Shakes')
 
 
 if __name__ == "__main__":
