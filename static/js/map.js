@@ -1,7 +1,7 @@
 "use strict"
 
 function myCallBack(){
-    const route = $("#map").data()      //Get start and end address from user
+    const route = $("#map").data();      //Get start and end address from user
     let map;
 
     //Create Map and call calculate and display route function

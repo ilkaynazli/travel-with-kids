@@ -367,12 +367,6 @@ class FlaskTests(TestCase):
         self.assertEqual(my_result, 'Jacobs Farms')
 
 
-    def test_business_info_page(self):
-        """Test the display business info page"""
-        result = self.client.get('/business/IBZbaTy-_Ds7GITu4QimHQ')
-
-        self.assertIn(b"<h1>Welcome to the Wildhaven Ranch page</h1>", result.data)
-
     def test_user_info_page(self):
         """Test the display user info page"""
         result = self.client.get('/users/1')
@@ -472,7 +466,7 @@ class ApiCallSecondTestUnitTests(TestCase):
         server.app.config['TESTING'] = True
         server.app.config['SECRET_KEY'] = 'key'
 
-        def _mock_request_get2(YELP_BUSINESS_URL, headers):
+        def _mock_request_get2(YELP_BUSINESS_URL, headers, params):
             """Mock yelp api request for business search"""
             class MockResult:
                 """Mock result of api request"""
@@ -523,6 +517,12 @@ class ApiCallSecondTestUnitTests(TestCase):
             return my_result
 
         api.requests.get = _mock_request_get2
+
+    def test_business_info_page(self):
+        """Test the display business info page"""
+        result = self.client.get('/business/9tR_vXF3ugf6zvcRVqf0VA')
+
+        self.assertIn(b"<h1>Welcome to the Mooyah Burger Fries &amp; Shakes page</h1>", result.data)
 
 
     def test_get_business_info(self):

@@ -3,17 +3,19 @@
 {% block title %}{{business.name}}{% endblock %}
 
 {% block body %}
+<div id='my-business' data-business="{{business}}"></div>
     <h1>Welcome to the {{business.name}} page</h1>
     <div>
         Address: {{business.address}}<br>
         Phone: {{business.phone}}<br>
-        <a href="{{business.url}}">Click here to see the Yelp reviews on this place</a>
+        <a href="{{business.yelp_url}}">Click here to see the Yelp reviews on this place</a>
+        <h1 id='url-id'></h1>
         <br><br>
     </div>
 
     <div id="photos">
-        {% if business.photos %}
-            {% for photo in business.photos %}
+        {% if business.photo %}
+            {% for photo in business.photo %}
                 <img src="{{photo}}" class='photos'>
             {% endfor %}
         {% else %}
@@ -21,4 +23,62 @@
         {% endif %}
     </div>
 
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script>
+    function placesCallback() {
+        console.log($('#my-business').data());
+        const business_string = $('#my-business').data()['business'].replace(/'/g, '"');
+        let business = JSON.parse(business_string);
+        console.log(business);
+        const name = business['name'];
+        console.log(name);
+        const business_location = business['location'];
+        console.log(business_location);
+        let service = new google.maps.places.PlacesService($('#my-business').get(0));
+        const fields_for_id = ['place_id', 'name'];
+        const request_for_id = {query: name,
+                                fields: fields_for_id,
+                                locationBias: business_location};
+
+        service.findPlaceFromQuery(request_for_id, handlePlacesResponse);
+        
+        function handlePlacesResponse(results, status) {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                console.log(results);
+                let place_id = results[0]['place_id'];
+                console.log(place_id); 
+                  
+                
+                const fields_for_details = []; 
+
+                for (let key in business) {
+                    console.log(business[key]);
+                    if(business[key].length == 0) {
+                        fields_for_details.push(key);
+                    }
+                } 
+                fields_for_details.push('photo', 'review', 'url', 'website');
+                console.log(fields_for_details);             
+
+                const request_for_details = { placeId: place_id,
+                                            fields: fields_for_details
+                                            };
+
+                service.getDetails(request_for_details, getPlacesDetails);
+
+                function getPlacesDetails(result, status) {
+                    if (status == google.maps.places.PlacesServiceStatus.OK) {
+                        console.log(result);
+                        $('#url-id').html('url: ' + result['url']);
+                    }
+                }
+            }
+        }
+
+}
+</script>
+
+<script 
+  src="https://maps.googleapis.com/maps/api/js?key={{YOUR_API_KEY}}&libraries=places&callback=placesCallback" async defer>
+</script>
 {% endblock %}

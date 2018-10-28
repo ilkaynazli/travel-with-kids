@@ -189,8 +189,9 @@ def display_business_page(business_id):
     """Display info on a business like name, address, phone, images, url to yelp"""
 
     business = get_business_info(business_id)
+    print('\n\n\n', business, '\n\n\n\n')
 
-    return render_template("businesses.html", business=business)
+    return render_template("businesses.html", business=business, YOUR_API_KEY=GOOGLE_MAPS)
 
 
 @app.route("/users/<int:user_id>")
@@ -212,6 +213,6 @@ if __name__ == "__main__":
     connect_to_db(app, 'travels')
 
     # Use the DebugToolbar
-    DebugToolbarExtension(app)
+    # DebugToolbarExtension(app)
 
     app.run(port=5000, host='0.0.0.0')

@@ -54,14 +54,18 @@ def get_business_info(business_id):
 
     header = {'Authorization': f"Bearer {YELP}"}
     business = requests.get(f"{YELP_BUSINESS_URL}{business_id}",
-                                        headers=header)
+                                        headers=header,
+                                        params=None)
     business = business.json()
+
     business_info = {
-        'name': business['name'],
-        'phone': business['display_phone'],
-        'url': business['url'],
-        'photos': business['photos'],
-        'address': " ".join(business['location']['display_address'])
+        "name": business['name'],
+        "phone": business['display_phone'],
+        "yelp_url": business['url'],
+        "photo": business['photos'],
+        "address": " ".join(business['location']['display_address']),
+        "location":{'lat':business['coordinates']['latitude'],
+                    'lng':business['coordinates']['longitude']}
     } 
     return business_info
 
