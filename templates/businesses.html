@@ -6,34 +6,41 @@
 <div id='my-business' data-business="{{business}}"></div>
     <h1>Welcome to the {{business.name}} page</h1>
     <div>
-        Address: {{business.address}}<br>
-        Phone: {{business.phone}}<br>
+        {% if business['formatted_address'] %}
+            Address: {{business['formatted_address']}}<br>
+        {% else %}
+            <div id='address'></div>
+        {% endif %}
+        {% if business['formatted_phone_number'] %}
+            Phone: {{business['formatted_phone_number']}}<br>
+        {% else %}
+            <div id='phone'></div>
+        {% endif %}
+        <div id='website'></div>
         <a href="{{business.yelp_url}}">Click here to see the Yelp reviews on this place</a>
-        <h1 id='url-id'></h1>
+        <div id='url-id'></div>
         <br><br>
     </div>
 
     <div id="photos">
         {% if business.photo %}
             {% for photo in business.photo %}
-                <img src="{{photo}}" class='photos'>
+                <img src="{{photo}}" class='photos-yelp'>
             {% endfor %}
         {% else %}
-            Unfortunately, this place does not have any pictures!
+            <img id='photos-google' src=''>
         {% endif %}
     </div>
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script>
     function placesCallback() {
+        let myPhoto;
         console.log($('#my-business').data());
         const business_string = $('#my-business').data()['business'].replace(/'/g, '"');
         let business = JSON.parse(business_string);
-        console.log(business);
         const name = business['name'];
-        console.log(name);
         const business_location = business['location'];
-        console.log(business_location);
         let service = new google.maps.places.PlacesService($('#my-business').get(0));
         const fields_for_id = ['place_id', 'name'];
         const request_for_id = {query: name,
@@ -44,15 +51,11 @@
         
         function handlePlacesResponse(results, status) {
             if (status === google.maps.places.PlacesServiceStatus.OK) {
-                console.log(results);
                 let place_id = results[0]['place_id'];
-                console.log(place_id); 
-                  
-                
+
                 const fields_for_details = []; 
 
                 for (let key in business) {
-                    console.log(business[key]);
                     if(business[key].length == 0) {
                         fields_for_details.push(key);
                     }
@@ -60,7 +63,7 @@
                 fields_for_details.push('photo', 'review', 'url', 'website');
                 console.log(fields_for_details);             
 
-                const request_for_details = { placeId: place_id,
+                const request_for_details = {placeId: place_id,
                                             fields: fields_for_details
                                             };
 
@@ -68,8 +71,34 @@
 
                 function getPlacesDetails(result, status) {
                     if (status == google.maps.places.PlacesServiceStatus.OK) {
-                        console.log(result);
-                        $('#url-id').html('url: ' + result['url']);
+                        myResult = result;
+                        console.log(result); 
+                        console.log(result.url);
+                        $('#url-id').html('<a href=' + result.url +'>Click here to see the Google page on this place</a>');
+                        if (result['formatted_address']) {
+                            $('#address').html("Address: " + result['formatted_address']);
+                        }
+                        if (result['formatted_phone_number']) {
+                            $('#phone').html("Phone: " + result['formatted_phone_number']);
+                        } else {
+                            $('#phone').html("Phone number does not exist");
+                        }
+                        if (result.website) {
+                            $('#website').html('<a href=' + result.website + '>Click here to go to web page of this business</a>');
+                        }
+                        console.log('this is photos', result.photos);
+                        // $('img#photos-google').attr('src', result.photos[0].getUrl());
+                        if (result.photos.length > 0) {
+                            for (let i=0; i<result.photos.length; i++) {
+                                console.log(result.photos[i]);
+                                let myPhoto = result.photos[i].getUrl();
+                                console.log(myPhoto);
+                                $('img#photos-google').attr('src', myPhoto);
+                            }
+                        } else {
+                            $('#photos-google').html('Unfortunately, this place does not have any pictures!');
+                        }
+
                     }
                 }
             }

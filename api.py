@@ -60,10 +60,10 @@ def get_business_info(business_id):
 
     business_info = {
         "name": business['name'],
-        "phone": business['display_phone'],
+        "formatted_phone_number": business['display_phone'],
         "yelp_url": business['url'],
         "photo": business['photos'],
-        "address": " ".join(business['location']['display_address']),
+        "formatted_address": " ".join(business['location']['display_address']),
         "location":{'lat':business['coordinates']['latitude'],
                     'lng':business['coordinates']['longitude']}
     } 
