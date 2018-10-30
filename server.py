@@ -28,7 +28,6 @@ app.jinja_env.undefined = StrictUndefined
 @app.route("/")
 def display_homepage():
     """Display homepage"""
-    print('\n\n\n\n\nhomepage\n', session.get('user_id'), '\n\n\n\n\n')
     return render_template("homepage.html")
 
 @app.route("/show-signup-button.json", methods=['POST'])
@@ -40,7 +39,6 @@ def display_signup():
         my_questions.append({'id': question.question_id,
                             'question': question.question})
     my_response = {'questions': my_questions}
-    print('\n\n\n\n\ndisplay signup\n', session.get('user_id'), '\n\n\n\n\n')
     return jsonify(my_response)
 
 
@@ -64,7 +62,6 @@ def get_signup_info():
 
     db.session.add_all([user, answer])
     db.session.commit()
-    print('\n\n\n\n\nsignup\n', session.get('user_id'), '\n\n\n\n\n')
 
     return jsonify({'error': result})
 
@@ -98,7 +95,6 @@ def login_user():
                     'user_id': user.user_id,
                     'error': False
                     }
-    print('\n\n\n\n\nlogin\n', session.get('user_id'), '\n\n\n\n\n')
     return jsonify(my_response) 
 
 
@@ -116,7 +112,6 @@ def forgot_password():
     question_id = db.session.query(Answer.question_id).filter(Answer.user_id == user.user_id).first()
     question = db.session.query(Question.question).filter(Question.question_id == question_id).first()
     my_response = {'question': question[0]}
-    print('\n\n\n\n\nforgot password\n', session.get('user_id'), '\n\n\n\n\n')
     return jsonify(my_response)
 
 
@@ -124,7 +119,6 @@ def forgot_password():
 def check_answer():
     """Check if the answer matches to the one at the database"""
     user_email = session.get('email')
-    print('\n\n\n\n\ncheck answer\n', session.get('user_id'), '\n\n\n\n\n')
     user = User.query.filter(User.email == user_email).first()
     user_answer = db.session.query(Answer.answer).filter(Answer.user_id == user.user_id).first()
     
@@ -142,7 +136,6 @@ def assign_new_password():
     """Assign a new password for the existing user"""
     password = request.json['password']
     result = test_the_password(password)
-    print('\n\n\n\n\n new password\n', session.get('user_id'), '\n\n\n\n\n')
     if result == False:    #if error is false
         user_email = session.get('email')
         user = User.query.filter(User.email == user_email).first()
@@ -158,7 +151,6 @@ def assign_new_password():
 def logout_user():
     """Log out user from the website and remove session from system"""
     session.pop('user_id', None)
-    print('\n\n\n\n\nlog out\n', session.get('user_id'), '\n\n\n\n\n')
     return redirect("/")
 
 
@@ -167,7 +159,6 @@ def show_map():
     """Show map and directions"""
     start_location = request.args.get("start_location")
     end_location = request.args.get("end_location")   
-    print('\n\n\n\n\nshow map\n', session.get('user_id'), '\n\n\n\n\n')
     return render_template("show_directions.html",
                             YOUR_API_KEY=GOOGLE_MAPS,
                             start=start_location,
@@ -180,6 +171,7 @@ def show_business_markers():
     """Get the response that has the directions info"""
 
     coordinates = json.loads(request.args.get('coordinates'))
+    print('\n\n\n\n', coordinates, '\n\n\n\n')
 
     options = json.loads(request.args.get('categories'))    
     categories_list = options.split('&categories=')
@@ -187,7 +179,6 @@ def show_business_markers():
     categories = ','.join(categories_list[1:])
 
     results = get_businesses(coordinates, categories, radius)
-    print('\n\n\n\n\nshow markers\n', session.get('user_id'), '\n\n\n\n\n')
     return jsonify(results)
 
 @app.route("/business/<business_id>")
@@ -195,7 +186,6 @@ def display_business_page(business_id):
     """Display info on a business like name, address, phone, images, url to yelp"""
 
     business = get_business_info(business_id)
-    print('\n\n\n\n\nbusiness/businessid\n', session.get('user_id'), '\n\n\n\n\n')    
     return render_template("businesses.html", business2=json.dumps(business), business=business, YOUR_API_KEY=GOOGLE_MAPS)
 
 
@@ -204,7 +194,6 @@ def display_user_info(user_id):
     """Display user info: Name, id, last search, favorited businesses, etc.""" 
 
     user = User.query.filter(User.user_id == user_id).first()
-    print('\n\n\n\n\nusers/userid\n', session.get('user_id'), '\n\n\n\n\n')
     return render_template("users.html", user=user)
    
 

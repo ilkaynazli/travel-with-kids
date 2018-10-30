@@ -32,8 +32,6 @@ class NewPassword extends React.Component {
                     this.checkPassword();
                 }
             );
-        // console.log(this.state.password);
-        // console.log(this.state.password2);
     }
 
     handleSubmit(evt) {

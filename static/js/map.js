@@ -7,7 +7,7 @@ function myCallBack(){
     //Create Map and call calculate and display route function
     function createMap() {
         map = new google.maps.Map(document.getElementById('map'), {
-                center: {lat: 37.38 , lng: -121.94 },
+                center: route['start'],
                 zoom: 10
             });      
         const directionsService = new google.maps.DirectionsService;
@@ -49,7 +49,7 @@ function myCallBack(){
                         }
                     }  
                 };
-                
+                console.log(coordinates);
                 // Create event listener attached to form that listens for submit
                 $('#categories-form').on('submit', getCategories);
                 

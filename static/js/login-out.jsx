@@ -24,12 +24,10 @@ class LoginForm extends React.Component {
         postData('/login.json', this.state)
             .then((response) => {
                 console.log('this is login hs1: ', localStorage.getItem('userId'));
-
                 this.setState({userId: response['user_id'],
                                 error: response['error']});
-                localStorage.setItem('userId', response['user_id']);
+                localStorage.setItem('userId', response['user_id']);                                  
                 console.log('this is login hs2: ', localStorage.getItem('userId'));
-                console.log('hello');
             })
             .catch((error) => console.error(error));
     }
@@ -43,43 +41,44 @@ class LoginForm extends React.Component {
     }
 
     render() {
-        const cachedId = localStorage.getItem('userId');
-        console.log('this is login r: ',cachedId);
+        const userId = this.state.userId;
+        console.log('this is login r: ', userId);
         if (this.state.error == true) {
             return <LoginError message={this.state.message}/>
-        } else if (cachedId != null) {
+        } else if (userId != null) {
             return (
                 <div>
-                <MyPageButton userId={cachedId} />
+                <MyPageButton userId={userId} />
                 <LogoutButton />
                 </div>
             );
         } else {
             return (
-                <form onSubmit={this.handleSubmit}>
-                    Username: 
-                    <input type="text" 
-                            name="username"
-                            value={this.state.username}
-                            onChange={(event) => this.handleChange(event)} /><br/>         
-                    Password:
-                    <input type="password"
-                            name="password"
-                            value={this.state.password}
-                            onChange={(event) => this.handleChange(event)} /><br/>
-                    <input type="submit" value="Submit" /><br/>
-                    Forgot password/username? 
-                    <a href="#" onClick={(evt) => this.doThisAfterClick(evt)}>Click Here</a>
-                </form>
+                <div>
+                    <form onSubmit={this.handleSubmit}>
+                        Username: 
+                        <input type="text" 
+                                name="username"
+                                value={this.state.username}
+                                onChange={(event) => this.handleChange(event)} /><br/>         
+                        Password:
+                        <input type="password"
+                                name="password"
+                                value={this.state.password}
+                                onChange={(event) => this.handleChange(event)} /><br/>
+                        <input type="submit" value="Submit" /><br/>
+                        Forgot password/username? 
+                        <a href="#" onClick={(evt) => this.doThisAfterClick(evt)}>Click Here</a>
+                    </form>
+                </div>
             );
         }
     } 
 }
 
 function LogoutButton(props) {
-    localStorage.removeItem('cachedId');
     return (
-        <button type='button'>
+        <button type='button' onClick={() => localStorage.removeItem('userId')}>
             <a href="/log-out">Log out</a>
         </button>
     );
@@ -87,6 +86,8 @@ function LogoutButton(props) {
 
 function MyPageButton(props) {
     const userId = props.userId;
+    console.log('this is in login button: ', userId);
+
     return (
         <button type='button'>
             <a href={"/users/"+userId}>My page</a>
@@ -120,7 +121,10 @@ class LogInButton extends React.Component {
 }
 
 ReactDOM.render(
-    <LogInButton />, document.getElementById('root')
+    <div>
+        <SignUpButton />, document.getElementById('signup')
+        <LogInButton />, document.getElementById('root')
+    </div>
 );
 
 

@@ -26,8 +26,9 @@ BUSINESS_TYPES = {
 def get_businesses(coordinates, categories, radius):
     """Get a list of businesses from YELP API"""
     business_list = []
+    
+    for coordinate in coordinates: 
 
-    for coordinate in coordinates:   
         my_results = yelp_api_call(coordinate, categories, radius)
         add_business_info_to_list(business_list, my_results['businesses'])
                                 
