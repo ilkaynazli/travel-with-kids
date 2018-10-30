@@ -23,16 +23,13 @@ class LoginForm extends React.Component {
         evt.preventDefault();
         postData('/login.json', this.state)
             .then((response) => {
+                console.log('this is login hs1: ', localStorage.getItem('userId'));
 
-                if (response['error'] == false) {
-                    console.log('this is response', response['user_id']);
-                    localStorage.setItem('cachedId', response['user_id']);
-                }
-                const cachedId = localStorage.getItem('cachedId');
-                console.log('this is login hs: ',cachedId);
                 this.setState({userId: response['user_id'],
                                 error: response['error']});
-                
+                localStorage.setItem('userId', response['user_id']);
+                console.log('this is login hs2: ', localStorage.getItem('userId'));
+                console.log('hello');
             })
             .catch((error) => console.error(error));
     }
@@ -46,7 +43,7 @@ class LoginForm extends React.Component {
     }
 
     render() {
-        const cachedId = localStorage.getItem('cachedId');
+        const cachedId = localStorage.getItem('userId');
         console.log('this is login r: ',cachedId);
         if (this.state.error == true) {
             return <LoginError message={this.state.message}/>

@@ -30,12 +30,12 @@
         <script src="/static/js/show-question.jsx" type="text/jsx"></script>
         <script src="/static/js/login-error.jsx" type="text/jsx"></script>
 
-        <!-- {% if session.get('user_id') %} -->
-            <!-- <script src="/static/js/logout-mypage-button.jsx" type="text/jsx"></script> -->
-        <!-- {% else %} -->
+        {% if session.get('user_id') %}
+            <script src="/static/js/logout-mypage-button.jsx" type="text/jsx"></script>
+        {% else %}
             <script src="/static/js/login-out.jsx" type="text/jsx"></script>
             <script src="/static/js/signup.jsx" type="text/jsx"></script>
-        <!-- {% endif %} -->
+        {% endif %}
 
 
         {% block body %}Body content goes here{% endblock %}

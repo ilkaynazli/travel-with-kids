@@ -1,5 +1,5 @@
 function LogoutButton(props) {
-    localStorage.removeItem('cachedId');
+    localStorage.removeItem('userId');
     return (
         <button type='button'>
             <a href="/log-out">Log out</a>
@@ -8,9 +8,10 @@ function LogoutButton(props) {
 }
 
 function MyPageButton(props) {
+    const userId = localStorage.getItem('userId');
     return (
         <button type='button'>
-            <a href={"/users/"}>My page</a>
+            <a href={"/users/" + userId}>My page</a>
         </button>
     );
 }

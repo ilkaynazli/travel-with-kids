@@ -7,7 +7,7 @@ class SignUp extends React.Component {
             password: '',
             password2: '',
             email: '',
-            userQuestion: '',
+            userQuestion: 1,
             answer: '',
             error: null,
             passwordHasError: false
@@ -56,7 +56,7 @@ class SignUp extends React.Component {
         evt.preventDefault();
         postData('/signup.json', this.state)
             .then((response) => {
-                    this.setState({error: response['error']});                
+                    this.setState({error: response['error']});          
                 })
             .catch((error) => console.error(error));
     }
@@ -74,6 +74,7 @@ class SignUp extends React.Component {
                 );
         } else { 
             return (
+
                 <div>
                     {error && alert("Password doesn't fit the requirements. Please try again!")}
                     {passwordHasError && 'The passwords do not match! Please try again!'}
