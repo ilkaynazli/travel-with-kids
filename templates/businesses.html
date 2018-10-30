@@ -3,7 +3,7 @@
 {% block title %}{{business.name}}{% endblock %}
 
 {% block body %}
-<div id='my-business' data-business="{{business}}"></div>
+<div id='my-business' data-business="{{business2}}"></div>
     <h1>Welcome to the {{business.name}} page</h1>
     <div>
         {% if business['formatted_address'] %}
@@ -17,28 +17,27 @@
             <div id='phone'></div>
         {% endif %}
         <div id='website'></div>
-        <a href="{{business.yelp_url}}">Click here to see the Yelp reviews on this place</a>
+        <a href="{{business.yelp_url}}">Yelp</a>
         <div id='url-id'></div>
         <br><br>
     </div>
 
     <div id="photos">
-        {% if business.photo %}
-            {% for photo in business.photo %}
-                <img src="{{photo}}" class='photos-yelp'>
-            {% endfor %}
-        {% else %}
-            <img id='photos-google' src=''>
-        {% endif %}
+        {% for photo in business.photo %}
+            <img src="{{photo}}" class='photos-yelp'>
+        {% endfor %}
+            <div id='photos-google'></div>
+        
     </div>
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script>
+    const cachedId = localStorage.getItem('cachedId');
+    console.log(cachedId);
     function placesCallback() {
         let myPhoto;
         console.log($('#my-business').data());
-        const business_string = $('#my-business').data()['business'].replace(/'/g, '"');
-        let business = JSON.parse(business_string);
+        const business = $('#my-business').data()['business'];
         const name = business['name'];
         const business_location = business['location'];
         let service = new google.maps.places.PlacesService($('#my-business').get(0));
@@ -61,7 +60,6 @@
                     }
                 } 
                 fields_for_details.push('photo', 'review', 'url', 'website');
-                console.log(fields_for_details);             
 
                 const request_for_details = {placeId: place_id,
                                             fields: fields_for_details
@@ -72,9 +70,8 @@
                 function getPlacesDetails(result, status) {
                     if (status == google.maps.places.PlacesServiceStatus.OK) {
                         myResult = result;
-                        console.log(result); 
-                        console.log(result.url);
-                        $('#url-id').html('<a href=' + result.url +'>Click here to see the Google page on this place</a>');
+                        
+                        $('#url-id').html('<a href=' + result.url +'>Google Maps</a>');
                         if (result['formatted_address']) {
                             $('#address').html("Address: " + result['formatted_address']);
                         }
@@ -83,18 +80,17 @@
                         } else {
                             $('#phone').html("Phone number does not exist");
                         }
-                        if (result.website) {
-                            $('#website').html('<a href=' + result.website + '>Click here to go to web page of this business</a>');
+                        if (result.website != '') {
+                            $('#website').html('<a href="' + result.website + '">' + name + '</a>');
                         }
-                        console.log('this is photos', result.photos);
-                        // $('img#photos-google').attr('src', result.photos[0].getUrl());
+                        let googlePhotos = [];
                         if (result.photos.length > 0) {
                             for (let i=0; i<result.photos.length; i++) {
-                                console.log(result.photos[i]);
-                                let myPhoto = result.photos[i].getUrl();
-                                console.log(myPhoto);
-                                $('img#photos-google').attr('src', myPhoto);
+                                let myPhoto = result.photos[i].getUrl({'maxHeight': 200});
+                                imgSrc = '<img src='+myPhoto+'><br>';
+                                googlePhotos.push(imgSrc);
                             }
+                            $('#photos-google').html(googlePhotos);
                         } else {
                             $('#photos-google').html('Unfortunately, this place does not have any pictures!');
                         }

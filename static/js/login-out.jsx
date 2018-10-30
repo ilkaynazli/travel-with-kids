@@ -23,11 +23,16 @@ class LoginForm extends React.Component {
         evt.preventDefault();
         postData('/login.json', this.state)
             .then((response) => {
+
                 if (response['error'] == false) {
+                    console.log('this is response', response['user_id']);
                     localStorage.setItem('cachedId', response['user_id']);
                 }
+                const cachedId = localStorage.getItem('cachedId');
+                console.log('this is login hs: ',cachedId);
                 this.setState({userId: response['user_id'],
                                 error: response['error']});
+                
             })
             .catch((error) => console.error(error));
     }
@@ -42,6 +47,7 @@ class LoginForm extends React.Component {
 
     render() {
         const cachedId = localStorage.getItem('cachedId');
+        console.log('this is login r: ',cachedId);
         if (this.state.error == true) {
             return <LoginError message={this.state.message}/>
         } else if (cachedId != null) {
@@ -91,8 +97,33 @@ function MyPageButton(props) {
     );
 }
 
+class LogInButton extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {myClick: false};
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleClick(evt) {
+        evt.preventDefault();
+        this.setState({myClick: true});
+    }
+
+    render() { 
+        const myClick = this.state.myClick;
+        return (
+            <div>
+            {myClick ? <LoginForm /> : <button type='button' 
+                                            onClick={this.handleClick}>                
+                                Login 
+                               </button>}           
+            </div>
+        ) 
+    }
+}
 
 ReactDOM.render(
-    <LoginForm />, document.getElementById('root')
+    <LogInButton />, document.getElementById('root')
 );
+
 

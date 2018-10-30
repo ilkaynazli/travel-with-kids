@@ -3,9 +3,12 @@
 {% block title %}My Page{% endblock %}
 
 {% block body %}
+    {% if session.get('user_id') == user.user_id %}
+        <h1>{{user.username}}</h1>
 
-    <h1>{{user.username}}</h1>
-
-    <a href="/">Click here to return to homepage</a>
+        <a href="/">Click here to return to homepage</a>
+    {% else %}
+        <h2>You are not logged in! Please log in <a href="/">here</a> to see your page.</h2>
+    {% endif %}
 
 {% endblock %}
