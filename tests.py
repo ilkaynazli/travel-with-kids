@@ -248,7 +248,7 @@ class ApiCallTestUnitTests(TestCase):
 
         self.old_api = api.yelp_api_call
 
-        def _mock_yelp_api_call(coordinate, categories, radius):
+        def _mock_yelp_api_call(payload_str):
             """Mock results of yelp api call at api.py"""
             return {'businesses':[{'id': 'GLW_lWB5K-4eHX-2RfzJ5g', 
                                 'alias': 'davis-poultry-farms-gilroy-10', 
@@ -318,8 +318,14 @@ class ApiCallTestUnitTests(TestCase):
         categories = 'markets, playgrounds, icecream, ranches'
         radius = 12500
         url = YELP_SEARCH_URL
+        payload = {'latitude': coordinate['lat'],
+                    'longitude': coordinate['lng'],
+                    'categories': categories,
+                    'attributes': 'good_for_kids',
+                    'radius': radius
+                    }
         # import pdb; pdb.set_trace()
-        test_result = api.yelp_api_call(coordinate, categories, radius)
+        test_result = api.yelp_api_call(payload)
         self.assertEqual(test_result['businesses'][0]['name'],'Davis Poultry Farms')
 
    

@@ -2,6 +2,7 @@ import os
 import requests
 import json
 from model import Business, db
+from cachetools import cached, TTLCache
 
 
 YELP = os.environ['YELP_API']
@@ -28,23 +29,25 @@ def get_businesses(coordinates, categories, radius):
     business_list = []
     
     for coordinate in coordinates: 
-
-        my_results = yelp_api_call(coordinate, categories, radius)
+        latitude = coordinate['lat']
+        longitude = coordinate['lng']
+        payload = {'latitude': latitude,
+                    'longitude': longitude,
+                    'categories': categories,
+                    'attributes': 'good_for_kids',
+                    'radius': radius
+                    }
+        payload_str = json.dumps(payload)
+        my_results = yelp_api_call(payload_str)
         add_business_info_to_list(business_list, my_results['businesses'])
-                                
     return business_list
 
+cache = TTLCache(maxsize=512, ttl=24*60*60)
 
-def yelp_api_call(coordinate, categories, radius):
+@cached(cache)
+def yelp_api_call(payload_str):
     """Yelp API call for a single coordinate data from google maps"""
-    latitude = coordinate['lat']
-    longitude = coordinate['lng']
-    payload = {'latitude': latitude,
-                'longitude': longitude,
-                'categories': categories,
-                'attributes': 'good_for_kids',
-                'radius': radius
-                }
+    payload = json.loads(payload_str)
     header = {'Authorization': f"Bearer {YELP}"}
     result = requests.get(YELP_SEARCH_URL, headers=header, params=payload)
     return result.json()

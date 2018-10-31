@@ -80,7 +80,7 @@
                         } else {
                             $('#phone').html("Phone number does not exist");
                         }
-                        if (result.website != '') {
+                        if (result.website != undefined) {
                             $('#website').html('<a href="' + result.website + '">' + name + '</a>');
                         }
                         let googlePhotos = [];

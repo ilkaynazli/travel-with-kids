@@ -99,12 +99,6 @@ class LogInButton extends React.Component {
     constructor(props) {
         super(props);
         this.state = {myClick: false};
-        this.handleClick = this.handleClick.bind(this);
-    }
-
-    handleClick(evt) {
-        evt.preventDefault();
-        this.setState({myClick: true});
     }
 
     render() { 
@@ -112,7 +106,8 @@ class LogInButton extends React.Component {
         return (
             <div>
             {myClick ? <LoginForm /> : <button type='button' 
-                                            onClick={this.handleClick}>                
+                                            onClick={(evt) => {evt.preventDefault();
+                                                                this.setState({myClick: true})}}>                
                                 Login 
                                </button>}           
             </div>
@@ -120,11 +115,30 @@ class LogInButton extends React.Component {
     }
 }
 
+class MyUserButtons extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {isLoggedIn: false}
+    }
+
+    componenDidMount() {
+        const userId = localStorage.getItem('userId');
+        {userId ? this.setState({isLoggedIn: true}) : this.setState({isLoggedIn: false})};
+        console.log(this.state.isLoggedIn);
+    }
+
+    render () {
+        return (
+            <div>
+                {!this.state.isLoggedIn && <SignUpButton />}
+                <LogInButton />
+            </div>
+        )
+    }
+}
+
 ReactDOM.render(
-    <div>
-        <SignUpButton />, document.getElementById('signup')
-        <LogInButton />, document.getElementById('root')
-    </div>
+    <MyUserButtons />, document.getElementById('root')
 );
 
 

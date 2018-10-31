@@ -144,8 +144,3 @@ class SignUpButton extends React.Component {
         ) 
     }
 }
-
-
-// ReactDOM.render(
-//     <SignUpButton />, document.getElementById('root')
-// );

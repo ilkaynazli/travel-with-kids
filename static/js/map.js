@@ -7,7 +7,7 @@ function myCallBack(){
     //Create Map and call calculate and display route function
     function createMap() {
         map = new google.maps.Map(document.getElementById('map'), {
-                center: route['start'],
+                center: {'lat': 37.3766893, 'lng':-122.0349817},
                 zoom: 10
             });      
         const directionsService = new google.maps.DirectionsService;
