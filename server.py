@@ -157,8 +157,8 @@ def logout_user():
 @app.route("/show-map")
 def show_map():
     """Show map and directions"""
-    start_location = request.args.get("start_location")
-    end_location = request.args.get("end_location")   
+    start_location = request.args.get("start_location").title()
+    end_location = request.args.get("end_location").title()
     user_id = session.get('user_id')
 
     if user_id and Route.query.filter(Route.user_id == user_id, 
@@ -203,7 +203,12 @@ def display_user_info(user_id):
     """Display user info: Name, id, last search, favorited businesses, etc.""" 
 
     user = User.query.filter(User.user_id == user_id).first()
-    return render_template("users.html", user=user)
+
+    routes_by_user = db.session.query(Route).filter(Route.user_id == user.user_id)
+    my_routes = routes_by_user.order_by(Route.route_id.desc()).limit(3).all()
+    print('\n\n\n\n\n', my_routes, '\n\n\n\n')
+
+    return render_template("users.html", user=user, routes=my_routes)
    
 
 if __name__ == "__main__":

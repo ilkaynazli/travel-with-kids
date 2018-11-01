@@ -100,6 +100,7 @@ class FlaskTests(TestCase):
         self.assertEqual(result.status_code, 200)
         self.assertEqual(json.loads(result.data)['question'], 'Favorite color?')
 
+
     def test_forgot_password_wrong_email(self):
         """Forgot password page, take email address of user"""
 
@@ -119,6 +120,7 @@ class FlaskTests(TestCase):
 
         self.assertEqual(json.loads(result.data)['error'], False)
         self.assertEqual(json.loads(result.data)['username'], 'ilkay')
+
 
     def test_check_answer_wrong_answer(self):
         """Check if the answer is correct"""
@@ -147,6 +149,7 @@ class FlaskTests(TestCase):
 
         self.assertEqual(json.loads(result.data)['error'], True)
 
+
     def test_logout(self):
         """Test logout route"""
 
@@ -155,6 +158,7 @@ class FlaskTests(TestCase):
 
         self.assertIn(b'<form action="/show-map"', result.data)
         # self.assertNotEqual(sess['user_id'], 1)                   ### How can I test if a session is removed?
+
 
     def test_show_markers(self):
         """Test the /show-markers.json route"""
