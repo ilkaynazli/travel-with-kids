@@ -44,7 +44,7 @@ class LoginError extends React.Component {
                 <form onSubmit={this.handleSubmit}>
                     {this.state.message} <br/>
                     Please enter your email: 
-                    <input type="text" name="email" value={this.state.email}
+                    <input type="email" name="email" value={this.state.email}
                                 onChange={(event)=>this.handleChange(event)} /><br />
                     <input type="submit" value="Submit" />
                 </form>

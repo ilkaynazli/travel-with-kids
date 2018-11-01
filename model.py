@@ -115,7 +115,6 @@ class Comment(db.Model):
                     business id: {self.business_id},\
                     comment: {self.comment}>"
 
-
 class Rating(db.Model):
     """Ratings of businesses made by users"""
 
@@ -144,7 +143,6 @@ class Rating(db.Model):
                     User id: {self.user_id},\
                     business id: {self.business_id},\
                     rating: {self.rating}>"
-
 
 class BusinessTip(db.Model):
     """Tips on businesses given by users"""
@@ -216,7 +214,6 @@ class Question(db.Model):
         return f"<Question id: {self.question_id},\
                     question: {self.question}>"
 
-
 class Answer(db.Model):
     """Answers to those questions given by users"""
 
@@ -245,6 +242,62 @@ class Answer(db.Model):
                     question id: {self.question_id},\
                     user id: {self.user_id},\
                     answer: {self.answer}>"
+
+class Route(db.Model):
+    """Start and end points of the routes chosen by user"""
+
+    __tablename__ = 'routes'
+
+    route_id = db.Column(db.Integer,
+                            primary_key=True,
+                            autoincrement=True,
+                            )
+    user_id = db.Column(db.Integer,
+                        db.ForeignKey('users.user_id'),
+                        nullable=False
+                        )
+    start = db.Column(db.String(200), nullable=False)
+    end = db.Column(db.String(200), nullable=False)
+
+    user = db.relationship('User')
+    stopovers = db.relationship('Stopover')
+
+    def __repr__(self):
+        """Human readable data"""
+        return f"<Route id: {self.route_id},\
+                    user id: {self.user_id},\
+                    start: {self.start},\
+                    end: {self.end}>"
+
+class Stopover(db.Model):
+    """Stopovers for a given user chosen by the user"""
+
+    __tablename__ = 'stopovers'
+
+    stopover_id = db.Column(db.Integer,
+                            primary_key=True,
+                            autoincrement=True,
+                            )
+    route_id = db.Column(db.Integer,
+                        db.ForeignKey('routes.route_id'),
+                        nullable=False
+                        )
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+    business_id = db.Column(db.String(100),
+                        db.ForeignKey('businesses.business_id'),
+                        nullable=False
+                        )
+    business = db.relationship('Business')
+    route = db.relationship('Route')
+
+    def __repr__(self):
+        """Human readable data"""
+        return f"<Stopover id: {self.stopover_id},\
+                    route id: {self.route_id},\
+                    business id: {self.business_id},\
+                    latitude: {self.latitude},\
+                    longitude: {self.longitude}>"
 
 
 def connect_to_db(app, db_name):
@@ -284,7 +337,13 @@ def example_data():
     sample_answer = Answer(question=sample_question,
                             user=sample_user,
                             answer='blue')
-
+    sample_route = Route(user=sample_user,
+                        start="Sunnyvale, CA",
+                        end="Universal City, CA")
+    sample_stopover = Stopover(route=sample_route,
+                                business=sample_business,
+                                latitude=34.256787,
+                                longitude=-117.161389)
 
     db.session.add_all([sample_user,
                         sample_business, 
@@ -294,7 +353,9 @@ def example_data():
                         sample_tip_t,
                         sample_question,
                         sample_answer,
-                        sample_favorite])
+                        sample_favorite,
+                        sample_route,
+                        sample_stopover])
     db.session.commit()
 
 

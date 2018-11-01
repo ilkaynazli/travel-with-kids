@@ -3,7 +3,7 @@ from jinja2 import StrictUndefined
 from flask import (Flask, render_template, redirect, request, flash, session)
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import (User, Business, Comment, Rating, BusinessTip,
+from model import (User, Business, Comment, Rating, BusinessTip, Route, Stopover,
                     TripTip, Question, Answer, connect_to_db, db)
 from functions import test_the_password, hash_password, check_hashed_password
 import os
@@ -159,6 +159,15 @@ def show_map():
     """Show map and directions"""
     start_location = request.args.get("start_location")
     end_location = request.args.get("end_location")   
+    user_id = session.get('user_id')
+
+    if user_id and Route.query.filter(Route.user_id == user_id, 
+                                      Route.start == start_location, 
+                                      Route.end == end_location).first() is None:
+            route = Route(user_id=user_id, start=start_location, end=end_location)
+            db.session.add(route)
+            db.session.commit()
+
     return render_template("show_directions.html",
                             YOUR_API_KEY=GOOGLE_MAPS,
                             start=start_location,
