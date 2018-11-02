@@ -6,7 +6,7 @@
 <div>
     Would you like to add this as a stopover?<br>
     <form action="/save-stopovers" method='POST' id="stopovers">
-        <button id="stopover" data-stopover="({{business.location[0]}}, {{business.location[1]}})">Add</button>
+        <button id="stopover" data-stopover="{{business.name}}">Add</button>
     </form>
 </div>
 
@@ -44,7 +44,7 @@
         evt.preventDefault();
         let formInput = {'stopover': $(evt.target).data('stopover')};
         $.post("/save-stopovers", formInput, function() {
-            $('#stopover').html('Remove');
+            $('#stopovers').html('<button id="stopover" data-stopover="remove">Remove</button>');
         });
     });
 </script>

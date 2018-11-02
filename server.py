@@ -169,6 +169,10 @@ def show_map():
             db.session.add(route)
             db.session.commit()
 
+    my_route = Route.query.filter(Route.start == start_location,
+                                  Route.end == end_location).first()
+    session['route_id'] = my_route.route_id
+
     return render_template("show_directions.html",
                             YOUR_API_KEY=GOOGLE_MAPS,
                             start=start_location,
@@ -203,13 +207,23 @@ def display_business_page(business_id):
 def save_stopovers_to_database():
     """Save the user selected stopovers to database"""
 
-    stopover_str = request.form.get('stopover') #this is a string
-    stopover = stopover_str.split(',')
-    latitude = float(stopover[0].lstrip('('))
-    longitude = float(stopover[1].rstrip(')'))
-    print('\n\n\n\n\n', type(stopover), stopover, type(latitude), latitude, type(longitude), longitude, '\n\n\n\n\n')
-
-    
+    name = request.form.get('stopover') #this is a string
+    print('\n\n\n\n', name, '\n\n\n\n')
+    if name == 'remove':
+        print('\n\n\nyes\n\n\n')
+    else:
+        business = db.session.query(Business).filter(Business.business_name == name).first()
+        print('\n\n\n\n', business, '\n\n\n\n')
+        print('\n\n\n\n\n', session.get('route_id'), '\n\n\n\n\n')
+        route_id = session.get('route_id')
+        if Stopover.query.filter(Stopover.route_id == route_id, 
+                                 Stopover.business_id == business.business_id).first() is None:
+            stopover = Stopover(route_id=route_id, 
+                                latitude=business.latitude, 
+                                longitude=business.longitude,
+                                business_id=business.business_id)
+            db.session.add(stopover)
+            db.session.commit()
 
     return "The server received your request and modified the db appropriately."
 

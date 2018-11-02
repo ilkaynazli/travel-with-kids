@@ -3,17 +3,19 @@
 function myCallBack(){
     const route = $("#map").data();      //Get start and end address from user
     let map;
+    let infoWindow = new google.maps.InfoWindow();
+    let marker;
 
-
-    // $('#map').on('click', function(evt){
-    //     let target = $(evt.target);
-    //     if (target.attr('id') === 'stopover-submit') {
-    //         evt.preventDefault();
-    //         alert("this worked");
-    //         let myData = $('#stopovers').attr("data-stopover"); 
-    //         console.log(myData);  
-    //     } 
-    // });
+    $('#map').on('click', function(evt){
+        let target = $(evt.target);
+        $('#stopovers').on('click', function(evt) {
+            evt.preventDefault();
+            let formInput = {'stopover': $(evt.target).data('stopover')};
+            $.post("/save-stopovers", formInput, function() {
+                $('#stopover').html('<button id="stopover" data-stopover="remove">Remove</button>');
+            });
+        });
+    });
 
     //Create Map and call calculate and display route function
     function createMap() {
@@ -32,6 +34,8 @@ function myCallBack(){
         directionsService.route({           //start, end points and travel mode
             origin: route['start'],
             destination: route['end'],
+            waypoints: [],
+            optimizeWaypoints: true,
             travelMode: 'DRIVING'
         }, function (response, status){     //take response and status from API
             if (status == 'OK') {           
@@ -76,8 +80,7 @@ function myCallBack(){
                     $.get('/show-markers.json', formInputs, showBusinesses);   
                 }
                            
-                let infoWindow = new google.maps.InfoWindow();
-                let marker;
+                
 
                 //function to open, close and set content of the info window
                 function displayMyInfoWindow(marker, map, infoWindow, content) {
@@ -111,8 +114,8 @@ function myCallBack(){
                                         '<a href="/business/'+ business_id +'" id="business-name">' +
                                         name + '</a><br>Would you like to add this as a stopover?<br>' + 
                                         '<form action="/save-stopovers" method="POST" id="stopovers">' +
-                                        '<button id="stopover" data-stopover="({{business.location[0]}},' +
-                                         '{{business.location[1]}})">Add</button></form>' + 
+                                        '<button id="stopover" data-stopover="'+ name
+                                         + '">Add</button></form>' + 
                                         '</div>'
                                         );  
                         displayMyInfoWindow(marker, map, infoWindow, myContent);           
