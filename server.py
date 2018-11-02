@@ -238,8 +238,32 @@ def display_user_info(user_id):
     my_routes = routes_by_user.order_by(Route.route_id.desc()).limit(3).all()
     print('\n\n\n\n\n', my_routes, '\n\n\n\n')
 
-    return render_template("users.html", user=user, routes=my_routes)
+    return render_template("users.html", user=user, routes=my_routes, YOUR_API_KEY=GOOGLE_MAPS)
    
+@app.route("/stopover-route")
+def display_route_with_stopovers():
+    """Show the map and route but include the stopovers"""
+    route_id = session.get('route_id')
+    my_route = Route.query.filter(Route.route_id == route_id).first()
+    stopovers = Stopover.query.filter(Stopover.route_id == route_id).all()
+    my_stopovers = []
+    for item in stopovers:
+        stopover = {
+                    'latitude': item.latitude,
+                    'longitude': item.longitude,
+                    'id': item.business_id
+                    }
+        my_stopovers.append(stopover)
+
+    print('\n\n\n\n', my_stopovers, '\n\n\n\n')
+
+    my_data = {
+                'start': my_route.start,
+                'end': my_route.end,
+                'stopovers': my_stopovers
+    }
+
+    return jsonify(my_data)
 
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the

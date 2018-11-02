@@ -12,7 +12,7 @@
         {% else %}
             <ul>
                 {% for route in routes %}
-                    <li><a href="/show-map?start_location={{route.start}}&end_location={{route.end}}">
+                    <li><a href="/stopover-route" id="link-to-stopover-route">
                             From {{ route.start }} to {{ route.end }}</a></li>
                 {% endfor %}
             </ul>
@@ -20,5 +20,13 @@
     {% else %}
         <h2>You are not logged in! Please log in <a href="/">here</a> to see your page.</h2>
     {% endif %}
+
+<div id="map2"></div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src='/static/js/stopovers_map.js'></script>
+<script 
+  src="https://maps.googleapis.com/maps/api/js?key={{YOUR_API_KEY}}&callback=myCallBack" async defer>
+</script>
 
 {% endblock %}
