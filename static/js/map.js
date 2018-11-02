@@ -6,6 +6,8 @@ function myCallBack(){
     let infoWindow = new google.maps.InfoWindow();
     let marker;
 
+
+    //send stopover data to server to save in database
     $('#map').on('click', function(evt){
         let target = $(evt.target);
         $('#stopovers').on('click', function(evt) {
@@ -34,8 +36,6 @@ function myCallBack(){
         directionsService.route({           //start, end points and travel mode
             origin: route['start'],
             destination: route['end'],
-            waypoints: [],
-            optimizeWaypoints: true,
             travelMode: 'DRIVING'
         }, function (response, status){     //take response and status from API
             if (status == 'OK') {           
@@ -120,10 +120,7 @@ function myCallBack(){
                                         );  
                         displayMyInfoWindow(marker, map, infoWindow, myContent);           
                     }
-                }
-
-                //send stopover data to server to save in database
-               
+                }              
                 
             } else {
                 alert('Directions request failed due to ' + status);

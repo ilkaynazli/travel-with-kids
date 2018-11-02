@@ -240,28 +240,29 @@ def display_user_info(user_id):
 
     return render_template("users.html", user=user, routes=my_routes, YOUR_API_KEY=GOOGLE_MAPS)
    
-@app.route("/stopover-route")
-def display_route_with_stopovers():
+@app.route("/stopover-route/<this_route>")
+def display_route_with_stopovers(this_route):
     """Show the map and route but include the stopovers"""
-    route_id = session.get('route_id')
-    my_route = Route.query.filter(Route.route_id == route_id).first()
-    stopovers = Stopover.query.filter(Stopover.route_id == route_id).all()
+    start, end = this_route.split('&')
+    print('\n\n\n\n', start, end, '\n\n\n\n\n')
+    user_id = session.get('user_id')
+    my_route = Route.query.filter(Route.start == start, Route.end == end, Route.user_id == user_id).first()
+    stopovers = Stopover.query.filter(Stopover.route_id == my_route.route_id).all()
     my_stopovers = []
+
     for item in stopovers:
+        name = db.session.query(Business.business_name).filter(Business.business_id == item.business_id).first()
         stopover = {
                     'latitude': item.latitude,
                     'longitude': item.longitude,
-                    'id': item.business_id
+                    'id': item.business_id,
+                    'name': name
                     }
         my_stopovers.append(stopover)
 
     print('\n\n\n\n', my_stopovers, '\n\n\n\n')
 
-    my_data = {
-                'start': my_route.start,
-                'end': my_route.end,
-                'stopovers': my_stopovers
-    }
+    my_data = {'stopovers': my_stopovers}
 
     return jsonify(my_data)
 
