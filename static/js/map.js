@@ -4,6 +4,17 @@ function myCallBack(){
     const route = $("#map").data();      //Get start and end address from user
     let map;
 
+
+    // $('#map').on('click', function(evt){
+    //     let target = $(evt.target);
+    //     if (target.attr('id') === 'stopover-submit') {
+    //         evt.preventDefault();
+    //         alert("this worked");
+    //         let myData = $('#stopovers').attr("data-stopover"); 
+    //         console.log(myData);  
+    //     } 
+    // });
+
     //Create Map and call calculate and display route function
     function createMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -51,6 +62,8 @@ function myCallBack(){
                 };
                 console.log(coordinates);
                 // Create event listener attached to form that listens for submit
+                //send coordinates (points every 40000 meters) and categories and  
+                //radius to server and get yelp api data from the server
                 $('#categories-form').on('submit', getCategories);
                 
                 function getCategories(evt) {   
@@ -71,10 +84,10 @@ function myCallBack(){
                     google.maps.event.addListener(marker, 'click', function () {
                         infoWindow.close();
                         infoWindow.setContent(content);
-                        infoWindow.open(map, marker);
+                        infoWindow.open(map, marker);                        
                     });
                 } 
-
+               
                 //function to create markers at a specific location and open 
                 //info windows when clicked on the marker
                 //markers also has the names of the places you can see it when
@@ -94,19 +107,20 @@ function myCallBack(){
                         });
 
                         //need to add more info to info window
-                        
                         let myContent = ('<div id="info-window">' +
-                                        '<a href="/business/'+business_id+'" id="business-name">' +
-                                        name + '</a>' +
+                                        '<a href="/business/'+ business_id +'" id="business-name">' +
+                                        name + '</a><br>Would you like to add this as a stopover?<br>' + 
+                                        '<form action="/save-stopovers" method="POST" id="stopovers">' +
+                                        '<button id="stopover" data-stopover="({{business.location[0]}},' +
+                                         '{{business.location[1]}})">Add</button></form>' + 
                                         '</div>'
                                         );  
                         displayMyInfoWindow(marker, map, infoWindow, myContent);           
                     }
                 }
 
-                //send coordinates (points every 40000 meters) to server and get 
-                //yelp api data from the server
-                          
+                //send stopover data to server to save in database
+               
                 
             } else {
                 alert('Directions request failed due to ' + status);

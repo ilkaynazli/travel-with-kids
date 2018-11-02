@@ -157,6 +157,7 @@ def logout_user():
 @app.route("/show-map")
 def show_map():
     """Show map and directions"""
+
     start_location = request.args.get("start_location").title()
     end_location = request.args.get("end_location").title()
     user_id = session.get('user_id')
@@ -180,7 +181,6 @@ def show_business_markers():
     """Get the response that has the directions info"""
 
     coordinates = json.loads(request.args.get('coordinates'))
-    print('\n\n\n\n', coordinates, '\n\n\n\n')
 
     options = json.loads(request.args.get('categories'))    
     categories_list = options.split('&categories=')
@@ -190,12 +190,28 @@ def show_business_markers():
     results = get_businesses(coordinates, categories, radius)
     return jsonify(results)
 
+
 @app.route("/business/<business_id>")
 def display_business_page(business_id):
     """Display info on a business like name, address, phone, images, url to yelp"""
 
     business = get_business_info(business_id)
     return render_template("businesses.html", business2=json.dumps(business), business=business, YOUR_API_KEY=GOOGLE_MAPS)
+
+
+@app.route("/save-stopovers", methods=['POST'])
+def save_stopovers_to_database():
+    """Save the user selected stopovers to database"""
+
+    stopover_str = request.form.get('stopover') #this is a string
+    stopover = stopover_str.split(',')
+    latitude = float(stopover[0].lstrip('('))
+    longitude = float(stopover[1].rstrip(')'))
+    print('\n\n\n\n\n', type(stopover), stopover, type(latitude), latitude, type(longitude), longitude, '\n\n\n\n\n')
+
+    
+
+    return "The server received your request and modified the db appropriately."
 
 
 @app.route("/users/<int:user_id>")

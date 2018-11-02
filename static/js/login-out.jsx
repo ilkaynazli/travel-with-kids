@@ -121,15 +121,15 @@ class MyUserButtons extends React.Component {
         this.state = {isLoggedIn: false}
     }
 
-    componenDidMount() {
+    componentDidUpdate() {
         const userId = localStorage.getItem('userId');
         {userId ? this.setState({isLoggedIn: true}) : this.setState({isLoggedIn: false})};
-        console.log(this.state.isLoggedIn);
+        console.log('cdm', this.state.isLoggedIn);
     }
 
     render () {
         return (
-            <div>
+             <div>
                 {!this.state.isLoggedIn && <SignUpButton />}
                 <LogInButton />
             </div>

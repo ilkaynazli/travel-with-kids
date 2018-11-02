@@ -68,8 +68,8 @@ def get_business_info(business_id):
         "yelp_url": business['url'],
         "photo": business['photos'],
         "formatted_address": " ".join(business['location']['display_address']),
-        "location":{'lat':business['coordinates']['latitude'],
-                    'lng':business['coordinates']['longitude']}
+        "location":(business['coordinates']['latitude'],
+                    business['coordinates']['longitude'])
     } 
     return business_info
 
