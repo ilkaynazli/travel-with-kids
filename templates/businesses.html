@@ -5,9 +5,8 @@
 {% block body %}
 <div>
     Would you like to add this as a stopover?<br>
-    <form action="/save-stopovers" method='POST' id="stopovers">
-        <button id="stopover" data-stopover="{{business.name}}">Add</button>
-    </form>
+        <button id="stopover-add" data-stopover="add-{{business.name}}">Add</button>
+        <button id="stopover-remove" data-stopover="remove-{{business.name}}" style="display:none">Remove</button>
 </div>
 
 <div id='my-business' data-business="{{business2}}"></div>
@@ -40,11 +39,22 @@
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script>
-    $('#stopovers').on('click', function(evt) {
+    $('#stopover-add').on('click', function(evt) {
         evt.preventDefault();
         let formInput = {'stopover': $(evt.target).data('stopover')};
+        console.log($(evt.target).data('stopover'));
         $.post("/save-stopovers", formInput, function() {
-            $('#stopovers').html('<button id="stopover" data-stopover="remove">Remove</button>');
+            $('#stopover-add').css('display', 'none');
+            $('#stopover-remove').css('display', 'block');
+        });
+    });
+    $('#stopover-remove').on('click', function(evt) {
+        evt.preventDefault();
+        let formInput = {'stopover': $(evt.target).data('stopover')};
+        console.log($(evt.target).data('stopover'));
+        $.post("/save-stopovers", formInput, function() {
+            $('#stopover-remove').css('display', 'none');
+            $('#stopover-add').css('display', 'block');
         });
     });
 </script>

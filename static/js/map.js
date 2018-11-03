@@ -10,11 +10,22 @@ function myCallBack(){
     //send stopover data to server to save in database
     $('#map').on('click', function(evt){
         let target = $(evt.target);
-        $('#stopovers').on('click', function(evt) {
+        $('#stopover-add').on('click', function(evt) {
             evt.preventDefault();
             let formInput = {'stopover': $(evt.target).data('stopover')};
+            console.log($(evt.target).data('stopover'));
             $.post("/save-stopovers", formInput, function() {
-                $('#stopover').html('<button id="stopover" data-stopover="remove">Remove</button>');
+                $('#stopover-add').css('display', 'none');
+                $('#stopover-remove').css('display', 'block');
+            });
+        });
+        $('#stopover-remove').on('click', function(evt) {
+            evt.preventDefault();
+            let formInput = {'stopover': $(evt.target).data('stopover')};
+            console.log($(evt.target).data('stopover'));
+            $.post("/save-stopovers", formInput, function() {
+                $('#stopover-remove').css('display', 'none');
+                $('#stopover-add').css('display', 'block');
             });
         });
     });
@@ -113,9 +124,9 @@ function myCallBack(){
                         let myContent = ('<div id="info-window">' +
                                         '<a href="/business/'+ business_id +'" id="business-name">' +
                                         name + '</a><br>Would you like to add this as a stopover?<br>' + 
-                                        '<form action="/save-stopovers" method="POST" id="stopovers">' +
-                                        '<button id="stopover" data-stopover="'+ name
-                                         + '">Add</button></form>' + 
+                                        '<button id="stopover-add" data-stopover="add-'+ name + '">Add</button>' +
+                                        '<button id="stopover-remove" data-stopover="remove-' + name + 
+                                        '" style="display:none">Remove</button>' + 
                                         '</div>'
                                         );  
                         displayMyInfoWindow(marker, map, infoWindow, myContent);           

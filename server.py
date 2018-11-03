@@ -207,23 +207,34 @@ def display_business_page(business_id):
 def save_stopovers_to_database():
     """Save the user selected stopovers to database"""
 
-    name = request.form.get('stopover') #this is a string
-    print('\n\n\n\n', name, '\n\n\n\n')
-    if name == 'remove':
-        print('\n\n\nyes\n\n\n')
-    else:
-        business = db.session.query(Business).filter(Business.business_name == name).first()
-        print('\n\n\n\n', business, '\n\n\n\n')
-        print('\n\n\n\n\n', session.get('route_id'), '\n\n\n\n\n')
-        route_id = session.get('route_id')
-        if Stopover.query.filter(Stopover.route_id == route_id, 
-                                 Stopover.business_id == business.business_id).first() is None:
-            stopover = Stopover(route_id=route_id, 
-                                latitude=business.latitude, 
-                                longitude=business.longitude,
-                                business_id=business.business_id)
-            db.session.add(stopover)
-            db.session.commit()
+    data = request.form.get('stopover') #this is a string
+    check, name = data.split('-')
+
+    print('\n\n\n\n', check, name, '\n\n\n\n')
+
+    business = db.session.query(Business).filter(Business.business_name == name).first()
+    print('\n\n\n\n', business, '\n\n\n\n')
+    print('\n\n\n\n\n', session.get('route_id'), '\n\n\n\n\n')
+    route_id = session.get('route_id')
+    stopover = Stopover(route_id=route_id, 
+                            latitude=business.latitude, 
+                            longitude=business.longitude,
+                            business_id=business.business_id)
+
+    test = Stopover.query.filter(Stopover.route_id == route_id, 
+                             Stopover.business_id == business.business_id).first()
+    print('\n\n\n\n', test, '\n\n\n', stopover, '\n\n\n\n')
+
+
+    if check == 'remove' and test:        
+        db.session.delete(test)
+        db.session.commit()
+        print('\n\n\ndeleted\n\n\n')
+        
+    if check == 'add' and test is None:
+        db.session.add(stopover)
+        db.session.commit()
+        print('\n\n\nadded\n\n\n')
 
     return "The server received your request and modified the db appropriately."
 
