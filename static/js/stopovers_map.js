@@ -60,31 +60,26 @@ function myCallBack(){
             if (status == 'OK') {           
                 directionsDisplay.setDirections(response);
                 console.log(response);          //delete this line when everything starts working//
-                //need to add geocoder for this to work!
-                let origin_position;
+                
+                //Add origin and destination markers with infowindows that has addresses
                 let geocoder = new google.maps.Geocoder();
-                geocoder.geocode({'address': origin}, function(results, status) {
-                    if (status === 'OK') {
-                        origin_position = results[0].geometry.location
+                for (let item of [origin, destination])
+                geocoder.geocode({'address': item}, function(results, status) {
+                if (status === 'OK') {
+                    marker = new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location,
+                        title: item
+                    });
+                    let myContent = ('<div id="info-window">' +
+                                    item + '</div>'
+                                    );  
+                    displayMyInfoWindow(marker, map, infoWindow, myContent);
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
                     }
                 });
-                let startMarker = new google.maps.Marker({
-                                position: origin_position,
-                                title: origin
-                                });
-                startMarker.setMap(map);
-                console.log(startMarker);
-                let destination_position;
-                geocoder.geocode({'address': destination}, function(results, status) {
-                    if (status === 'OK') {
-                        destination_position = results[0].geometry.location
-                    }
-                });
-                let endMarker = new google.maps.Marker({
-                                position: destination_position,
-                                map: map,
-                                title: destination
-                                });
+
                 for (let id of businesses.keys()) {
                     let name = businesses.get(id)['name'][0];
                     console.log(name);
