@@ -61,12 +61,15 @@ def get_business_info(business_id):
                                         headers=header,
                                         params=None)
     business = business.json()
-
+    photos = []
+    for photo in business['photos']:
+        new_photo = photo[:-5] + 'l' + photo[-4:]
+        photos.append(new_photo)
     business_info = {
         "name": business['name'],
         "formatted_phone_number": business['display_phone'],
         "yelp_url": business['url'],
-        "photo": business['photos'],
+        "photo": photos,
         "formatted_address": " ".join(business['location']['display_address']),
         "location":(business['coordinates']['latitude'],
                     business['coordinates']['longitude'])
@@ -83,12 +86,19 @@ def add_business_info_to_list(business_list, businesses):
         name = business['name']
         business_id = business['id']
         categories_list = business['categories']
+        image = business['image_url']
+        if image is not None:
+            new_image = image[:-5] + 'ms' + image[-4:]
+        else:
+            new_image = image
+        print('\n\n\n\n', new_image, '\n\n\n\n\n')
         business_type = find_the_category_of_business(categories_list)
         my_business = {'name': name,
                         'coords': {'latitude': latitude,
                                     'longitude': longitude},
                         'business_id': business_id,
-                        'business_type': business_type
+                        'business_type': business_type,
+                        'image': new_image
                         }
 
         if Business.query.filter(Business.business_id == my_business.get('business_id')).first() == None:

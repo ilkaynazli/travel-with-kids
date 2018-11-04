@@ -210,11 +210,7 @@ def save_stopovers_to_database():
     data = request.form.get('stopover') #this is a string
     check, name = data.split('-')
 
-    print('\n\n\n\n', check, name, '\n\n\n\n')
-
     business = db.session.query(Business).filter(Business.business_name == name).first()
-    print('\n\n\n\n', business, '\n\n\n\n')
-    print('\n\n\n\n\n', session.get('route_id'), '\n\n\n\n\n')
     route_id = session.get('route_id')
     stopover = Stopover(route_id=route_id, 
                             latitude=business.latitude, 
@@ -223,18 +219,14 @@ def save_stopovers_to_database():
 
     test = Stopover.query.filter(Stopover.route_id == route_id, 
                              Stopover.business_id == business.business_id).first()
-    print('\n\n\n\n', test, '\n\n\n', stopover, '\n\n\n\n')
-
 
     if check == 'remove' and test:        
         db.session.delete(test)
         db.session.commit()
-        print('\n\n\ndeleted\n\n\n')
         
     if check == 'add' and test is None:
         db.session.add(stopover)
         db.session.commit()
-        print('\n\n\nadded\n\n\n')
 
     return "The server received your request and modified the db appropriately."
 
@@ -247,7 +239,6 @@ def display_user_info(user_id):
 
     routes_by_user = db.session.query(Route).filter(Route.user_id == user.user_id)
     my_routes = routes_by_user.order_by(Route.route_id.desc()).limit(3).all()
-    print('\n\n\n\n\n', my_routes, '\n\n\n\n')
 
     return render_template("users.html", user=user, routes=my_routes, YOUR_API_KEY=GOOGLE_MAPS)
    
@@ -255,7 +246,6 @@ def display_user_info(user_id):
 def display_route_with_stopovers(this_route):
     """Show the map and route but include the stopovers"""
     start, end = this_route.split('&')
-    print('\n\n\n\n', start, end, '\n\n\n\n\n')
     user_id = session.get('user_id')
     my_route = Route.query.filter(Route.start == start, Route.end == end, Route.user_id == user_id).first()
     stopovers = Stopover.query.filter(Stopover.route_id == my_route.route_id).all()
@@ -270,8 +260,6 @@ def display_route_with_stopovers(this_route):
                     'name': name
                     }
         my_stopovers.append(stopover)
-
-    print('\n\n\n\n', my_stopovers, '\n\n\n\n')
 
     my_data = {'stopovers': my_stopovers}
 

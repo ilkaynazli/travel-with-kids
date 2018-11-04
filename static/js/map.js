@@ -5,6 +5,7 @@ function myCallBack(){
     let map;
     let infoWindow = new google.maps.InfoWindow();
     let marker;
+    const markers = [];
 
 
     //send stopover data to server to save in database
@@ -80,9 +81,19 @@ function myCallBack(){
                 //send coordinates (points every 40000 meters) and categories and  
                 //radius to server and get yelp api data from the server
                 $('#categories-form').on('submit', getCategories);
-                
+                function setMapOnAll(map) {
+                    for (var i = 0; i < markers.length; i++) {
+                      markers[i].setMap(map);
+                    }
+                  }
+
+                function clearMarkers() {
+                    setMapOnAll(null);
+                  }
+                            
                 function getCategories(evt) {   
                     evt.preventDefault();
+                    clearMarkers();
                     let categories = $(this).serialize();
                     let formInputs = {'categories': JSON.stringify(categories), 
                                       'coordinates': JSON.stringify(coordinates)};            
@@ -90,8 +101,6 @@ function myCallBack(){
                     // make get request to api, callback is showBusinesses()
                     $.get('/show-markers.json', formInputs, showBusinesses);   
                 }
-                           
-                
 
                 //function to open, close and set content of the info window
                 function displayMyInfoWindow(marker, map, infoWindow, content) {
@@ -108,22 +117,37 @@ function myCallBack(){
                 //you do mouseover
                 function showBusinesses(results) {
                     const businessDetails = results;
+                    const park = ['plygr', 'inply', 'crsl', 'farm', 'zoo', 'aquar'];
+                    const eat = ['br-br', 'bbq', 'brgr', 'pizza', 'sndwc', 'icecr'];
+                    let color;
                     for (let i = 0; i < businessDetails.length; i++) {
                         const coords = businessDetails[i]['coords'];
                         const latLng = new google.maps.LatLng(coords['latitude'],
                                                               coords['longitude']);
                         const name = businessDetails[i]['name'];
                         const business_id = businessDetails[i]['business_id'];
+                        const image = businessDetails[i]['image'];
+                        if (park.includes(businessDetails[i]['business_type'])) {
+                            color = 'Azure';
+                            console.log(color);
+                        } else if (eat.includes(businessDetails[i]['business_type'])) {
+                            color = 'Pink';
+                            console.log(color);
+                        } 
+                        let icon = 'https://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Ball-' + color + '-icon.png'
                         marker = new google.maps.Marker({
                             position: latLng,
                             map: map, 
-                            title : name                           
+                            title : name, 
+                            icon: icon                          
                         });
 
+                        markers.push(marker);
                         //need to add more info to info window
                         let myContent = ('<div id="info-window">' +
                                         '<a href="/business/'+ business_id +'" id="business-name">' +
-                                        name + '</a><br>Would you like to add this as a stopover?<br>' + 
+                                        name + '</a><br><img src="' + image + '"><br>' + 
+                                        'Would you like to add this as a stopover?<br>' + 
                                         '<button id="stopover-add" data-stopover="add-'+ name + '">Add</button>' +
                                         '<button id="stopover-remove" data-stopover="remove-' + name + 
                                         '" style="display:none">Remove</button>' + 

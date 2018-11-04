@@ -6,14 +6,14 @@ function myCallBack(){
     let marker;
     const waypoints = [];
     const route = $("#routes").data();      //Get start and end address from user
-    let origin = route['start'];
-    let destination = route['end'];
+    let origin = [route['start'], 'A'];
+    let destination = [route['end'], 'B'];
     const businesses = new Map;
 
 
-    $('#link-to-stopover-route').on('click', function(evt) {
+    $('.link-to-stopover-route').on('click', function(evt) {
         evt.preventDefault();
-        $.get('/stopover-route/'+origin+'&'+destination, function(data) {
+        $.get('/stopover-route/'+origin[0]+'&'+destination[0], function(data) {
             for (let stopover of data.stopovers) {
                 let latitude = stopover['latitude'];
                 let longitude = stopover['longitude'];
@@ -51,8 +51,8 @@ function myCallBack(){
     //Calculate and Display route
     function calculateAndDisplayRoute(directionsService, directionsDisplay) {
         directionsService.route({           //start, end points and travel mode
-            origin: origin,
-            destination: destination,
+            origin: origin[0],
+            destination: destination[0],
             waypoints: waypoints,
             optimizeWaypoints: true,
             travelMode: 'DRIVING'
@@ -63,39 +63,62 @@ function myCallBack(){
                 
                 //Add origin and destination markers with infowindows that has addresses
                 let geocoder = new google.maps.Geocoder();
-                for (let item of [origin, destination])
-                geocoder.geocode({'address': item}, function(results, status) {
-                if (status === 'OK') {
-                    marker = new google.maps.Marker({
-                        map: map,
-                        position: results[0].geometry.location,
-                        title: item
+                for (let item of [origin, destination]) {
+                    geocoder.geocode({'address': item[0]}, function(results, status) {
+                        if (status === 'OK') {
+                            marker = new google.maps.Marker({
+                                map: map,
+                                position: results[0].geometry.location,
+                                title: item[0],
+                                label: item[1]
+                            });
+                            let myContent = ('<div id="info-window">' +
+                                            item + '</div>'
+                                            );  
+                            displayMyInfoWindow(marker, map, infoWindow, myContent);
+                        } else {
+                            alert('Geocode was not successful for the following reason: ' + status);
+                            }
                     });
-                    let myContent = ('<div id="info-window">' +
-                                    item + '</div>'
-                                    );  
-                    displayMyInfoWindow(marker, map, infoWindow, myContent);
-                } else {
-                    alert('Geocode was not successful for the following reason: ' + status);
-                    }
-                });
-
+                }
                 for (let id of businesses.keys()) {
                     let name = businesses.get(id)['name'][0];
                     console.log(name);
                     let LatLng = businesses.get(id).waypoint;
-                    marker = new google.maps.Marker({
-                            position: LatLng,
-                            map: map, 
-                            title : name                           
-                        });
+                    let service = new google.maps.places.PlacesService($('#place-photos').get(0));
+                    const fields_for_id = ['photo'];
+                    const request_for_id = {query: name,
+                                            fields: fields_for_id,
+                                            locationBias: LatLng};
 
-                    //need to add more info to info window
-                    let myContent = ('<div id="info-window">' +
-                                    '<a href="/business/'+ id +'" id="business-name">' +
-                                    name + '</div>'
-                                    );  
-                    displayMyInfoWindow(marker, map, infoWindow, myContent);  
+                    service.findPlaceFromQuery(request_for_id, function(results, status) {
+                        if (status === google.maps.places.PlacesServiceStatus.OK) {
+                            marker = new google.maps.Marker({
+                                        position: LatLng,
+                                        map: map, 
+                                        title : name,                           
+                                    });
+
+                            let myPhoto;
+                            let myContent;
+                            if (results[0].photos != undefined) {
+                                myPhoto = results[0].photos[0].getUrl({'maxHeight': 100});
+                                console.log(myPhoto);
+                                myContent = ('<div id="info-window">' +
+                                            '<a href="/business/'+ id +'" id="business-name">' +
+                                            name + '<br><img src='+myPhoto+'></div>'
+                                            );  
+                            } else {
+                                myContent = ('<div id="info-window">' +
+                                            '<a href="/business/'+ id +'" id="business-name">' +
+                                            name + '</div>'
+                                            );  
+
+                            }
+                            
+                            displayMyInfoWindow(marker, map, infoWindow, myContent);  
+                        }
+                    });           
                 }
 
                 //function to open, close and set content of the info window

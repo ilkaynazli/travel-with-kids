@@ -26,7 +26,7 @@ class LoginForm extends React.Component {
                 console.log('this is login hs1: ', localStorage.getItem('userId'));
                 this.setState({userId: response['user_id'],
                                 error: response['error']});
-                localStorage.setItem('userId', response['user_id']);                                  
+                localStorage.setItem('userId', response['user_id']);                                
                 console.log('this is login hs2: ', localStorage.getItem('userId'));
             })
             .catch((error) => console.error(error));
@@ -38,6 +38,11 @@ class LoginForm extends React.Component {
             error: true,
             message: ''
         });
+    }
+    componentDidUpdate() {
+        const userId = localStorage.getItem('userId');
+        {userId ? this.props.isLoggedIn = true : this.props.isLoggedIn = false};
+        console.log('cdm', this.state.isLoggedIn);
     }
 
     render() {
@@ -121,17 +126,11 @@ class MyUserButtons extends React.Component {
         this.state = {isLoggedIn: false}
     }
 
-    componentDidUpdate() {
-        const userId = localStorage.getItem('userId');
-        {userId ? this.setState({isLoggedIn: true}) : this.setState({isLoggedIn: false})};
-        console.log('cdm', this.state.isLoggedIn);
-    }
-
     render () {
         return (
              <div>
                 {!this.state.isLoggedIn && <SignUpButton />}
-                <LogInButton />
+                <LogInButton isLoggedIn = {this.state.isLoggedIn}/>
             </div>
         )
     }

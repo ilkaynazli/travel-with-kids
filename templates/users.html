@@ -13,7 +13,7 @@
             <ul>
                 {% for route in routes %}
                     <li id='routes' data-start='{{route.start}}' data-end="{{route.end}}">
-                        <a href="/stopover-route/{{route.start}}&{{route.end}}" id="link-to-stopover-route">
+                        <a href="/stopover-route/{{route.start}}&{{route.end}}" class="link-to-stopover-route">
                             From {{ route.start }} to {{ route.end }}</a></li>
                 {% endfor %}
             </ul>
@@ -23,11 +23,12 @@
     {% endif %}
 
 <div id="map2"></div>
+<div id="place-photos"></div>
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src='/static/js/stopovers_map.js'></script>
 <script 
-  src="https://maps.googleapis.com/maps/api/js?key={{YOUR_API_KEY}}&callback=myCallBack" async defer>
+  src="https://maps.googleapis.com/maps/api/js?key={{YOUR_API_KEY}}&libraries=places&callback=myCallBack" async defer>
 </script>
 
 {% endblock %}
