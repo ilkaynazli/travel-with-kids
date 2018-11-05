@@ -6,7 +6,7 @@ function myCallBack(){
     let infoWindow = new google.maps.InfoWindow();
     let marker;
     const markers = [];
-
+    const routeInfo = new Map;
 
     //send stopover data to server to save in database
     $('#map').on('click', function(evt){
@@ -57,6 +57,15 @@ function myCallBack(){
                 const steps = myRoute.routes[0].legs[0].steps;  //take each step of your route 
                 let totalDistance = 0;
                 const coordinates = [];
+                let routeDistance = 0;
+                let routeDuration = 0;
+                for (let leg of myRoute.routes[0].legs) {
+                    routeDuration = routeDuration + leg.duration.text;
+                    routeDistance = routeDistance + leg.distance.text;
+                }
+                routeInfo.set('duration', routeDuration);
+                routeInfo.set('distance', routeDistance);
+                console.log(routeInfo);
                 //go through each step and each array the steps have.
                 //calculate the distance between each lat_lngs and add it to the total distance
                 //when the total distance is > 40000 meters add the final lat_lng to the coordinates array

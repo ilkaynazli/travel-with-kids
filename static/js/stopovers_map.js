@@ -9,6 +9,7 @@ function myCallBack(){
     let origin = [route['start'], 'A'];
     let destination = [route['end'], 'B'];
     const businesses = new Map;
+    const routeInfo = new Map;
 
 
     $('.link-to-stopover-route').on('click', function(evt) {
@@ -60,7 +61,16 @@ function myCallBack(){
             if (status == 'OK') {           
                 directionsDisplay.setDirections(response);
                 console.log(response);          //delete this line when everything starts working//
-                
+                let routeDistance = 0;
+                let routeDuration = 0;
+                for (let leg of response.routes[0].legs) {
+                    routeDuration = routeDuration + leg.duration.value;
+                    routeDistance = routeDistance + leg.distance.value;
+                }
+                let routeDurationTime = moment().startOf('day').seconds(routeDuration).format('H:mm');
+                routeInfo.set('duration', routeDurationTime);
+                routeInfo.set('distance', routeDistance/0.000621371);
+                console.log(routeInfo);
                 //Add origin and destination markers with infowindows that has addresses
                 let geocoder = new google.maps.Geocoder();
                 for (let item of [origin, destination]) {

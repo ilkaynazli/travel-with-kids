@@ -39,11 +39,11 @@ class LoginForm extends React.Component {
             message: ''
         });
     }
-    componentDidUpdate() {
-        const userId = localStorage.getItem('userId');
-        {userId ? this.props.isLoggedIn = true : this.props.isLoggedIn = false};
-        console.log('cdm', this.state.isLoggedIn);
-    }
+    // componentDidUpdate() {
+    //     const userId = localStorage.getItem('userId');
+    //     {userId ? this.props.isLoggedIn = true : this.props.isLoggedIn = false};
+    //     console.log('cdm', this.state.isLoggedIn);
+    // }
 
     render() {
         const userId = this.state.userId;
@@ -130,7 +130,7 @@ class MyUserButtons extends React.Component {
         return (
              <div>
                 {!this.state.isLoggedIn && <SignUpButton />}
-                <LogInButton isLoggedIn = {this.state.isLoggedIn}/>
+                <LogInButton />
             </div>
         )
     }
