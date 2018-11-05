@@ -5,8 +5,8 @@
 {% block body %}
 <div>
     Would you like to add this as a stopover?<br>
-        <button id="stopover-add" data-stopover="add-{{business.name}}">Add</button>
-        <button id="stopover-remove" data-stopover="remove-{{business.name}}" style="display:none">Remove</button>
+        <button id="stopover-add" data-stopover="add?{{business.name}}">Add</button>
+        <button id="stopover-remove" data-stopover="remove?{{business.name}}" style="display:none">Remove</button>
 </div>
 
 <div id='my-business' data-business="{{business2}}"></div>

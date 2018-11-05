@@ -6,7 +6,7 @@
     {% if session.get('user_id') == user.user_id %}
         <h1>{{user.username}}</h1>
         <a href="/">Click here to return to homepage</a>
-        <h3>Here are your last three searches</h3>
+        <h3>Here is your last search</h3>
         {% if routes == [] %}
             You do not have any saved routes.
         {% else %}
@@ -21,6 +21,7 @@
     {% else %}
         <h2>You are not logged in! Please log in <a href="/">here</a> to see your page.</h2>
     {% endif %}
+<div id="distance-info"></div>
 
 <div id="map2"></div>
 <div id="place-photos"></div>

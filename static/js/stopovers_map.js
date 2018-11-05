@@ -5,37 +5,35 @@ function myCallBack(){
     let infoWindow = new google.maps.InfoWindow();
     let marker;
     const waypoints = [];
-    const route = $("#routes").data();      //Get start and end address from user
-    let origin = [route['start'], 'A'];
-    let destination = [route['end'], 'B'];
+    let origin, destination;
     const businesses = new Map;
     const routeInfo = new Map;
 
 
     $('.link-to-stopover-route').on('click', function(evt) {
         evt.preventDefault();
+        const route = $("#routes").data();      //Get start and end address from user
+        origin = [route['start'], 'A'];
+        destination = [route['end'], 'B'];
         $.get('/stopover-route/'+origin[0]+'&'+destination[0], function(data) {
             for (let stopover of data.stopovers) {
                 let latitude = stopover['latitude'];
                 let longitude = stopover['longitude'];
-                console.log(latitude);
-                console.log(longitude);
                 let id = stopover['id'];
                 let name = stopover['name'];
                 let waypoint = new google.maps.LatLng(latitude, longitude);
                 businesses.set(id, {'name': name,
                                     'waypoint': waypoint});
             }
-            console.log(businesses);
             for (let id of businesses.keys()) {
                 waypoints.push({location: businesses.get(id).waypoint,
                                 stopover: true,
                                 });
             }
-            console.log(waypoints);
             createMap();
-        })
+        });
     })
+
 
     //Create Map and call calculate and display route function
     function createMap() {
@@ -60,17 +58,21 @@ function myCallBack(){
         }, function (response, status){     //take response and status from API
             if (status == 'OK') {           
                 directionsDisplay.setDirections(response);
-                console.log(response);          //delete this line when everything starts working//
                 let routeDistance = 0;
                 let routeDuration = 0;
                 for (let leg of response.routes[0].legs) {
                     routeDuration = routeDuration + leg.duration.value;
                     routeDistance = routeDistance + leg.distance.value;
                 }
-                let routeDurationTime = moment().startOf('day').seconds(routeDuration).format('H:mm');
+                let hour = Math.floor(routeDuration/3600);
+                let minutes = Math.floor((routeDuration - hour*3600)/60);
+                let routeDurationTime = hour + ' hours, ' + minutes + ' minutes'; 
+
                 routeInfo.set('duration', routeDurationTime);
-                routeInfo.set('distance', routeDistance/0.000621371);
-                console.log(routeInfo);
+                routeInfo.set('distance', Math.round(routeDistance*0.000621371*100)/100 + ' miles');
+                console.log(routeInfo.get('distance'), routeInfo.get('duration'));
+                let html = 'This journey is ' + routeInfo.get('distance') + ' and will take ' + routeInfo.get('duration');
+                $('#distance-info').html(html);
                 //Add origin and destination markers with infowindows that has addresses
                 let geocoder = new google.maps.Geocoder();
                 for (let item of [origin, destination]) {
@@ -93,7 +95,6 @@ function myCallBack(){
                 }
                 for (let id of businesses.keys()) {
                     let name = businesses.get(id)['name'][0];
-                    console.log(name);
                     let LatLng = businesses.get(id).waypoint;
                     let service = new google.maps.places.PlacesService($('#place-photos').get(0));
                     const fields_for_id = ['photo'];
@@ -113,7 +114,6 @@ function myCallBack(){
                             let myContent;
                             if (results[0].photos != undefined) {
                                 myPhoto = results[0].photos[0].getUrl({'maxHeight': 100});
-                                console.log(myPhoto);
                                 myContent = ('<div id="info-window">' +
                                             '<a href="/business/'+ id +'" id="business-name">' +
                                             name + '<br><img src='+myPhoto+'></div>'

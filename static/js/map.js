@@ -14,7 +14,6 @@ function myCallBack(){
         $('#stopover-add').on('click', function(evt) {
             evt.preventDefault();
             let formInput = {'stopover': $(evt.target).data('stopover')};
-            console.log($(evt.target).data('stopover'));
             $.post("/save-stopovers", formInput, function() {
                 $('#stopover-add').css('display', 'none');
                 $('#stopover-remove').css('display', 'block');
@@ -23,7 +22,6 @@ function myCallBack(){
         $('#stopover-remove').on('click', function(evt) {
             evt.preventDefault();
             let formInput = {'stopover': $(evt.target).data('stopover')};
-            console.log($(evt.target).data('stopover'));
             $.post("/save-stopovers", formInput, function() {
                 $('#stopover-remove').css('display', 'none');
                 $('#stopover-add').css('display', 'block');
@@ -52,7 +50,6 @@ function myCallBack(){
         }, function (response, status){     //take response and status from API
             if (status == 'OK') {           
                 directionsDisplay.setDirections(response);
-                console.log(response);          //delete this line when everything starts working//
                 const myRoute = response;
                 const steps = myRoute.routes[0].legs[0].steps;  //take each step of your route 
                 let totalDistance = 0;
@@ -60,12 +57,16 @@ function myCallBack(){
                 let routeDistance = 0;
                 let routeDuration = 0;
                 for (let leg of myRoute.routes[0].legs) {
-                    routeDuration = routeDuration + leg.duration.text;
-                    routeDistance = routeDistance + leg.distance.text;
+                    routeDuration = routeDuration + leg.duration.value;
+                    routeDistance = routeDistance + leg.distance.value;
                 }
-                routeInfo.set('duration', routeDuration);
-                routeInfo.set('distance', routeDistance);
-                console.log(routeInfo);
+                let hour = Math.floor(routeDuration/3600);
+                let minutes = Math.floor((routeDuration - hour*3600)/60);
+                let routeDurationTime = hour + ' hours, ' + minutes + ' minutes'; 
+
+                routeInfo.set('duration', routeDurationTime);
+                routeInfo.set('distance', Math.round(routeDistance*0.000621371*100)/100 + ' miles');
+
                 //go through each step and each array the steps have.
                 //calculate the distance between each lat_lngs and add it to the total distance
                 //when the total distance is > 40000 meters add the final lat_lng to the coordinates array
@@ -85,11 +86,14 @@ function myCallBack(){
                         }
                     }  
                 };
-                console.log(coordinates);
+                let html = 'This journey is ' + routeInfo.get('distance') + ' and will take ' + routeInfo.get('duration');
+                $('#distance-info').html(html);
+
                 // Create event listener attached to form that listens for submit
                 //send coordinates (points every 40000 meters) and categories and  
                 //radius to server and get yelp api data from the server
                 $('#categories-form').on('submit', getCategories);
+
                 function setMapOnAll(map) {
                     for (var i = 0; i < markers.length; i++) {
                       markers[i].setMap(map);
@@ -106,7 +110,6 @@ function myCallBack(){
                     let categories = $(this).serialize();
                     let formInputs = {'categories': JSON.stringify(categories), 
                                       'coordinates': JSON.stringify(coordinates)};            
-                    console.log(formInputs);
                     // make get request to api, callback is showBusinesses()
                     $.get('/show-markers.json', formInputs, showBusinesses);   
                 }
@@ -138,10 +141,8 @@ function myCallBack(){
                         const image = businessDetails[i]['image'];
                         if (park.includes(businessDetails[i]['business_type'])) {
                             color = 'Azure';
-                            console.log(color);
                         } else if (eat.includes(businessDetails[i]['business_type'])) {
                             color = 'Pink';
-                            console.log(color);
                         } 
                         let icon = 'https://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Ball-' + color + '-icon.png'
                         marker = new google.maps.Marker({
@@ -157,8 +158,8 @@ function myCallBack(){
                                         '<a href="/business/'+ business_id +'" id="business-name">' +
                                         name + '</a><br><img src="' + image + '"><br>' + 
                                         'Would you like to add this as a stopover?<br>' + 
-                                        '<button id="stopover-add" data-stopover="add-'+ name + '">Add</button>' +
-                                        '<button id="stopover-remove" data-stopover="remove-' + name + 
+                                        '<button id="stopover-add" data-stopover="add?'+ name + '">Add</button>' +
+                                        '<button id="stopover-remove" data-stopover="remove?' + name + 
                                         '" style="display:none">Remove</button>' + 
                                         '</div>'
                                         );  

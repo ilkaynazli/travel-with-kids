@@ -6,7 +6,8 @@ class LoginForm extends React.Component {
             password: '',
             userId: null,
             error: false,
-            message: 'Wrong username or password!'
+            message: 'Wrong username or password!',
+            isLoggedIn: props.isLoggedIn   
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -39,11 +40,13 @@ class LoginForm extends React.Component {
             message: ''
         });
     }
-    // componentDidUpdate() {
-    //     const userId = localStorage.getItem('userId');
-    //     {userId ? this.props.isLoggedIn = true : this.props.isLoggedIn = false};
-    //     console.log('cdm', this.state.isLoggedIn);
-    // }
+
+    componentDidUpdate() {
+        if (this.state.isLoggedIn != localStorage.getItem('userId')) {
+            this.setState({isLoggedIn: (localStorage.getItem('userId') ? true : false) });
+        }
+        console.log(this.state.isLoggedIn);
+    }
 
     render() {
         const userId = this.state.userId;
@@ -128,10 +131,17 @@ class MyUserButtons extends React.Component {
 
     render () {
         return (
-             <div>
-                {!this.state.isLoggedIn && <SignUpButton />}
-                <LogInButton />
-            </div>
+            <div>
+          {
+           localStorage.getItem('userId')
+            ? <LogOutButton />
+            : ( <div>
+                 <LogInButton />
+                 <SignUpButton />
+                 </div>
+              )
+          }
+        </div>
         )
     }
 }

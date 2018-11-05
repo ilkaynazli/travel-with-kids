@@ -208,7 +208,7 @@ def save_stopovers_to_database():
     """Save the user selected stopovers to database"""
 
     data = request.form.get('stopover') #this is a string
-    check, name = data.split('-')
+    check, name = data.split('?')
 
     business = db.session.query(Business).filter(Business.business_name == name).first()
     route_id = session.get('route_id')
@@ -238,7 +238,7 @@ def display_user_info(user_id):
     user = User.query.filter(User.user_id == user_id).first()
 
     routes_by_user = db.session.query(Route).filter(Route.user_id == user.user_id)
-    my_routes = routes_by_user.order_by(Route.route_id.desc()).limit(3).all()
+    my_routes = routes_by_user.order_by(Route.route_id.desc()).limit(1).all()
 
     return render_template("users.html", user=user, routes=my_routes, YOUR_API_KEY=GOOGLE_MAPS)
    
