@@ -14,8 +14,8 @@
                 {% else %}
                     <ul>
                         {% for route in routes %}
-                            <li id='routes' data-start='{{route.start}}' data-end="{{route.end}}">
-                                <a href="/stopover-route/{{route.start}}&{{route.end}}" class="link-to-stopover-route">
+                            <li class='routes'>
+                                <a href="/stopover-route/{{route.start}}&{{route.end}}"  data-start='{{route.start}}' data-end="{{route.end}}" class="link-to-stopover-route">
                                     From {{ route.start }} to {{ route.end }}</a></li>
                         {% endfor %}
                     </ul>

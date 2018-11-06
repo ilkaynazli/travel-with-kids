@@ -12,7 +12,7 @@ function myCallBack(){
 
     $('.link-to-stopover-route').on('click', function(evt) {
         evt.preventDefault();
-        const route = $("#routes").data();      //Get start and end address from user
+        const route = $(evt.target).data();      //Get start and end address from user
         origin = [route['start'], 'A'];
         destination = [route['end'], 'B'];
         $.get('/stopover-route/'+origin[0]+'&'+destination[0], function(data) {
