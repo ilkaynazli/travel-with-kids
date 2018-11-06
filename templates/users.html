@@ -1,29 +1,38 @@
 {% extends 'base.html' %}
 
-{% block title %}My Page{% endblock %}
+
 
 {% block body %}
-    {% if session.get('user_id') == user.user_id %}
-        <h1>{{user.username}}</h1>
-        <a href="/">Click here to return to homepage</a>
-        <h3>Here is your last search</h3>
-        {% if routes == [] %}
-            You do not have any saved routes.
-        {% else %}
-            <ul>
-                {% for route in routes %}
-                    <li id='routes' data-start='{{route.start}}' data-end="{{route.end}}">
-                        <a href="/stopover-route/{{route.start}}&{{route.end}}" class="link-to-stopover-route">
-                            From {{ route.start }} to {{ route.end }}</a></li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    {% else %}
-        <h2>You are not logged in! Please log in <a href="/">here</a> to see your page.</h2>
-    {% endif %}
-<div id="distance-info"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-5">
+            {% if session.get('user_id') == user.user_id %}
+                <h4>Hi there, {{user.username}}</h4>
+                <h5>Here is your last search</h5>
+                {% if routes == [] %}
+                    You do not have any saved routes.
+                {% else %}
+                    <ul>
+                        {% for route in routes %}
+                            <li id='routes' data-start='{{route.start}}' data-end="{{route.end}}">
+                                <a href="/stopover-route/{{route.start}}&{{route.end}}" class="link-to-stopover-route">
+                                    From {{ route.start }} to {{ route.end }}</a></li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% else %}
+                <h2>You are not logged in! Please log in <a href="/">here</a> to see your page.</h2>
+            {% endif %}
+        </div>
+        <div class="col-md-5">
+            <div id="distance-info"></div>
+            <div id="map2"></div>
+        </div>
+    </div>
+</div>
 
-<div id="map2"></div>
+
+
 <div id="place-photos"></div>
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>

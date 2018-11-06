@@ -5,54 +5,77 @@
 {% endblock %}
 
 {% block body %}
-<div>
-<div class="custom-div col-md-6">
-<div id="map" data-start='{{start}}' data-end="{{end}}"></div>
-<div id="distance-info"></div>
-</div>
-<div class="custom-div col-md-6">
-<form action="/show-markers.json" id='categories-form'>
-    <h3>How far away from the main route would you like to travel?</h3>
-    <div class="form-row" >
-    <div class="custom-range col-md-3">
-    <label class="custom-range col-md-3">5</label>
-        <input type="range" class="custom-range col-md-3" name="points" min="5000" max="20000">
-    <label class="custom-range col-md-3">20 (km)</label>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-5">
+            <div id="distance-info"></div>
+            <div id="map" data-start='{{start}}' data-end="{{end}}"></div>
+            
+        </div>
+
+        <div class="col-md-6 col-md-offset-3">
+            <form action="/show-markers.json" id='categories-form'>
+                <h5>How far away from the main route would you like to travel?</h5>
+                <div class="form-row" >
+                    <div class="custom-range col-md-3">
+                        <label class="custom-range col-md-3">5</label>
+                            <input type="range" class="custom-range col-md-3" name="points" min="5000" max="20000">
+                        <label class="custom-range col-md-3">20 (km)</label>
+                    </div>
+                </div>
+                <br><br>
+                <div class="form-check">
+                    <h5>Where do you want to stop?</h5>
+                    <h6>Food?</h6>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-xs-6">
+                        <input class="form-check-input" type="checkbox" 
+                            name="categories" value="breakfast_brunch"><label>Breakfast/Brunch</label><br>
+                        <input class="form-check-input" type="checkbox" 
+                            name="categories" value="bbq"><label>Barbeque</label><br>
+                        <input class="form-check-input" type="checkbox" 
+                            name="categories" value="burgers"><label>Burgers</label><br>
+                            </div>
+                            <div class="col-xs-3">
+                        <input class="form-check-input" type="checkbox" 
+                            name="categories" value="pizza"><label>Pizza</label><br>
+                        <input class="form-check-input" type="checkbox" 
+                            name="categories" value="sandwiches"><label>Sandwiches</label><br>
+                        <input class="form-check-input" type="checkbox" 
+                            name="categories" value="icecream"><label>Icecream</label><br>
+                            </div>
+                        </div>
+                        <br><br>
+                    <h6>Play?</h6>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-xs-6">
+                        <input class="form-check-input"type="checkbox" 
+                            name="categories" value="playgrounds"><label>Playground</label><br>
+                        <input class="form-check-input" type="checkbox" 
+                            name="categories" value="indoor_playcenter"><label>Indoor Playcenter</label><br>
+                        <input class="form-check-input" type="checkbox" 
+                            name="categories" value="carousels"><label>Carousels</label><br>
+                            </div>
+                            <div class="col-xs-3">
+                        <input class="form-check-input" type="checkbox" 
+                            name="categories" value="farms"><label>Farms</label><br>
+                        <input class="form-check-input" type="checkbox" 
+                            name="categories" value="zoos"><label>Zoo</label><br>
+                        <input class="form-check-input" type="checkbox" 
+                            name="categories" value="aquariums"><label>Aquariums</label><br><br>
+                        </div>
+                    </div>
+                </div>
+                <input type="submit">
+            </form>
+        </div>
     </div>
 </div>
-    <div class="form-check">
-        <h3>Where do you want to stop?</h3>
-        <h4>Food?</h4>
-            <input class="form-check-input" type="checkbox" 
-                name="categories" value="breakfast_brunch"><label>Breakfast/Brunch</label><br>
-            <input class="form-check-input" type="checkbox" 
-                name="categories" value="bbq"><label>Barbeque</label><br>
-            <input class="form-check-input" type="checkbox" 
-                name="categories" value="burgers"><label>Burgers</label><br>
-            <input class="form-check-input" type="checkbox" 
-                name="categories" value="pizza"><label>Pizza</label><br>
-            <input class="form-check-input" type="checkbox" 
-                name="categories" value="sandwiches"><label>Sandwiches</label><br>
-            <input class="form-check-input" type="checkbox" 
-                name="categories" value="icecream"><label>Icecream</label><br>
-        <h4>Play?</h4>
-            <input class="form-check-input"type="checkbox" 
-                name="categories" value="playgrounds"><label>Playground</label><br>
-            <input class="form-check-input" type="checkbox" 
-                name="categories" value="indoor_playcenter"><label>Indoor Playcenter</label><br>
-            <input class="form-check-input" type="checkbox" 
-                name="categories" value="carousels"><label>Carousels</label><br>
-            <input class="form-check-input" type="checkbox" 
-                name="categories" value="farms"><label>Farms</label><br>
-            <input class="form-check-input" type="checkbox" 
-                name="categories" value="zoos"><label>Zoo</label><br>
-            <input class="form-check-input" type="checkbox" 
-                name="categories" value="aquariums"><label>Aquariums</label><br><br>
-    </div>
-    <input type="submit">
-</form>
-</div>
-</div>
+
+
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src='/static/js/map.js'></script>

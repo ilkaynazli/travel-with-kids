@@ -252,9 +252,18 @@ def display_user_info(user_id):
 def display_route_with_stopovers(this_route):
     """Show the map and route but include the stopovers"""
     start, end = this_route.split('&')
+    print('\n\n\n\n', start, end, '\n\n\n\n\n')
+
     user_id = session.get('user_id')
+    print('\n\n\n\n', user_id, '\n\n\n\n\n')
+
     my_route = Route.query.filter(Route.start == start, Route.end == end, Route.user_id == user_id).first()
+
+    print('\n\n\n\n', my_route, '\n\n\n\n\n')
+
     stopovers = Stopover.query.filter(Stopover.route_id == my_route.route_id).all()
+    print('\n\n\n\n', stopovers, '\n\n\n\n\n')
+
     my_stopovers = []
 
     for item in stopovers:
@@ -266,7 +275,7 @@ def display_route_with_stopovers(this_route):
                     'name': name
                     }
         my_stopovers.append(stopover)
-
+    print('\n\n\n\n', my_stopovers, '\n\n\n\n\n')
     my_data = {'stopovers': my_stopovers}
 
     return jsonify(my_data)

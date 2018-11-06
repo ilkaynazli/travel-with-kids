@@ -30,6 +30,7 @@ function myCallBack(){
                                 stopover: true,
                                 });
             }
+            console.log(waypoints);
             createMap();
         });
     })
