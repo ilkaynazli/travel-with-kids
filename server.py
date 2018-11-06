@@ -30,6 +30,12 @@ def display_homepage():
     """Display homepage"""
     return render_template("homepage.html")
 
+
+@app.route('/about')
+def display_about_page():
+    """Display about page"""
+    return render_template("about.html")
+
 @app.route("/show-signup-button.json", methods=['POST'])
 def display_signup():
     """Display sign up details"""

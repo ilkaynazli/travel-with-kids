@@ -6,9 +6,8 @@ class LoginForm extends React.Component {
             password: '',
             userId: null,
             error: false,
-            message: 'Wrong username or password!',
-            isLoggedIn: props.isLoggedIn   
-        }
+            message: 'Wrong username or password!'
+            }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.doThisAfterClick = this.doThisAfterClick.bind(this);
@@ -41,12 +40,6 @@ class LoginForm extends React.Component {
         });
     }
 
-    componentDidUpdate() {
-        if (this.state.isLoggedIn != localStorage.getItem('userId')) {
-            this.setState({isLoggedIn: (localStorage.getItem('userId') ? true : false) });
-        }
-        console.log(this.state.isLoggedIn);
-    }
 
     render() {
         const userId = this.state.userId;
@@ -98,7 +91,7 @@ function MyPageButton(props) {
 
     return (
         <button type='button'>
-            <a href={"/users/"+userId}>My page</a>
+            <a href={"/users/"+userId}>My Page</a>
         </button>
     );
 }
@@ -131,16 +124,9 @@ class MyUserButtons extends React.Component {
 
     render () {
         return (
-            <div>
-          {
-           localStorage.getItem('userId')
-            ? <LogOutButton />
-            : ( <div>
-                 <LogInButton />
-                 <SignUpButton />
-                 </div>
-              )
-          }
+        <div>
+            {!this.state.isLoggedIn && <SignUpButton />}
+            <LogInButton />
         </div>
         )
     }

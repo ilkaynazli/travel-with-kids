@@ -171,7 +171,7 @@ class FlaskTests(TestCase):
 
     def test_show_maps(self):
         """test the /show-map route"""
-        result = self.client.get('/show-map')
+        result = self.client.get('/show-map?start_location=Sunnyvale&end_location=Sacramento')
         self.assertEqual(result.status_code, 200)
         self.assertIn(b'<div id="map" data-start=', result.data)
         self.assertIn(b"<script src='/static/js/map.js'></script>", result.data)
