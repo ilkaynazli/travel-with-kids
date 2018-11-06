@@ -5,14 +5,21 @@
 {% endblock %}
 
 {% block body %}
-
+<div>
+<div class="custom-div col-md-6">
 <div id="map" data-start='{{start}}' data-end="{{end}}"></div>
 <div id="distance-info"></div>
+</div>
+<div class="custom-div col-md-6">
 <form action="/show-markers.json" id='categories-form'>
     <h3>How far away from the main route would you like to travel?</h3>
-    <label>5</label>
-        <input type="range" name="points" min="5000" max="20000">
-    <label>20 (km)</label>
+    <div class="form-row" >
+    <div class="custom-range col-md-3">
+    <label class="custom-range col-md-3">5</label>
+        <input type="range" class="custom-range col-md-3" name="points" min="5000" max="20000">
+    <label class="custom-range col-md-3">20 (km)</label>
+    </div>
+</div>
     <div class="form-check">
         <h3>Where do you want to stop?</h3>
         <h4>Food?</h4>
@@ -44,6 +51,8 @@
     </div>
     <input type="submit">
 </form>
+</div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src='/static/js/map.js'></script>
