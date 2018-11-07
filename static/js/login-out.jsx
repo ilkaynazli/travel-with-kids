@@ -100,7 +100,7 @@ function MyPageButton(props) {
 
     return (
         <button type='button'
-                className="btn btn-info">
+                className="btn">
             <a href={"/users/"+userId}>My Page</a>
         </button>
     );
