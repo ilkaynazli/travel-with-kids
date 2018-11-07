@@ -4,7 +4,7 @@ function myCallBack(){
     let map;
     let infoWindow = new google.maps.InfoWindow();
     let marker;
-    const waypoints = [];
+    let waypoints;
     let origin, destination;
     const businesses = new Map;
     const routeInfo = new Map;
@@ -12,6 +12,7 @@ function myCallBack(){
 
     $('.link-to-stopover-route').on('click', function(evt) {
         evt.preventDefault();
+        waypoints = [];
         const route = $(evt.target).data();      //Get start and end address from user
         origin = [route['start'], 'A'];
         destination = [route['end'], 'B'];

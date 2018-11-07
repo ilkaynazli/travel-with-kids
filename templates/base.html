@@ -5,13 +5,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="/static/css/my_css.css">
-
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
         {% block title %}{% endblock %}
         {% block head %}{% endblock %}
         <br><br><br>
     </head>
 
     <body>
+        <div id="background">
     <nav class="navbar navbar-expand-lg navbar-light bg-info" style="background-color: #e3f2fd;">
         <a class="navbar-brand" href="/"><img src="static/img/roadtrip.png" width="40" height="30" alt="">RoadTripsWithKids</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,23 +44,24 @@
         <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
 
         <script src="http://unpkg.com/babel-standalone"></script>
-        
+  <!-- <script src="https://unpkg.com/react-modal@1.6.2/dist/react-modal.min.js"></script> -->
+
         <script src="/static/js/postData.jsx" type="text/jsx"></script>
         <script src="/static/js/signup.jsx" type="text/jsx"></script>
         <script src="/static/js/new-password.jsx" type="text/jsx"></script>
         <script src="/static/js/show-question.jsx" type="text/jsx"></script>
         <script src="/static/js/login-error.jsx" type="text/jsx"></script>
-       
-        {% if session.get('user_id') %}
-            <script src="/static/js/logout-mypage-button.jsx" type="text/jsx"></script>
-        {% else %}           
-            <script src="/static/js/login-out.jsx" type="text/jsx"></script>
-        {% endif %}
+        <script src="/static/js/logout-mypage-button.jsx" type="text/jsx"></script>
+        <script src="/static/js/login-out.jsx" type="text/jsx"></script>
+        <!-- <script src="/static/js/react-modal-bootstrap.jsx" type="text/jsx"></script> -->
+
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
         {% block body %}Body content goes here{% endblock %}
-    
+<div id="background-image-credits" class="fixed-bottom">Photo by Jeremy Bishop on Unsplash</div>
+
+</div>    
 </body>
 </html>

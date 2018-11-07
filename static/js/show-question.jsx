@@ -43,7 +43,9 @@ class ShowQuestion extends React.Component {
                     Please enter your answer here:
                     <input type="text" name="answer" value={this.state.answer}
                                 onChange={(event)=>this.handleChange(event)} /><br />
-                    <input type="submit" value="Submit" />
+                    <input type="submit" 
+                           value="Submit"
+                           className="btn btn-info" />
                 </form>
             </div>
             );

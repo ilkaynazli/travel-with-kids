@@ -112,7 +112,9 @@ class SignUp extends React.Component {
                                         name="answer" 
                                         value={this.state.answer}
                                         onChange={(event)=>this.handleChange(event)}/>
-                        <input type="submit" value="Submit"/><br/><br/>
+                        <input type="submit" 
+                               value="Submit"
+                               className="btn btn-info" /><br/><br/>
                         *These fields are required!
                     </form>
                 </div>

@@ -7,3 +7,12 @@
     height: 5%;
     /*width: ;*/
 }
+
+#background {
+    background: url(/static/img/background.jpg) no-repeat center center;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: -1;
+}

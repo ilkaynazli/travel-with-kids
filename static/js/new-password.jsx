@@ -79,7 +79,9 @@ class NewPassword extends React.Component {
                     Re-enter Password*: <input type="password" name="password2"  
                                     value={this.state.password2}
                                     onChange={(event)=>this.handleChange(event)}/><br/>
-                    <input type="submit" value="Submit"/><br/><br/>
+                    <input type="submit" 
+                           value="Submit"
+                           className="btn btn-info"/><br/><br/>
                     *These fields are required!
                 </form>
                 </div>

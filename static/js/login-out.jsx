@@ -57,19 +57,27 @@ class LoginForm extends React.Component {
             return (
                 <div>
                     <form onSubmit={this.handleSubmit}>
-                        Username: 
+                    <div class="form-group">
+                        <label>Username:</label> 
                         <input type="text" 
+                                className="form-control"
+                                placeholder="Username"
                                 name="username"
                                 value={this.state.username}
                                 onChange={(event) => this.handleChange(event)} /><br/>         
-                        Password:
+                        <label>Password:</label>
                         <input type="password"
+                                className="form-control"
+                                placeholder="Password"
                                 name="password"
                                 value={this.state.password}
                                 onChange={(event) => this.handleChange(event)} /><br/>
-                        <input type="submit" value="Submit" /><br/>
+                        <input type="submit" 
+                               value="Submit"
+                               className="btn btn-info" /><br/>
                         Forgot password/username? 
                         <a href="#" onClick={(evt) => this.doThisAfterClick(evt)}>Click Here</a>
+                    </div>
                     </form>
                 </div>
             );
@@ -79,7 +87,9 @@ class LoginForm extends React.Component {
 
 function LogoutButton(props) {
     return (
-        <button type='button' onClick={() => localStorage.removeItem('userId')}>
+        <button type='button' 
+                className="btn btn-info"
+                onClick={() => localStorage.removeItem('userId')}>
             <a href="/log-out">Log out</a>
         </button>
     );
@@ -90,7 +100,8 @@ function MyPageButton(props) {
     console.log('this is in login button: ', userId);
 
     return (
-        <button type='button'>
+        <button type='button'
+                className="btn btn-info">
             <a href={"/users/"+userId}>My Page</a>
         </button>
     );
@@ -106,7 +117,8 @@ class LogInButton extends React.Component {
         const myClick = this.state.myClick;
         return (
             <div>
-            {myClick ? <LoginForm /> : <button type='button' 
+            {myClick ? <LoginForm /> : <button type='button'
+                                            className="btn btn-info" 
                                             onClick={(evt) => {evt.preventDefault();
                                                                 this.setState({myClick: true})}}>                
                                 Login 
