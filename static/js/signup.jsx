@@ -68,8 +68,7 @@ class SignUp extends React.Component {
         if (error == false) {
             return (        
                     <div>
-                        You have successfully signed up<br/>
-                        <a href="/">Click here to go to homepage</a>
+                        You have successfully signed up
                     </div>
                 );
         } else { 
@@ -79,26 +78,48 @@ class SignUp extends React.Component {
                     {error && alert("Password doesn't fit the requirements. Please try again!")}
                     {passwordHasError && 'The passwords do not match! Please try again!'}
                     <form onSubmit={this.handleSubmit}>
-                        Username*: <input type="text" 
+                        <div className="form-group"> 
+                        <label>Username*: </label>
+                                        <input type="text" 
+                                            className="form-control"
+                                            placeholder="Username"
                                             name="username" 
                                             value={this.state.username}
                                             onChange={(event)=>this.handleChange(event)}/><br/>
-                        Password*: <input type="password" 
+                        </div>
+                        <div className="form-group"> 
+                        <label>Password*: </label> 
+                                        <input type="password" 
+                                            className="form-control"
+                                            placeholder="Password"
                                             name="password" 
                                             value={this.state.password}
                                             onChange={(event)=>this.handleChange(event)}/><br/>
                         Please use at least one lowercase, one uppercase letter, one number, 
                         and one character (!@#$%^&*(){}[]/?)<br/>
-                        Re-enter Password*: <input type="password" 
+                        </div>
+                        <div className="form-group"> 
+                        <label>Re-enter Password*: </label>
+                                            <input type="password" 
+                                                    className="form-control"
+                                                    placeholder="Password"
                                                     name="password2" 
                                                     value={this.state.password2}
                                                     onChange={(event)=>this.handleChange(event)}/><br/>
-                        Email*: <input type="email" 
+                        </div>
+                        <div className="form-group"> 
+                        <label>Email*: </label>
+                                    <input type="email" 
+                                        className="form-control"
+                                        placeholder="Email"   
                                         name="email" 
                                         value={this.state.email}
                                         onChange={(event)=>this.handleChange(event)}/><br/>
-
-                        <select name="userQuestion"                                 
+                        </div>
+                        <div className="form-group"> 
+                        <label>Please select a question:</label>
+                        <select multiple className="form-control"
+                                name="userQuestion"                               
                                 value={this.state.userQuestion}
                                 onChange={(event)=>this.handleChange(event)}>
                             {questions.map((question) => 
@@ -107,11 +128,16 @@ class SignUp extends React.Component {
                                             {question['question']}
                                         </option>)}
                         </select><br/>
-
-                        Answer*: <input type="text" 
+                        </div>
+                        <div className="form-group"> 
+                        <label>Answer*: </label>
+                                    <input type="text" 
+                                        className="form-control"
+                                        placeholder="Answer"
                                         name="answer" 
                                         value={this.state.answer}
                                         onChange={(event)=>this.handleChange(event)}/>
+                        </div>
                         <input type="submit" 
                                value="Submit"
                                className="btn btn-info" /><br/><br/>
@@ -139,6 +165,7 @@ class SignUpButton extends React.Component {
         return (
             <div>
             {myClick ? <SignUp /> : <button type='button' 
+                                            className="btn btn-info"
                                             onClick={this.handleClick}>                
                                     Sign Up
                                 </button>}           

@@ -108,6 +108,7 @@ function myCallBack(){
                     evt.preventDefault();
                     clearMarkers();
                     let categories = $(this).serialize();
+                    console.log(categories);
                     let formInputs = {'categories': JSON.stringify(categories), 
                                       'coordinates': JSON.stringify(coordinates)};            
                     // make get request to api, callback is showBusinesses()
@@ -158,8 +159,8 @@ function myCallBack(){
                                         '<a href="/business/'+ business_id +'" id="business-name">' +
                                         name + '</a><br><img src="' + image + '"><br>' + 
                                         'Would you like to add this as a stopover?<br>' + 
-                                        '<button id="stopover-add" data-stopover="add?'+ name + '">Add</button>' +
-                                        '<button id="stopover-remove" data-stopover="remove?' + name + 
+                                        '<button class="btn btn-info" id="stopover-add" data-stopover="add?'+ name + '">Add</button>' +
+                                        '<button class="btn btn-info" id="stopover-remove" data-stopover="remove?' + name + 
                                         '" style="display:none">Remove</button>' + 
                                         '</div>'
                                         );  

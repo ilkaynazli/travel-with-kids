@@ -9,19 +9,20 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-5">
-            <div id="distance-info"></div>
+            <h5 id="distance-info"></h5>
             <div id="map" data-start='{{start}}' data-end="{{end}}"></div>
             
         </div>
 
-        <div class="col-md-6 col-md-offset-3">
+        <div class="col-md-6 col-md-offset-6 bg-light">
+            <br>
             <form action="/show-markers.json" id='categories-form'>
                 <h5>How far away from the main route would you like to travel?</h5>
                 <div class="form-row" >
-                    <div class="custom-range col-md-3">
-                        <label class="custom-range col-md-3">5</label>
-                            <input type="range" class="custom-range col-md-3" name="points" min="5000" max="20000">
-                        <label class="custom-range col-md-3">20 (km)</label>
+                    <div class="custom-range">
+                        <label class="custom-range col-md-2">5</label>
+                            <input type="range" class="custom-range col-md-6" name="points" min="5000" max="20000">
+                        <label class="custom-range col-md-2">20 (km)</label>
                     </div>
                 </div>
                 <br><br>
@@ -30,7 +31,7 @@
                     <h6>Food?</h6>
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-xs-6">
+                            <div class="col-md-3">
                         <input class="form-check-input" type="checkbox" 
                             name="categories" value="breakfast_brunch"><label>Breakfast/Brunch</label><br>
                         <input class="form-check-input" type="checkbox" 
@@ -38,7 +39,7 @@
                         <input class="form-check-input" type="checkbox" 
                             name="categories" value="burgers"><label>Burgers</label><br>
                             </div>
-                            <div class="col-xs-3">
+                            <div class="col-md-3  col-md-offset-6">
                         <input class="form-check-input" type="checkbox" 
                             name="categories" value="pizza"><label>Pizza</label><br>
                         <input class="form-check-input" type="checkbox" 
@@ -51,7 +52,7 @@
                     <h6>Play?</h6>
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-xs-6">
+                            <div class="col-md-3">
                         <input class="form-check-input"type="checkbox" 
                             name="categories" value="playgrounds"><label>Playground</label><br>
                         <input class="form-check-input" type="checkbox" 
@@ -59,7 +60,7 @@
                         <input class="form-check-input" type="checkbox" 
                             name="categories" value="carousels"><label>Carousels</label><br>
                             </div>
-                            <div class="col-xs-3">
+                            <div class="col-md-3  col-md-offset-6">
                         <input class="form-check-input" type="checkbox" 
                             name="categories" value="farms"><label>Farms</label><br>
                         <input class="form-check-input" type="checkbox" 

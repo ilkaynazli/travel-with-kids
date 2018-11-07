@@ -3,9 +3,9 @@
     width: 500px;
 }
 
-.photos-yelp {
-    height: 5%;
-    /*width: ;*/
+.photos-yelp img-thumbnail rounded float-left {
+    height: auto;
+    width: 100%;
 }
 
 #background {

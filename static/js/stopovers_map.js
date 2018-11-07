@@ -13,6 +13,8 @@ function myCallBack(){
     $('.link-to-stopover-route').on('click', function(evt) {
         evt.preventDefault();
         waypoints = [];
+        businesses.clear();
+        
         const route = $(evt.target).data();      //Get start and end address from user
         origin = [route['start'], 'A'];
         destination = [route['end'], 'B'];
@@ -31,7 +33,6 @@ function myCallBack(){
                                 stopover: true,
                                 });
             }
-            console.log(waypoints);
             createMap();
         });
     })

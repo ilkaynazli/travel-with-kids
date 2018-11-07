@@ -39,10 +39,16 @@ class ShowQuestion extends React.Component {
                 <div>
                 {error && <div>The answer does not match! Please try again:</div>}
                 <form onSubmit={this.handleSubmit}>
-                    {this.state.question} <br/>
-                    Please enter your answer here:
-                    <input type="text" name="answer" value={this.state.answer}
+                    <div className="form-group">
+                    <label>{this.state.question}</label> <br/>
+                    <label>Please enter your answer here:</label>
+                    <input type="text" 
+                           name="answer"
+                           className="form-control"
+                           placeholder="Answer"
+                           value={this.state.answer}
                                 onChange={(event)=>this.handleChange(event)} /><br />
+                    </div>
                     <input type="submit" 
                            value="Submit"
                            className="btn btn-info" />

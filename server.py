@@ -55,21 +55,21 @@ def get_signup_info():
     result = test_the_password(password)
     if result:
         return jsonify({'error': result})
+    else:
+        username = request.json['username']
+        email = request.json['email']
+        
+        hashed_password = hash_password(password)
+        user = User(username=username, password=hashed_password, email=email)
 
-    username = request.json['username']
-    email = request.json['email']
-    
-    hashed_password = hash_password(password)
-    user = User(username=username, password=hashed_password, email=email)
+        question_id = request.json['userQuestion']
+        user_answer = request.json['answer']
+        answer = Answer(question_id=question_id, user=user, answer=user_answer)
 
-    question_id = request.json['userQuestion']
-    user_answer = request.json['answer']
-    answer = Answer(question_id=question_id, user=user, answer=user_answer)
+        db.session.add_all([user, answer])
+        db.session.commit()
 
-    db.session.add_all([user, answer])
-    db.session.commit()
-
-    return jsonify({'error': result})
+        return jsonify({'error': result})
 
 
 @app.route("/login.json", methods=['POST'])    

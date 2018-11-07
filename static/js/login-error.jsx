@@ -21,9 +21,6 @@ class LoginError extends React.Component {
         evt.preventDefault();
         postData('/forgot-password.json', this.state)
             .then((response) => {
-                    console.log(response);
-                    console.log(response['question']);
-                    console.log(localStorage.getItem('cachedId'));
                     this.setState({question: response['question']});                
                 })
             .catch((error) => console.error(error));
@@ -43,9 +40,15 @@ class LoginError extends React.Component {
             return (
                 <form onSubmit={this.handleSubmit}>
                     {this.state.message} <br/>
-                    Please enter your email: 
-                    <input type="email" name="email" value={this.state.email}
+                    <div className="form-group">
+                    <label>Please enter your email: </label>
+                    <input type="email" 
+                                name="email"
+                                className="form-control"
+                                placeholder="Email"
+                                value={this.state.email}
                                 onChange={(event)=>this.handleChange(event)} /><br />
+                            </div>
                     <input type="submit" 
                            value="Submit"
                            className="btn btn-info" />

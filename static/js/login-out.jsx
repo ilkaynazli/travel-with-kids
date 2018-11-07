@@ -23,11 +23,9 @@ class LoginForm extends React.Component {
         evt.preventDefault();
         postData('/login.json', this.state)
             .then((response) => {
-                console.log('this is login hs1: ', localStorage.getItem('userId'));
                 this.setState({userId: response['user_id'],
                                 error: response['error']});
                 localStorage.setItem('userId', response['user_id']);                                
-                console.log('this is login hs2: ', localStorage.getItem('userId'));
             })
             .catch((error) => console.error(error));
     }
@@ -43,7 +41,6 @@ class LoginForm extends React.Component {
 
     render() {
         const userId = this.state.userId;
-        console.log('this is login r: ', userId);
         if (this.state.error == true) {
             return <LoginError message={this.state.message}/>
         } else if (userId != null) {
@@ -55,9 +52,9 @@ class LoginForm extends React.Component {
             );
         } else {
             return (
-                <div>
+                    <div>
                     <form onSubmit={this.handleSubmit}>
-                    <div class="form-group">
+                    <div className="form-group">
                         <label>Username:</label> 
                         <input type="text" 
                                 className="form-control"
@@ -65,6 +62,8 @@ class LoginForm extends React.Component {
                                 name="username"
                                 value={this.state.username}
                                 onChange={(event) => this.handleChange(event)} /><br/>         
+                        </div>
+                        <div className="form-group">
                         <label>Password:</label>
                         <input type="password"
                                 className="form-control"
@@ -72,14 +71,14 @@ class LoginForm extends React.Component {
                                 name="password"
                                 value={this.state.password}
                                 onChange={(event) => this.handleChange(event)} /><br/>
+                        </div>
                         <input type="submit" 
                                value="Submit"
                                className="btn btn-info" /><br/>
                         Forgot password/username? 
                         <a href="#" onClick={(evt) => this.doThisAfterClick(evt)}>Click Here</a>
-                    </div>
                     </form>
-                </div>
+    </div>
             );
         }
     } 
@@ -136,7 +135,7 @@ class MyUserButtons extends React.Component {
 
     render () {
         return (
-        <div>
+        <div className="btn-group">
             {!this.state.isLoggedIn && <SignUpButton />}
             <LogInButton />
         </div>

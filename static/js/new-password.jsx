@@ -38,9 +38,6 @@ class NewPassword extends React.Component {
         evt.preventDefault();
         postData('/new-password.json', this.state)
             .then((response) => {
-                    console.log(response);
-                    console.log(response['message']);
-                    console.log(localStorage.getItem('cachedId'));
                     this.setState({error: response['error']});                
                 })
             .catch((error) => console.error(error));
@@ -55,13 +52,10 @@ class NewPassword extends React.Component {
     render() {
         const error = this.state.error;
         const passwordHasError = this.state.passwordHasError;
-        console.log('this is render:' + error + passwordHasError);
-
         if (error == false) {
             return (        
                     <div>
-                        You have successfully changed your password<br/>
-                        <a href="/">Click here to go to homepage</a>
+                        You have successfully changed your password!
                     </div>
                 );
         } else {
@@ -71,14 +65,26 @@ class NewPassword extends React.Component {
                 {passwordHasError && 'The passwords do not match! Please try again!'}
                 <br/>
                 <form onSubmit={this.handleSubmit}>
-                    Password*: <input type="password" name="password" 
+                <div className="form-group">
+                    <label>Password*: </label>
+                                <input type="password" 
+                                    name="password" 
+                                    className="form-control"
+                                    placeholder="Password"
                                     value={this.state.password} 
                                     onChange={(event)=>this.handleChange(event)}/><br/>
                     Please use at least one lowercase, one uppercase letter, one number, 
                     and one character (!@#$%^&*(){}[]/?)<br/>
-                    Re-enter Password*: <input type="password" name="password2"  
+                </div>
+                <div className="form-group">
+                    <label>Re-enter Password*: </label>
+                            <input type="password" 
+                                    name="password2"  
+                                    className="form-control"
+                                    placeholder="Password"
                                     value={this.state.password2}
                                     onChange={(event)=>this.handleChange(event)}/><br/>
+                </div>
                     <input type="submit" 
                            value="Submit"
                            className="btn btn-info"/><br/><br/>

@@ -63,7 +63,7 @@ def get_business_info(business_id):
     business = business.json()
     photos = []
     for photo in business['photos']:
-        new_photo = photo[:-5] + 'l' + photo[-4:]
+        new_photo = photo[:-5] + 'm' + photo[-4:]
         photos.append(new_photo)
     business_info = {
         "name": business['name'],
@@ -101,7 +101,8 @@ def add_business_info_to_list(business_list, businesses):
                         'image': new_image
                         }
 
-        if Business.query.filter(Business.business_id == my_business.get('business_id')).first() == None:
+        if (Business.query.filter(Business.business_id == my_business.get('business_id')).first() == None 
+            and latitude and longitude):
             add_business_to_database(business_id, name, business_type, latitude, longitude)
 
         business_list.append(my_business)
