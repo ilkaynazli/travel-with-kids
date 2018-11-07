@@ -157,7 +157,7 @@ function myCallBack(){
                         //need to add more info to info window
                         let myContent = ('<div id="info-window">' +
                                         '<a href="/business/'+ business_id +'" id="business-name">' +
-                                        name + '</a><br><img src="' + image + '"><br>' + 
+                                        name + '</a><br><img src="' + image + '" class="img-thumbnail" alt="responsive"><br>' + 
                                         'Would you like to add this as a stopover?<br>' + 
                                         '<button class="btn btn-info" id="stopover-add" data-stopover="add?'+ name + '">Add</button>' +
                                         '<button class="btn btn-info" id="stopover-remove" data-stopover="remove?' + name + 

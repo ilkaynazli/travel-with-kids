@@ -119,7 +119,7 @@ function myCallBack(){
                                 myPhoto = results[0].photos[0].getUrl({'maxHeight': 100});
                                 myContent = ('<div id="info-window">' +
                                             '<a href="/business/'+ id +'" id="business-name">' +
-                                            name + '<br><img src='+myPhoto+'></div>'
+                                            name + '<br><img src="'+myPhoto+'" class="img-thumbnail" alt="responsive"></div>'
                                             );  
                             } else {
                                 myContent = ('<div id="info-window">' +

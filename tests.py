@@ -203,7 +203,7 @@ class FlaskTests(TestCase):
         """Test the display user info page"""
         result = self.client.get('/users/1')
 
-        self.assertIn(b'<h1>ilkay</h1>', result.data)
+        self.assertIn(b'<h5>Here is your last 3 searches</h5>', result.data)
 
 
 class MyFunctionsUnitTests(TestCase):
