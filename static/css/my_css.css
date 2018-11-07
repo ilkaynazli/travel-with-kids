@@ -1,12 +1,12 @@
 #map, #map2 {
-    height: 600px;
-    width: 500px;
+    height: 400px;
+    width: 600px;
 }
 
-.photos-yelp img-thumbnail rounded float-left {
+/*.photos-yelp img-thumbnail rounded float-left {
     height: auto;
     width: 100%;
-}
+}*/
 
 #background {
     background: url(/static/img/background2.jpeg) no-repeat center center;
@@ -20,3 +20,4 @@
 .btn {
     background-color: #81b8c6;
 }
+

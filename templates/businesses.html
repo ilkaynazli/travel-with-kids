@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-{% block title %}{% endblock %}
-
 {% block body %}
 <div class="container">
     <div class="row justify-content-end">
@@ -30,13 +28,15 @@
         <div id='url-id'></div>
         <br><br>
     </div>
-
-    <div id="photos">
-        <div id='photos-google'></div>
-        {% for photo in business.photo %}
-            <img src="{{photo}}" class='photos-yelp img-thumbnail rounded float-left'>
-        {% endfor %}     
+ <div id="photos">
+    <div class="row">
+        <div class='photos-google'></div>
     </div>
+        <div class="col">
+        {% for photo in business.photo %}
+            <img src="{{photo}}" style="height:200px; width:auto" class='photos-yelp img-thumbnail rounded float-left'>
+        {% endfor %}     
+    </div></div></div>
 
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
@@ -116,10 +116,14 @@
                         if (result.photos != undefined) {
                             for (let i=0; i<result.photos.length; i++) {
                                 let myPhoto = result.photos[i].getUrl({'maxHeight': 200});
-                                imgSrc = '<img src='+myPhoto+' class="img-thumbnail rounded float-left"><br>';
+                                if (i == 3 || i == 7){
+                                    imgSrc = '<div class="col"><img src='+myPhoto+' class="img-thumbnail" alt="responsive"></div><div class="w-100"></div>';
+                                } else {
+                                    imgSrc = '<div class="col"><img src='+myPhoto+' class="img-thumbnail" alt="responsive"></div>';
+                                }
                                 googlePhotos.push(imgSrc);
                             }
-                            $('#photos-google').html(googlePhotos);
+                            $('.photos-google').html(googlePhotos.join(''));
                         } else {
                             $('#photos-google').html('Unfortunately, this place does not have any pictures!');
                         }

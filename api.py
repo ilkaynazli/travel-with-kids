@@ -63,7 +63,7 @@ def get_business_info(business_id):
     business = business.json()
     photos = []
     for photo in business['photos']:
-        new_photo = photo[:-5] + 'm' + photo[-4:]
+        new_photo = photo[:-5] + 'l' + photo[-4:]
         photos.append(new_photo)
     business_info = {
         "name": business['name'],
