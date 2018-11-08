@@ -30,7 +30,7 @@
     </div>
  <div id="photos">
     <div class="row">
-        <div class='photos-google'></div>
+        <div class='row photos-google'></div>
     </div>
         <div class="col">
         {% for photo in business.photo %}
@@ -44,7 +44,6 @@
     $('#stopover-add').on('click', function(evt) {
         evt.preventDefault();
         let formInput = {'stopover': $(evt.target).data('stopover')};
-        console.log($(evt.target).data('stopover'));
         $.post("/save-stopovers", formInput, function() {
             $('#stopover-add').css('display', 'none');
             $('#stopover-remove').css('display', 'block');
@@ -53,7 +52,6 @@
     $('#stopover-remove').on('click', function(evt) {
         evt.preventDefault();
         let formInput = {'stopover': $(evt.target).data('stopover')};
-        console.log($(evt.target).data('stopover'));
         $.post("/save-stopovers", formInput, function() {
             $('#stopover-remove').css('display', 'none');
             $('#stopover-add').css('display', 'block');
@@ -62,10 +60,8 @@
 </script>
 <script>
     const cachedId = localStorage.getItem('cachedId');
-    console.log(cachedId);
     function placesCallback() {
         let myPhoto;
-        console.log($('#my-business').data());
         const business = $('#my-business').data()['business'];
         const name = business['name'];
         const business_location = new google.maps.LatLng(business['location']);

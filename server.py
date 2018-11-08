@@ -175,9 +175,9 @@ def show_map():
             db.session.add(route)
             db.session.commit()
 
-    my_route = Route.query.filter(Route.start == start_location,
+            my_route = Route.query.filter(Route.start == start_location,
                                   Route.end == end_location).first()
-    session['route_id'] = my_route.route_id
+            session['route_id'] = my_route.route_id
 
     return render_template("show_directions.html",
                             YOUR_API_KEY=GOOGLE_MAPS,
@@ -206,6 +206,7 @@ def display_business_page(business_id):
     """Display info on a business like name, address, phone, images, url to yelp"""
 
     business = get_business_info(business_id)
+    print('\n\n\n', business, '\n\n\n\n', type(business), '\n\n\n')
     return render_template("businesses.html", business2=json.dumps(business), business=business, YOUR_API_KEY=GOOGLE_MAPS)
 
 
@@ -283,13 +284,13 @@ def display_route_with_stopovers(this_route):
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
-    # app.debug = True
+    app.debug = True
     # make sure templates, etc. are not cached in debug mode
-    # app.jinja_env.auto_reload = app.debug
+    app.jinja_env.auto_reload = app.debug
 
     connect_to_db(app, 'travels')
 
     # Use the DebugToolbar
     # DebugToolbarExtension(app)
-    app.run()
-    # app.run(port=5000, host='0.0.0.0')
+    # app.run()
+    app.run(port=5000, host='0.0.0.0')
