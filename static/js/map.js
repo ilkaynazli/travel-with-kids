@@ -29,19 +29,6 @@ function myCallBack(){
         });
     });
 
-    function showToolTip(evt) {
-        let tooltipText = $('#stopover-add').data('tooltip');
-        console.log(tooltipText);
-        $('#my-tooltip').append('<div id="tooltip">' + tooltipText + '</div>');
-    }
-
-    function removeToolTip(evt) {
-        $('#tooltip').remove();
-    }
-
-    $('#stopover-add').on('mouseover', showToolTip);
-    $('#stopover-add').on('mouseout', removeToolTip);
-
     //Create Map and call calculate and display route function
     function createMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -153,17 +140,10 @@ function myCallBack(){
                         const name = businessDetails[i]['name'];
                         const business_id = businessDetails[i]['business_id'];
                         const image = businessDetails[i]['image'];
-                        if (park.includes(businessDetails[i]['business_type'])) {
-                            color = 'Azure';
-                        } else if (eat.includes(businessDetails[i]['business_type'])) {
-                            color = 'Pink';
-                        } 
-                        let icon = 'https://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Ball-' + color + '-icon.png'
                         marker = new google.maps.Marker({
                             position: latLng,
                             map: map, 
                             title : name, 
-                            icon: icon                          
                         });
 
                         markers.push(marker);
