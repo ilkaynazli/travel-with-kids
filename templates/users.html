@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-
-
 {% block body %}
 <div class="container-fluid">
     <div class="row">
@@ -15,7 +13,9 @@
                     <ul>
                         {% for route in routes %}
                             <li>
-                                <a href="/stopover-route/{{route.start}}&{{route.end}}"  data-start='{{route.start}}' data-end="{{route.end}}" class="link-to-stopover-route">
+                                <a href="/stopover-route/{{route.start}}&{{route.end}}"  
+                                    data-start='{{route.start}}' data-end="{{route.end}}" 
+                                    class="link-to-stopover-route">
                                     From {{ route.start }} to {{ route.end }}</a></li>
                         {% endfor %}
                     </ul>

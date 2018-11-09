@@ -21,3 +21,8 @@
     background-color: #81b8c6;
 }
 
+#tooltip {
+    position: absolute;
+    z-index: 99999;
+}
+}

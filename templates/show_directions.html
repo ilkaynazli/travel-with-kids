@@ -1,8 +1,4 @@
 {% extends 'base.html' %}
-{% block title %}Maps{% endblock %}
-{% block head %}
-
-{% endblock %}
 
 {% block body %}
 
@@ -78,6 +74,23 @@
 
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src='/static/js/map.js'></script>
+<!-- <script>
+    "use strict"
+
+    function showToolTip(evt) {
+        let tooltipText = $('#stopover-add').data('tooltip');
+        console.log(tooltipText);
+        $('#my-tooltip').append('<div id="tooltip">' + tooltipText + '</div>');
+    }
+
+    function removeToolTip(evt) {
+        $('#tooltip').remove();
+    }
+
+    $('#stopover-add').on('mouseover', showToolTip);
+    $('#stopover-add').on('mouseout', removeToolTip);
+
+</script> -->
 <script 
   src="https://maps.googleapis.com/maps/api/js?key={{YOUR_API_KEY}}&callback=myCallBack" async defer>
 </script>

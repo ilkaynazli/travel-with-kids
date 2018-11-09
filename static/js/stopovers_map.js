@@ -13,8 +13,7 @@ function myCallBack(){
     $('.link-to-stopover-route').on('click', function(evt) {
         evt.preventDefault();
         waypoints = [];
-        businesses.clear();
-        
+        businesses.clear();        
         const route = $(evt.target).data();      //Get start and end address from user
         origin = [route['start'], 'A'];
         destination = [route['end'], 'B'];
@@ -73,8 +72,8 @@ function myCallBack(){
 
                 routeInfo.set('duration', routeDurationTime);
                 routeInfo.set('distance', Math.round(routeDistance*0.000621371*100)/100 + ' miles');
-                console.log(routeInfo.get('distance'), routeInfo.get('duration'));
-                let html = 'This journey is ' + routeInfo.get('distance') + ' and will take ' + routeInfo.get('duration');
+                let html = 'This journey is ' + routeInfo.get('distance') + 
+                            ' and will take ' + routeInfo.get('duration');
                 $('#distance-info').html(html);
                 //Add origin and destination markers with infowindows that has addresses
                 let geocoder = new google.maps.Geocoder();

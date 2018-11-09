@@ -5,7 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="/static/css/my_css.css">
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/reactstrap/4.8.0/reactstrap.min.js"></script> -->
         {% block title %}{% endblock %}
         {% block head %}{% endblock %}
     </head>
@@ -40,6 +39,9 @@
         </div>
  
        <br>
+        <script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+        <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js"></script>
+        
         <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
         <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
         <sript src="https://unpkg.com/react-transition-group@2.5.0/dist/react-transition-group.min.js"></sript>
@@ -63,7 +65,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
-        {% block body %}Body content goes here{% endblock %}
+        {% block body %}{% endblock %}
 <div id="background-image-credits" class="text-right fixed-bottom">Photo by Jeremy Bishop on Unsplash</div>
 
 </div>    

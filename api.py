@@ -91,7 +91,6 @@ def add_business_info_to_list(business_list, businesses):
             new_image = image[:-5] + 'ms' + image[-4:]
         else:
             new_image = image
-        print('\n\n\n\n', new_image, '\n\n\n\n\n')
         business_type = find_the_category_of_business(categories_list)
         my_business = {'name': name,
                         'coords': {'latitude': latitude,

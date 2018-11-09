@@ -29,6 +29,19 @@ function myCallBack(){
         });
     });
 
+    function showToolTip(evt) {
+        let tooltipText = $('#stopover-add').data('tooltip');
+        console.log(tooltipText);
+        $('#my-tooltip').append('<div id="tooltip">' + tooltipText + '</div>');
+    }
+
+    function removeToolTip(evt) {
+        $('#tooltip').remove();
+    }
+
+    $('#stopover-add').on('mouseover', showToolTip);
+    $('#stopover-add').on('mouseout', removeToolTip);
+
     //Create Map and call calculate and display route function
     function createMap() {
         map = new google.maps.Map(document.getElementById('map'), {
@@ -86,7 +99,8 @@ function myCallBack(){
                         }
                     }  
                 };
-                let html = 'This journey is ' + routeInfo.get('distance') + ' and will take ' + routeInfo.get('duration');
+                let html = 'This journey is ' + routeInfo.get('distance') + 
+                            ' and will take ' + routeInfo.get('duration');
                 $('#distance-info').html(html);
 
                 // Create event listener attached to form that listens for submit
@@ -108,7 +122,6 @@ function myCallBack(){
                     evt.preventDefault();
                     clearMarkers();
                     let categories = $(this).serialize();
-                    console.log(categories);
                     let formInputs = {'categories': JSON.stringify(categories), 
                                       'coordinates': JSON.stringify(coordinates)};            
                     // make get request to api, callback is showBusinesses()
@@ -155,14 +168,16 @@ function myCallBack(){
 
                         markers.push(marker);
                         //need to add more info to info window
-                        let myContent = ('<div id="info-window">' +
+                        let myContent = ('<div id="info-window"><div id="my-tooltip">' +
                                         '<a href="/business/'+ business_id +'" id="business-name">' +
                                         name + '</a><br><img src="' + image + '" class="img-thumbnail" alt="responsive"><br>' + 
                                         'Would you like to add this as a stopover?<br>' + 
-                                        '<button class="btn btn-info" id="stopover-add" data-stopover="add?'+ name + '">Add</button>' +
+                                        '<button class="btn btn-info" id="stopover-add"' +
+                                        'data-tooltip="User must login to add a stopover to their routes" data-stopover="add?'
+                                        + name + '">Add</button>' +
                                         '<button class="btn btn-info" id="stopover-remove" data-stopover="remove?' + name + 
                                         '" style="display:none">Remove</button>' + 
-                                        '</div>'
+                                        '</div></div>'
                                         );  
                         displayMyInfoWindow(marker, map, infoWindow, myContent);           
                     }

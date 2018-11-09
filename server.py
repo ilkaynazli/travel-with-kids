@@ -20,9 +20,6 @@ app = Flask(__name__)
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = os.environ['SECRET']
 
-# Normally, if you use an undefined variable in Jinja2, it fails
-# silently. This is horrible. Fix this so that, instead, it raises an
-# error.
 app.jinja_env.undefined = StrictUndefined
 
 @app.route("/")
@@ -30,11 +27,11 @@ def display_homepage():
     """Display homepage"""
     return render_template("homepage.html")
 
-
 @app.route('/about')
 def display_about_page():
     """Display about page"""
     return render_template("about.html")
+
 
 @app.route("/show-signup-button.json", methods=['POST'])
 def display_signup():
@@ -174,10 +171,12 @@ def show_map():
             route = Route(user_id=user_id, start=start_location, end=end_location)
             db.session.add(route)
             db.session.commit()
+    
 
-            my_route = Route.query.filter(Route.start == start_location,
+    my_route = Route.query.filter(Route.start == start_location,
                                   Route.end == end_location).first()
-            session['route_id'] = my_route.route_id
+    if my_route:
+        session['route_id'] = my_route.route_id
 
     return render_template("show_directions.html",
                             YOUR_API_KEY=GOOGLE_MAPS,
@@ -206,8 +205,10 @@ def display_business_page(business_id):
     """Display info on a business like name, address, phone, images, url to yelp"""
 
     business = get_business_info(business_id)
-    print('\n\n\n', business, '\n\n\n\n', type(business), '\n\n\n')
-    return render_template("businesses.html", business2=json.dumps(business), business=business, YOUR_API_KEY=GOOGLE_MAPS)
+    return render_template("businesses.html", 
+                            business2=json.dumps(business), 
+                            business=business, 
+                            YOUR_API_KEY=GOOGLE_MAPS)
 
 
 @app.route("/save-stopovers", methods=['POST'])
@@ -216,7 +217,6 @@ def save_stopovers_to_database():
 
     data = request.form.get('stopover') #this is a string
     check, name = data.split('?')
-
     business = db.session.query(Business).filter(Business.business_name == name).first()
     route_id = session.get('route_id')
     stopover = Stopover(route_id=route_id, 
@@ -247,24 +247,20 @@ def display_user_info(user_id):
     routes_by_user = db.session.query(Route).filter(Route.user_id == user.user_id)
     my_routes = routes_by_user.order_by(Route.route_id.desc()).limit(3).all()
 
-    return render_template("users.html", user=user, routes=my_routes, YOUR_API_KEY=GOOGLE_MAPS)
+    return render_template("users.html", 
+                            user=user, 
+                            routes=my_routes, 
+                            YOUR_API_KEY=GOOGLE_MAPS)
    
 @app.route("/stopover-route/<this_route>")
 def display_route_with_stopovers(this_route):
     """Show the map and route but include the stopovers"""
     start, end = this_route.split('&')
-    print('\n\n\n\n', start, end, '\n\n\n\n\n')
-
     user_id = session.get('user_id')
-    print('\n\n\n\n', user_id, '\n\n\n\n\n')
-
-    my_route = Route.query.filter(Route.start == start, Route.end == end, Route.user_id == user_id).first()
-
-    print('\n\n\n\n', my_route, '\n\n\n\n\n')
-
+    my_route = Route.query.filter(Route.start == start, 
+                                    Route.end == end, 
+                                    Route.user_id == user_id).first()
     stopovers = Stopover.query.filter(Stopover.route_id == my_route.route_id).all()
-    print('\n\n\n\n', stopovers, '\n\n\n\n\n')
-
     my_stopovers = []
 
     for item in stopovers:
@@ -276,7 +272,6 @@ def display_route_with_stopovers(this_route):
                     'name': name
                     }
         my_stopovers.append(stopover)
-    print('\n\n\n\n', my_stopovers, '\n\n\n\n\n')
     my_data = {'stopovers': my_stopovers}
 
     return jsonify(my_data)
@@ -284,13 +279,13 @@ def display_route_with_stopovers(this_route):
 if __name__ == "__main__":
     # We have to set debug=True here, since it has to be True at the
     # point that we invoke the DebugToolbarExtension
-    # app.debug = True
+    app.debug = True
     # make sure templates, etc. are not cached in debug mode
-    # app.jinja_env.auto_reload = app.debug
+    app.jinja_env.auto_reload = app.debug
 
     connect_to_db(app, 'travels')
 
     # Use the DebugToolbar
     # DebugToolbarExtension(app)
-    app.run()
-    # app.run(port=5000, host='0.0.0.0')
+    # app.run()
+    app.run(port=5000, host='0.0.0.0')

@@ -29,9 +29,9 @@
         <br><br>
     </div>
  <div id="photos">
-    <div class="row">
+<!--     <div class="row"> -->
         <div class='row photos-google'></div>
-    </div>
+    <!-- </div> -->
         <div class="col">
         {% for photo in business.photo %}
             <img src="{{photo}}" style="height:200px; width:auto" class='photos-yelp img-thumbnail rounded float-left'>
@@ -108,7 +108,7 @@
                         if (result.website != undefined) {
                             $('#website').html('<a href="' + result.website + '">' + name + '</a>');
                         }
-                        let googlePhotos = [];
+                        const googlePhotos = [];
                         if (result.photos != undefined) {
                             for (let i=0; i<result.photos.length; i++) {
                                 let myPhoto = result.photos[i].getUrl({'maxHeight': 200});
