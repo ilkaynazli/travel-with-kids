@@ -65,7 +65,7 @@ Install dependencies:
 Create database 'travels'.
     $ createdb travels
 
-Create your database tables and seed example data.
+Create your database tables and seed questions data.
     $ python model.py
     $ python seed.py
 
